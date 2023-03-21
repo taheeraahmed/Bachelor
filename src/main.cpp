@@ -4,16 +4,22 @@
 #include <SPI.h>
 
 const int LED_PIN = 44;
-const int TFT_CS = ???;
-const int TFT_DC = ???;
-const int TFT_MOSI = ???;
-const int TFT_SCLK = ???;
-const int TFT_RST = ???;
+const int TFT_CS = 27;
+const int TFT_DC = 25;
+const int TFT_MOSI = 24;
+const int TFT_SCLK = 23;
+const int TFT_RST = 26;
 
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_PIN, OUTPUT);
   Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+  tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
+  uint16_t time = millis();
+  tft.fillScreen(ST7735_BLACK);
+  time = millis() - time;
+  // large block of text
+  tft.fillScreen(ST7735_WHITE);
+  // testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST77XX_WHITE);
+  delay(1000);
 }
 
 // the loop function runs over and over again forever
