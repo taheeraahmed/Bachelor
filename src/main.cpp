@@ -1,14 +1,14 @@
 #include <Arduino.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7735.h>
+#include <Adafruit_GFX.h>         // grafisk bibliotek
+#include <Adafruit_ST7735.h>      // maskinvare biblioteket til skjermen på 1,8 inch
 #include <SPI.h>
 
-const int LED_PIN = 44;
-const int TFT_CS = 27;
-const int TFT_DC = 25;
-const int TFT_MOSI = 24;
-const int TFT_SCLK = 23;
-const int TFT_RST = 26;
+const int LED_PIN = 44;         // LED
+const int TFT_CS = 27;          // CS
+const int TFT_DC = 25;          // A0
+const int TFT_MOSI = 24;        // SDA
+const int TFT_SCLK = 23;        // SCK
+const int TFT_RST = 26;         // RESET
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
