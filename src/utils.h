@@ -1,7 +1,7 @@
 struct TestChoices {
-  int mode;     // 1 2 3 
-  int duration; // 1 2
-  int pvm_freq; // 1 2 3 
+  int mode;     // (1) Placebo, (2) Not Placebo (3) PWM 
+  int duration; // (1) 30 min (2) 45 min
+  int pvm_freq; // (1) ??  (2) ?? (3) ?? 
 };
 
 struct MEMORY_EXTENSION_PINS {
