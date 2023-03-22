@@ -10,7 +10,7 @@ int TEMP_PIN_3;
 int TEMP_PIN_4;
 
 // TODO: Define the test choices  (Mina)
-testChoices choices;
+TestChoices choices;
 
 String fileName;
 
