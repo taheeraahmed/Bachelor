@@ -1,16 +1,26 @@
 #include <Arduino.h>
+#include <save_temp_to_csv.h>
+#include <utils.h>
 
-const int LED_PIN = 44;
+int CHIP_PIN;
+// TODO: Set temperature pins (Elise)
+int TEMP_PIN_1;
+int TEMP_PIN_2;
+int TEMP_PIN_3;
+int TEMP_PIN_4;
+
+// TODO: Define the test choices  (Mina)
+testChoices choices;
+
+String fileName;
 
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_PIN, OUTPUT);
+  // TODO: Set startTime (Mina)
+  unsigned long startTime;
+
+  fileName = setupReadCSV(CHIP_PIN, startTime, choices);
 }
 
-// the loop function runs over and over again forever
 void loop() {
-  digitalWrite(LED_PIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-  delay(1000);                  // wait for a second
-  digitalWrite(LED_PIN, LOW);   // turn the LED off by making the voltage LOW
-  delay(1000);                  // wait for a second
+  readSensorValues(TEMP_PIN_1, TEMP_PIN_2, TEMP_PIN_3, TEMP_PIN_4, fileName.c_str());
 }
