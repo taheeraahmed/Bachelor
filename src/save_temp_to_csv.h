@@ -37,18 +37,15 @@ String setupReadCSV(int CHIP_PIN, unsigned long startTime, TestChoices choices) 
   This function reads the sensor values and writes them to the CSV file.
 
   It takes the following parameters:
-    TEMP_PIN_1: The analog pin that the first temperature sensor is connected to
-    TEMP_PIN_2: The analog pin that the second temperature sensor is connected to
-    TEMP_PIN_3: The analog pin that the third temperature sensor is connected to
-    TEMP_PIN_4: The analog pin that the fourth temperature sensor is connected to
+    tempPin: The pins the temperature sensors are connected to
     fileName: The name of the CSV file to write to
 */
 void readSensorValues(TEMPERATURE_PINS temp_pins, const char *fileName) {
   // Read the sensor value
-  int tempValue1 = analogRead(temp_pins.TEMP_PIN_PCB);
-  int tempValue2 = analogRead(temp_pins.TEMP_PIN_LED);
-  int tempValue3 = analogRead(temp_pins.TEMP_PIN_AIR);
-  int tempValue4 = analogRead(temp_pins.TEMP_PIN_SKIN);
+  int tempValue1 = analogRead(temp_pins.PCB);
+  int tempValue2 = analogRead(temp_pins.LED);
+  int tempValue3 = analogRead(temp_pins.AIR);
+  int tempValue4 = analogRead(temp_pins.SKIN);
   
   // Get the current time
   unsigned long currentTime = millis();

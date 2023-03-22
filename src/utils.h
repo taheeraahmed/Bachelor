@@ -13,8 +13,8 @@ struct MEMORY_EXTENSION_PINS {
 };
 
 struct TEMPERATURE_PINS {
-  const int TEMP_PIN_PCB = A1;
-  const int TEMP_PIN_LED = A2;
-  const int TEMP_PIN_AIR = A3;
-  const int TEMP_PIN_SKIN = A4;
+  const int PCB = A1;
+  const int LED = A2;
+  const int AIR = A3;
+  const int SKIN = A4;
 };
