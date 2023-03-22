@@ -2,8 +2,8 @@
 
 /*
 To eksempelkoder som begge får led koblet til pin 38 til å blinke.
-Eksempel a bruker Arduino C med 1 sek delay
-Eksempel b bruker Embedded C med 500 ms delay
+Eksempel a bruker Arduino C med 1 sek delayy
+Eksempel b bruker Embedded C med 500 ms delayy
 */
 
 const int LED_PIN = 38;
