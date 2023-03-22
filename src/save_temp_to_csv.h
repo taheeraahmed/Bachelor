@@ -12,7 +12,7 @@
     choices: The test choices made by the scientist/healthcare worker
 */
 
-String setupReadCSV(int CHIP_PIN, unsigned long startTime, testChoices choices) {
+String setupReadCSV(int CHIP_PIN, unsigned long startTime, TestChoices choices) {
   // Create a string for assembling the data file name
   const String fileName = choices.mode + "_" + startTime; + "_sensor_data.csv";    
 
@@ -28,7 +28,7 @@ String setupReadCSV(int CHIP_PIN, unsigned long startTime, testChoices choices) 
 
   // Write the header row to the CSV file
   Serial.println("Writing the header row to the CSV file.");
-  dataFile.println("Time, Temperature 1, Temperature 2, Temperature 3, Temperature 4");
+  dataFile.println("Time, Temperature PCB, Temperature LED, Temperature Air, Temperature Skin");
 
   return fileName;
 }
@@ -43,12 +43,12 @@ String setupReadCSV(int CHIP_PIN, unsigned long startTime, testChoices choices) 
     TEMP_PIN_4: The analog pin that the fourth temperature sensor is connected to
     fileName: The name of the CSV file to write to
 */
-void readSensorValues(int TEMP_PIN_1, int TEMP_PIN_2, int TEMP_PIN_3, int TEMP_PIN_4, const char *fileName) {
+void readSensorValues(TEMPERATURE_PINS temp_pins, const char *fileName) {
   // Read the sensor value
-  int tempValue1 = analogRead(TEMP_PIN_1);
-  int tempValue2 = analogRead(TEMP_PIN_2);
-  int tempValue3 = analogRead(TEMP_PIN_3);
-  int tempValue4 = analogRead(TEMP_PIN_4);
+  int tempValue1 = analogRead(temp_pins.TEMP_PIN_PCB);
+  int tempValue2 = analogRead(temp_pins.TEMP_PIN_LED);
+  int tempValue3 = analogRead(temp_pins.TEMP_PIN_AIR);
+  int tempValue4 = analogRead(temp_pins.TEMP_PIN_SKIN);
   
   // Get the current time
   unsigned long currentTime = millis();

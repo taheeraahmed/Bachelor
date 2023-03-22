@@ -11,3 +11,10 @@ struct MEMORY_EXTENSION_PINS {
   const int CLK = 52;   // SPI clock pin
   const int CD = 49;    // Card detect pin I/O
 };
+
+struct TEMPERATURE_PINS {
+  const int TEMP_PIN_PCB = A1;
+  const int TEMP_PIN_LED = A2;
+  const int TEMP_PIN_AIR = A3;
+  const int TEMP_PIN_SKIN = A4;
+};

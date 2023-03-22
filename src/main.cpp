@@ -4,10 +4,7 @@
 
 MEMORY_EXTENSION_PINS memExtPins;
 // TODO: Set temperature pins (Elise)
-int TEMP_PIN_1;
-int TEMP_PIN_2;
-int TEMP_PIN_3;
-int TEMP_PIN_4;
+TEMPERATURE_PINS tempPins;
 
 // TODO: Define the test choices  (Mina)
 TestChoices choices;
@@ -22,5 +19,5 @@ void setup() {
 }
 
 void loop() {
-  readSensorValues(TEMP_PIN_1, TEMP_PIN_2, TEMP_PIN_3, TEMP_PIN_4, fileName.c_str());
+  readSensorValues(tempPins, fileName.c_str());
 }
