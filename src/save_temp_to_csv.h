@@ -12,7 +12,7 @@
     choices: The test choices made by the scientist/healthcare worker
 */
 
-String setupReadCSV(int CHIP_PIN, unsigned long startTime, TestChoices choices) {
+String setupReadCSV(MEMORY_EXTENSION_PINS memExtPins, unsigned long startTime, TestChoices choices) {
   // Create a string for assembling the data file name
   const String fileName = choices.mode + "_" + startTime; + "_sensor_data.csv";    
 
@@ -21,7 +21,7 @@ String setupReadCSV(int CHIP_PIN, unsigned long startTime, TestChoices choices) 
   File dataFile = SD.open(fileName.c_str(), FILE_WRITE);
 
   // Initialize the SD card
-  if (!SD.begin(CHIP_PIN)) {
+  if (!SD.begin(memExtPins.CS)) {
     Serial.println("Error initializing SD card.");
     return "Error initializing SD card.";
   }

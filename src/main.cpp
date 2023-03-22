@@ -12,7 +12,7 @@ String fileName;
 void setup() {
   // TODO: Set startTime (Mina)
   unsigned long startTime;
-  fileName = setupReadCSV(memExtPins.CS, startTime, choices);
+  fileName = setupReadCSV(memExtPins, startTime, choices);
 }
 
 void loop() {
