@@ -2,7 +2,7 @@
 #include <save_temp_to_csv.h>
 #include <utils.h>
 
-int CHIP_PIN;
+MEMORY_EXTENSION_PINS memExtPins;
 // TODO: Set temperature pins (Elise)
 int TEMP_PIN_1;
 int TEMP_PIN_2;
@@ -18,7 +18,7 @@ void setup() {
   // TODO: Set startTime (Mina)
   unsigned long startTime;
 
-  fileName = setupReadCSV(CHIP_PIN, startTime, choices);
+  fileName = setupReadCSV(memExtPins.CS, startTime, choices);
 }
 
 void loop() {
