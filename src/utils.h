@@ -1,3 +1,5 @@
+# include <Arduino.h>
+
 /**
  * @brief This struct is used to store the information about the settings of the test
  * @details 
