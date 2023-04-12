@@ -1,6 +1,12 @@
 #include <Arduino.h>
+#include <utils.h>
 
 const int LED_PIN = 44;
+
+MEMORY_EXTENSION_PINS mem_ext_pins;
+TEMPERATURE_PINS temp_pins;
+FAN_PINS fan_pins;
+TestChoices choices;
 
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
