@@ -1,3 +1,5 @@
+# include <Arduino.h>
+
 /**
  * @brief This struct is used to store the information about the settings of the test
  * @details 
@@ -54,8 +56,8 @@ struct TEMPERATURE_PINS {
  * @returns A struct containing the fan pins with the following values: LED and CONTROL
 */
 struct FAN_PINS {
-  const int LED = 5;
-  const int CONTROL = 4;
+  const int LED = 10;
+  const int CONTROL = 11;
 };
 
 /**
