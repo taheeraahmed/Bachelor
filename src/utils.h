@@ -56,8 +56,8 @@ struct TEMPERATURE_PINS {
  * @returns A struct containing the fan pins with the following values: LED and CONTROL
 */
 struct FAN_PINS {
-  const int LED = 13;
-  const int CONTROL = 13;
+  const int LED = 5;
+  const int CONTROL = 4;
 };
 
 /**
