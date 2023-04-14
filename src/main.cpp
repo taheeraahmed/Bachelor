@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <save_temp_to_csv.h>
 #include <fan/fan.h>
 #include "utils.h"
 
