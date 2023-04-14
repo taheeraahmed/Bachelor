@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <save_temp_to_csv.h>
-#include <utils.h>
-#include <fan.h>
+#include <fan/fan.h>
+#include "utils.h"
 
 MEMORY_EXTENSION_PINS mem_ext_pins;
 TEMPERATURE_PINS temp_pins;
@@ -19,5 +19,4 @@ void setup() {
 
 void loop() {
   readSensorValuesToCsv(temp_pins, filename.c_str());
-  //turnOnFans(fan_pins);
 }
