@@ -17,10 +17,10 @@ ATmega2560 Datablad
 https://mansfield-devine.com/speculatrix/2018/02/avr-basics-using-the-i2c-bus-1-clock-speed/
 */
 
-#include <Arduino.h>
+#include <avr/io.h>
 #include <stdio.h>
 #include <util/twi.h>
-
+#include "I2C.h"
 
 unsigned long f_cpu = 16000000UL;
 
@@ -48,27 +48,29 @@ TWDR: TWI Data Register
 */
 
 
-int mainI2C(void){
-  //Serial.begin(9600);
+uint8_t mainI2C(void){
+  
   init_I2C(100000);
 
-  I2C_TX(DAC_Address, data_to_dac);
+  I2CTx(DAC_Address, data_to_dac);
 
-  data = I2C_RX(RTC_Address, 0x04);
+  data = I2CRx(RTC_Address, 0x04);
   //Serial.println(data);
   uint8_t Dato = ((data >> 7) & ((1 << PIN1) | (1 << PIN0)))*10+ (data & ((1 << PIN3) | (1 << PIN2) | (1 << PIN1) | (1 << PIN0)));
   printf("Dato:     %d\n", Dato);
   //printf(Dato);
 
-  data = I2C_RX(RTC_Address, 0x05);
+  data = I2CRx(RTC_Address, 0x05);
   //Serial.println(data);
   uint8_t Maned = (data >> 4)*10 + (data & ((1 << 3) | (1 << 2) | (1 << 1) | (1 << 0)));
   printf("Måned:    %d\n", Maned);
   
-  data = I2C_RX(RTC_Address, 0x06);
+  data = I2CRx(RTC_Address, 0x06);
   //Serial.println(data);
   uint8_t Ar = (data & ((1 << PIN7) | (1 << PIN6) | (1 << PIN5) | (1 << PIN4)))*10 + (data & ((1 << PIN3) | (1 << PIN2) | (1 << PIN1) | (1 << PIN0)));
   printf("År:    %d\n", Ar);
+
+  return(Ar);
 }
 
 
@@ -78,7 +80,7 @@ int mainI2C(void){
 TWSR = 0x00; TWBR = 0x0C; 
 //enable TWI 
 TWCR = (1<<TWEN); }*/
-void init_I2C(unsigned long F_SCL){
+void initI2C(unsigned long F_SCL){
     // Setter opp SDA og SCL
     DDRD |= PIN1 | PIN0;
     PORTC |= (1 << PIN1) | (1 << PIN0);
@@ -102,12 +104,12 @@ void init_I2C(unsigned long F_SCL){
     TWBR = (uint8_t)((f_cpu/F_SCL)-16)/(2*(4*exp(TWPS_Calculated)));
     // Enabler I2C på pinnene.
     TWCR = (1 << TWEN); 
-    wait_for_ack();
+    WaitForAck();
     TWCR = (1 << TWINT);
-    wait_for_ack();
+    WaitForACK();
 }
 
-uint8_t check_TWSR(){
+uint8_t checkTWSR(){
     uint8_t status_code;
 
     status_code = TWSR & ~((1 << PIN2) | (1 << PIN2) | (1 << PIN0));
@@ -116,55 +118,55 @@ uint8_t check_TWSR(){
 
 // Void funksjon som sender x antall bytes via I2C.
 // NB!! Ikke Testet
-void I2C_TX(uint8_t address_byte, char transmit_data[]){
+void I2CTx(uint8_t address_byte, char transmit_data[]){
   
-  I2C_START_COND();
+  I2CStartCond();
   // Sender adresse til slave:
-  I2C_WRITE(address_byte);
+  I2CWrite(address_byte);
   //Det er opprettet connection med slave. Nå skal data sendes:
-  I2C_TRANSMIT_BYTE(transmit_data);
-  I2C_STOP_COND();
+  I2CTransmitByte(transmit_data);
+  I2CStopCond();
 }
 
 
 // Funksjon som tar inn data via I2C 
 //NB!!! Ikke ferdig.
-uint8_t I2C_RX(uint8_t address_byte, uint8_t register_to_read){
+uint8_t I2CRx(uint8_t address_byte, uint8_t register_to_read){
   uint8_t recieved_data;
   
-  I2C_START_COND();
+  I2CStartCond();
   // Sender adresse til slave:
-  I2C_WRITE(address_byte); 
+  I2CWrite(address_byte); 
   // Sender registeret det skal leses fra hos slave:
-  I2C_WRITE(register_to_read);
+  I2CWrite(register_to_read);
   // Sender ny start condition.
-  I2C_START_COND();
+  I2CStartCond();
   // Sender adresse til slave med read bit aktivert:
-  I2C_WRITE(address_byte + 1);
+  I2CWrite(address_byte + 1);
   recieved_data = I2C_RECIEVE_WITH_NACK();
-  I2C_STOP_COND();
+  I2CStopCond();
 
   return recieved_data;
 }
 
-void I2C_START_COND(){
+void I2CStartCond(){
   // Setter START Condition ved å skrive til TWCR:
   TWCR = ((1 << TWEN) | (1 << TWINT) | (1 << TWSTA));  // TWCR = 1X10X10X
   wait_for_ack();
 }
 
-void I2C_STOP_COND(){
+void I2CStopCond(){
   // Genererer STOP condition:
   TWCR |= ((1 << TWINT) | (1 << TWSTO) | (1 << TWEN));    // TWCR = 1X01X10X
 }
 
-void I2C_WRITE(uint8_t data){
+void I2CWrite(uint8_t data){
   TWDR = data;
   TWCR = ((1 << TWINT) | (1 << TWEN));  // TWCR = 1X00X10X
   wait_for_ack();
 }
 
-void I2C_TRANSMIT_BYTE(char* data_to_send){
+void I2CTransmitByte(char* data_to_send){
   size_t transmit_size = sizeof(data_to_send);
 
   for (uint8_t i = 0; i < transmit_size; i++){
@@ -174,18 +176,18 @@ void I2C_TRANSMIT_BYTE(char* data_to_send){
   }
 }
 
-uint8_t I2C_RECIEVE_WITH_ACK(){
+uint8_t I2CRecieveWithAck(){
   TWCR = ((1 << TWINT) | (1 << TWEN) | (1 << TWEA));
   wait_for_ack();
   return TWDR;
 }
 
-uint8_t I2C_RECIEVE_WITH_NACK(){
+uint8_t I2CRecieveWithNack(){
   TWCR = ((1 << TWINT) | (1 << TWEN));
   wait_for_ack();
   return TWDR;
 }
 
-void wait_for_ack(){
+void WaitForAck(){
   while (!(TWCR & (1 << TWINT)));
 }
