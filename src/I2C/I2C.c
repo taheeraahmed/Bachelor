@@ -20,6 +20,8 @@ https://mansfield-devine.com/speculatrix/2018/02/avr-basics-using-the-i2c-bus-1-
 #include <avr/io.h>
 #include <stdio.h>
 #include <util/twi.h>
+//#include <cmath>
+
 #include "I2C.h"
 
 unsigned long f_cpu = 16000000UL;
@@ -50,7 +52,7 @@ TWDR: TWI Data Register
 
 uint8_t mainI2C(void){
   
-  init_I2C(100000);
+  initI2C(100000);
 
   I2CTx(DAC_Address, data_to_dac);
 
@@ -101,12 +103,12 @@ void initI2C(unsigned long F_SCL){
     TWSR = 0b00000011;
     
     // Beregner instillinger til TWBR og skriver til registeret.
-    TWBR = (uint8_t)((f_cpu/F_SCL)-16)/(2*(4*exp(TWPS_Calculated)));
+    //TWBR = (uint8_t)((f_cpu/F_SCL)-16)/(2*(4*exp(TWPS_Calculated)));
     // Enabler I2C på pinnene.
     TWCR = (1 << TWEN); 
     WaitForAck();
     TWCR = (1 << TWINT);
-    WaitForACK();
+    WaitForAck();
 }
 
 uint8_t checkTWSR(){
@@ -143,7 +145,7 @@ uint8_t I2CRx(uint8_t address_byte, uint8_t register_to_read){
   I2CStartCond();
   // Sender adresse til slave med read bit aktivert:
   I2CWrite(address_byte + 1);
-  recieved_data = I2C_RECIEVE_WITH_NACK();
+  recieved_data = I2CRecieveWithNack();
   I2CStopCond();
 
   return recieved_data;
@@ -152,7 +154,7 @@ uint8_t I2CRx(uint8_t address_byte, uint8_t register_to_read){
 void I2CStartCond(){
   // Setter START Condition ved å skrive til TWCR:
   TWCR = ((1 << TWEN) | (1 << TWINT) | (1 << TWSTA));  // TWCR = 1X10X10X
-  wait_for_ack();
+  WaitForAck();
 }
 
 void I2CStopCond(){
@@ -163,7 +165,7 @@ void I2CStopCond(){
 void I2CWrite(uint8_t data){
   TWDR = data;
   TWCR = ((1 << TWINT) | (1 << TWEN));  // TWCR = 1X00X10X
-  wait_for_ack();
+  WaitForAck();
 }
 
 void I2CTransmitByte(char* data_to_send){
@@ -172,19 +174,19 @@ void I2CTransmitByte(char* data_to_send){
   for (uint8_t i = 0; i < transmit_size; i++){
     TWDR = data_to_send[i];
     TWCR = ((1 << TWINT) | (1 << TWEN));    // TWCR = 1X00X10X
-    wait_for_ack();
+    WaitForAck();
   }
 }
 
 uint8_t I2CRecieveWithAck(){
   TWCR = ((1 << TWINT) | (1 << TWEN) | (1 << TWEA));
-  wait_for_ack();
+  WaitForAck();
   return TWDR;
 }
 
 uint8_t I2CRecieveWithNack(){
   TWCR = ((1 << TWINT) | (1 << TWEN));
-  wait_for_ack();
+  WaitForAck();
   return TWDR;
 }
 

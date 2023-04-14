@@ -10,17 +10,16 @@ TEMPERATURE_PINS temp_pins;
 FAN_PINS fan_pins;
 TestChoices choices;
 
-uint8_t main() {
+int main() {
   pinMode(fan_pins.CONTROL, OUTPUT);
   pinMode(fan_pins.LED, OUTPUT);
-
   initI2C(100000);
 
   mainI2C();
-  
   while (1){
     
   }
+  return 25; //Cursed
 }
 
 
