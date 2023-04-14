@@ -41,7 +41,7 @@ String setupReadCSV(MEMORY_EXTENSION_PINS memExtPins, unsigned long startTime, T
     tempPin: The pins the temperature sensors are connected to
     fileName: The name of the CSV file to write to
 */
-void readSensorValues(TEMPERATURE_PINS temp_pins, const char *fileName) {
+void readSensorValuesToCsv(TEMPERATURE_PINS temp_pins, const char *fileName) {
   // Read the sensor value
   int tempValue1 = analogRead(temp_pins.PCB);
   int tempValue2 = analogRead(temp_pins.LED);
