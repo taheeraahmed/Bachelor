@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <stdio.h>
-#include <utils.h>
+//#include <utils.h>
 #include <fan.h>
 #include <I2C/I2C.h>
 #include <BlinkeLed.h>
@@ -13,9 +13,9 @@ TestChoices choices;
 int main() {
   pinMode(fan_pins.CONTROL, OUTPUT);
   pinMode(fan_pins.LED, OUTPUT);
-  initI2C(100000);
+  //initI2C(100000);
 
-  mainI2C();
+  //mainI2C();
   while (1){
     
   }
