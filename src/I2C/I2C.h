@@ -1,7 +1,5 @@
 
 #include <avr/io.h>
-#include <stdio.h>
-#include <util/twi.h>
 
 //Funksjonsdefinisjoner:
 uint8_t mainI2C(void);

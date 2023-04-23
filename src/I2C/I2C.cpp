@@ -103,7 +103,7 @@ void initI2C(unsigned long F_SCL){
     TWSR = 0b00000011;
     
     // Beregner instillinger til TWBR og skriver til registeret.
-    //TWBR = (uint8_t)((f_cpu/F_SCL)-16)/(2*(4*exp(TWPS_Calculated)));
+    TWBR = (uint8_t)((f_cpu/F_SCL)-16)/(2*((TWPS_Calculated)));
     // Enabler I2C på pinnene.
     TWCR = (1 << TWEN); 
     WaitForAck();
