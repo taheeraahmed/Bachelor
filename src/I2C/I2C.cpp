@@ -193,3 +193,8 @@ uint8_t I2CRecieveWithNack(){
 void WaitForAck(){
   while (!(TWCR & (1 << TWINT)));
 }
+/*
+ISR(TWI_vect){
+
+}
+*/
