@@ -8,11 +8,11 @@
  * The pvm_freq should be either ??, ?? or ??
  * @returns A struct containing the test settings with the following values: mode, duration and pvm_freq
 */
-struct TestChoices {
+typedef struct {
   int mode;
   int duration;
   int pvm_freq;
-};
+} TestChoices;
 
 /**
  * @brief This struct is used to store the information about the pins belonging to the memory extension
@@ -24,13 +24,13 @@ struct TestChoices {
  * The CD pin is the card detect pin I/O
  * @returns  A struct containing the memory extension pins with the following values: CS, DO, DI, CLK and CD
 */
-struct MEMORY_EXTENSION_PINS {
+typedef struct {
   const int CS = 53;    // SPI chip select pin
   const int DO = 50;    // SPI data out pin
   const int DI = 51;    // SPI data in pin
   const int CLK = 52;   // SPI clock pin
   const int CD = 49;    // Card detect pin I/O
-};
+} MEMORY_EXTENSION_PINS;
 
 /**
  * @brief This struct is used to store the information about the pins belonging to the temperature sensors
@@ -41,12 +41,12 @@ struct MEMORY_EXTENSION_PINS {
  * The SKIN pin is the pin measures the temperature value on the user's skin.
  * @returns A struct containing the temperature pins with the following values: PCB, LED, AIR and SKIN
 */
-struct TEMPERATURE_PINS {
+typedef struct {
   const int PCB = A1;
   const int LED = A2;
   const int AIR = A3;
   const int SKIN = A4;
-};
+} TEMPERATURE_PINS;
 
 /**
  * @brief This struct is used to store the information about the pins belonging to the fans
@@ -55,10 +55,10 @@ struct TEMPERATURE_PINS {
  * The CONTROL pin is the pin the fan is connected to.
  * @returns A struct containing the fan pins with the following values: LED and CONTROL
 */
-struct FAN_PINS {
+typedef struct {
   const int LED = 10;
   const int CONTROL = 11;
-};
+} FAN_PINS;
 
 /**
  * @brief This struct is used to store the error information.
