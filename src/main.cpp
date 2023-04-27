@@ -8,8 +8,6 @@ FAN_PINS fan_pins;
 TestChoices choices;
 
 void setup() {
-  pinMode(fan_pins.CONTROL, OUTPUT);
-  pinMode(fan_pins.LED, OUTPUT);
 }
 
 void loop() {
