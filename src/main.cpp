@@ -1,17 +1,30 @@
-#include <Arduino.h>
-#include <utils.h>
-#include <fan.h>
+/*
+Trigger en interrupt hver gang timer er lik ett millisekund.
+Arduino MEGA 2560 har 16MHz
 
-MEMORY_EXTENSION_PINS mem_ext_pins;
-TEMPERATURE_PINS temp_pins;
-FAN_PINS fan_pins;
-TestChoices choices;
+16MHz/1000 som deles på en prescale 8 gir oss 2000. Hver gang 
+teller er 2000 så har ett millisekund gått. Dette kan vi lage til en macro
+*/
+#include <avr/io.h>
 
-void setup() {
-  pinMode(fan_pins.CONTROL, OUTPUT);
-  pinMode(fan_pins.LED, OUTPUT);
+#include "getTime/getTime.h"
+
+int main (void)
+{
+  initGetTime();
+  DDRB |= (1<< PIN7);
+  PORTB |= (1<< PIN7);
+
+  while (1)
+  {
+    unsigned long getTime_current = getTime();
+    long getTime_since;
+
+      if(getTime_current - getTime_since > 2000) {
+        // LED connected to PC0/Analog 0
+        PORTB ^= (1 << PIN7);
+        getTime_since = getTime_current;
+    }
+  }
 }
 
-void loop() {
-  //turnOnFans(fan_pins);
-}
