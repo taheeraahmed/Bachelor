@@ -1,16 +1,30 @@
-#include <Arduino.h>
+/*
+Trigger en interrupt hver gang timer er lik ett millisekund.
+Arduino MEGA 2560 har 16MHz
 
-const int LED_PIN = 44;
+16MHz/1000 som deles på en prescale 8 gir oss 2000. Hver gang 
+teller er 2000 så har ett millisekund gått. Dette kan vi lage til en macro
+*/
+#include <avr/io.h>
 
-void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_PIN, OUTPUT);
+#include "getTime/getTime.h"
+
+int main (void)
+{
+  initGetTime();
+  DDRB |= (1<< PIN7);
+  PORTB |= (1<< PIN7);
+
+  while (1)
+  {
+    unsigned long getTime_current = getTime();
+    long getTime_since;
+
+      if(getTime_current - getTime_since > 2000) {
+        // LED connected to PC0/Analog 0
+        PORTB ^= (1 << PIN7);
+        getTime_since = getTime_current;
+    }
+  }
 }
 
-// the loop function runs over and over again forever
-void loop() {
-  digitalWrite(LED_PIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-  delay(1000);                  // wait for a second
-  digitalWrite(LED_PIN, LOW);   // turn the LED off by making the voltage LOW
-  delay(1000);                  // wait for a second
-}
