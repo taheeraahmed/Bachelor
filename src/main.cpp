@@ -15,15 +15,14 @@ int main() {
   pinMode(fan_pins.CONTROL, OUTPUT);
   pinMode(fan_pins.LED, OUTPUT);
 
-  initI2C(100000);
-  initPWM();
+  initTimer1();
 
-  //mainI2C();
   while (1){
     //Test av PWM på led
-    setDutyCycle(137);  
+    setBuzzerAlarm(1,200);
+    setFans(1,0,255,0);
   }
-  return 25; //Cursed
+  return 0; 
 }
 
 
