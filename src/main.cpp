@@ -1,34 +1,48 @@
-#include <SD.h>
+#include <EEPROM.h>
+#include <Arduino.h>
+// start reading from the first byte (address 0) of the EEPROM
+int address = 0;
+byte value;
 
-File myFile;
-
-/* 
-- MOSI (Master Out Slave In): connect to Arduino Mega pin 51
-- MISO (Master In Slave Out): connect to Arduino Mega pin 50
-- SCK (Serial Clock): connect to Arduino Mega pin 52
-- CS (Chip Select): you can use any available digital pin on the Arduino Mega, but for this example, let's use pin 53. Connect CS to Arduino Mega pin 53.
- */
 void setup() {
+  // initialize serial and wait for port to open:
   Serial.begin(9600);
-  pinMode(53, OUTPUT); // Set CS pin as an output
-  digitalWrite(53, HIGH); // Deselect the SD card
-  
-  //Initialize SD card
-  if (!SD.begin(53)) { // Use pin 53 as the CS pin
-    Serial.println("SD card initialization failed!");
-    return;
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
   }
-  Serial.println("SD card initialization successful.");
-  
-  //Open file
-  myFile = SD.open("test.txt", FILE_WRITE);
-  
-  //Write to file
-  myFile.println("Hello world!");
-  
-  //Close file
-  myFile.close();
 }
 
 void loop() {
+  // read a byte from the current address of the EEPROM
+  value = EEPROM.read(address);
+
+  Serial.print(address);
+  Serial.print("\t");
+  Serial.print(value, DEC);
+  Serial.println();
+
+  /***
+    Advance to the next address, when at the end restart at the beginning.
+
+    Larger AVR processors have larger EEPROM sizes, E.g:
+    - Arduino Duemilanove: 512 B EEPROM storage.
+    - Arduino Uno:         1 kB EEPROM storage.
+    - Arduino Mega:        4 kB EEPROM storage.
+
+    Rather than hard-coding the length, you should use the pre-provided length function.
+    This will make your code portable to all AVR processors.
+  ***/
+  address = address + 1;
+  if (address == EEPROM.length()) {
+    address = 0;
+  }
+
+  /***
+    As the EEPROM sizes are powers of two, wrapping (preventing overflow) of an
+    EEPROM address is also doable by a bitwise and of the length - 1.
+
+    ++address &= EEPROM.length() - 1;
+  ***/
+
+  delay(500);
 }
