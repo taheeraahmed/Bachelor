@@ -3,6 +3,16 @@
 #include <Arduino.h>
 #include <Temp/Temp.h>
 #include "getTime/getTime.h"
+#include <fan/fan.h>
+#include "utils.h"
+/*
+Trigger en interrupt hver gang timer er lik ett millisekund.
+Arduino MEGA 2560 har 16MHz
+
+16MHz/1000 som deles på en prescale 8 gir oss 2000. Hver gang 
+teller er 2000 så har ett millisekund gått. Dette kan vi lage til en macro
+*/
+
 
 int main(void)
 {
