@@ -1,19 +1,8 @@
 #include "PWM/PWM.h"
 #include <avr/interrupt.h>
+#include <avr/io.h>
 
-/**
- * @brief Function to initiate PWM on timer0. 
- * @details 
- * The function sets the clock frequency to XXX and enables the owerflov vector.
- * Timer0 is used to controll the NIR light and activates PINs xxx on port xxx
-*/
-void initTimer0(){
-  // Setter opp compare Match instillinger for teller 0.
-  TCCR0A |= (1 << COM0A1) | (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
-  TCCR0B |= (1 << CS02);
-  // Skrur på interrupt for teller 0.
-  TIMSK0 |= (1 << TOIE0);
-}
+
 /**
  * @brief Function to initiate PWM on timer1. 
  * @details 
@@ -27,6 +16,7 @@ void initTimer1(){
   // Skrur på interrupt på teller 1.
   TIMSK1 |= (1<< TOIE1);
 
+  //Setter alle pinner som styres av teller 1 til utganger.
   DDRB |= ((1 << PIN4) | (1 << PIN5));
   DDRH |= (1 << PIN5);
 }
@@ -55,6 +45,7 @@ void setBuzzerAlarm(bool buzzerState, uint8_t buzzDuty){
  *
  * To turn the led fan on/off, the timer on the compare match C is enabled/disabled.
  * The duty cycle is set by writing to the OCR1C register.
+ * @param 
 */
 void setFans(bool controllFans, bool ledFans, uint8_t controllFanDuty, uint8_t ledFanDuty){
   if ((ledFans == true) & (controllFans == true)){
@@ -74,11 +65,6 @@ void setFans(bool controllFans, bool ledFans, uint8_t controllFanDuty, uint8_t l
   //OCR1B = controllFanDuty;
   OCR1B = 65535 - ((65535/255)*controllFanDuty);
   OCR1C = 65535 - ((65535/255)*ledFanDuty);
-}
-
-
-void initNIR(uint8_t NIRDuty, uint8_t R_ID){
-
 }
 
 // Setter opp avbuddsvektor for compare A timer 1
