@@ -1,7 +1,9 @@
-#include <Arduino.h>
-#include <fan/fan.h>
 #include <avr/io.h>
+#include <util/delay.h>
+#include <Arduino.h>
+#include <Temp/Temp.h>
 #include "getTime/getTime.h"
+#include <fan/fan.h>
 #include "utils.h"
 /*
 Trigger en interrupt hver gang timer er lik ett millisekund.
@@ -12,14 +14,22 @@ teller er 2000 så har ett millisekund gått. Dette kan vi lage til en macro
 */
 
 
-int main (void)
+int main(void)
 {
+  Serial.begin(9600);
+  initADC();
+  initPort();
+  calcLedID();
   initGetTime();
+
   DDRB |= (1<< PIN7);
   PORTB |= (1<< PIN7);
 
   while (1)
   {
+   printADC();
+   _delay_ms(2000);
+
     unsigned long getTime_current = getTime();
     long getTime_since;
 
@@ -29,5 +39,5 @@ int main (void)
         getTime_since = getTime_current;
     }
   }
+  
 }
-
