@@ -1,8 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <Arduino.h>
-#include "Customize_keypad.h"
-
 
 #define used_pins_keypad 0b01111111
 #define row_pins 0b00001111
