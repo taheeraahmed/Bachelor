@@ -1,6 +1,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <Arduino.h>
+#include "Customize_keypad.h"
+
 
 #define used_pins_keypad 0b01111111
 #define row_pins 0b00001111
@@ -22,6 +24,7 @@ Serial.begin(9600);
 Keypad_DDRx  |= (1 << 6) | (1 << 5) | (1 << 4);       //kobler kolonnepinnene på A 
 Keypad_PORTx |= (1 << 6) | (1 << 5) | (1 << 4);       //kolonnepinnene på PORTA
 Keypad_PORTx |= (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);  //Radpinnene på PORTA
+
 /*
 DDRA  |= (1 << 2) | (1 << 4) | (1 << 6);
 PORTA |= (1 << 2) | (1 << 4) | (1 << 6);
