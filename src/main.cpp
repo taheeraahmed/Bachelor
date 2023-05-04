@@ -3,8 +3,10 @@
 #include <Arduino.h>
 #include <Temp/Temp.h>
 #include "getTime/getTime.h"
-#include <fan/fan.h>
 #include "utils.h"
+#include <stdio.h>
+#include <I2C/I2C.h>
+
 /*
 Trigger en interrupt hver gang timer er lik ett millisekund.
 Arduino MEGA 2560 har 16MHz
