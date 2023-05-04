@@ -1,6 +1,13 @@
 #include "PWM/PWM.h"
+#include <stdint.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <getTime/getTime.h>
+
+
+unsigned long current_time__buzzer;
+unsigned long old_time_buzzer;
+bool buzzer_trig;
 
 
 /**
@@ -9,12 +16,12 @@
  * The function sets the clock frequency to XXX and enables the owerflow vector.
  * Timer1 is used to controll the the fans on the controll unit and the LED-head including the buzzer.
 */
-void initTimer1(){
+void initTimer3(void){
   // Setter opp compare match insillinger for teller 1.
-  TCCR1A |= (1 << COM1A1) | (1 << COM1B1) | (1 << COM1C1) | (1 << WGM11) | (1 << WGM10);
-  TCCR1B |= (1 << CS11) | (1 << CS10);
+  TCCR3A |= (1 << COM3A1) | (1 << COM3B1) | (1 << COM3C1) | (1 << WGM31) | (1 << WGM30);
+  TCCR3B |= (1 << CS31) | (1 << CS30);
   // Skrur på interrupt på teller 1.
-  TIMSK1 |= (1<< TOIE1);
+  TIMSK3 |= (1<< TOIE3);
 
   //Setter alle pinner som styres av teller 1 til utganger.
   DDRB |= ((1 << PIN4) | (1 << PIN5));
@@ -26,15 +33,34 @@ void initTimer1(){
  * @details 
  * To turn the buzzer on/off, the timer on the compare match A is enabled/disabled.
  * The duty cycle is set by writing to the OCR1A register.
+ * By using the getTime function the buzzer is turned on and off when enabled.
+ * @param [buzzerState] Enables buzzer [0-1]
+ * @param [buzzDuty] Sets the dutyCycle [0-255]
+ * @param [interval] Sets the interval wich the buzzer will be turned on/off [ms]
 */
-void setBuzzerAlarm(bool buzzerState, uint8_t buzzDuty){
+void setBuzzerAlarm(bool buzzerState, uint8_t buzzDuty, uint16_t interval){
   if (buzzerState == true){
-    TIMSK1 |= ((1 << OCIE1A));
+
+    current_time__buzzer = getTime();
+
+    if ((current_time__buzzer - old_time_buzzer) > interval){
+      if (buzzer_trig == false){
+        buzzer_trig = true;
+        TIMSK3 |= ((1 << OCIE3A));
+      }
+      else {
+        buzzer_trig = false;
+        TIMSK3 &= ~(1 << OCIE3A);
+      }
+      old_time_buzzer = current_time__buzzer;
+      
+    }
   }
   else if(buzzerState == false){
-    TIMSK1 &= ~(1 << OCIE1A);
+    TIMSK3 &= ~(1 << OCIE3A);
   }
-  OCR1A = 65535 - ((65535/255)*buzzDuty); 
+  OCR3A = 65535 - ((65535/255)*buzzDuty); 
+  sei();
 }
 
 /**
@@ -45,42 +71,46 @@ void setBuzzerAlarm(bool buzzerState, uint8_t buzzDuty){
  *
  * To turn the led fan on/off, the timer on the compare match C is enabled/disabled.
  * The duty cycle is set by writing to the OCR1C register.
- * @param 
+ * @param [controllFans] Turns fans on controll unit on/off [0-1]
+ * @param [ledFans] Turns fans on led-head on/off [0-1]
+ * @param [caontrollFanDuty] Sets duty cycle for fans on controll unit [0-255]
+ * @param [ledFanDuty] Sets duty cycle for fans on led-head [0-255]
 */
 void setFans(bool controllFans, bool ledFans, uint8_t controllFanDuty, uint8_t ledFanDuty){
   if ((ledFans == true) & (controllFans == true)){
-    TIMSK1 |= (1 << OCIE1B) | (1 << OCIE1C);
+    TIMSK3 |= (1 << OCIE3B) | (1 << OCIE3C);
   }
   else if (controllFans == true){
-    TIMSK1 |= (1 << OCIE1B);
-    TIMSK1 &= ~(1 << OCIE1C);
+    TIMSK3 |= (1 << OCIE3B);
+    TIMSK3 &= ~(1 << OCIE3C);
   }
   else if (ledFans == true){
-    TIMSK1 |= (1 << OCIE1C);
-    TIMSK1 &= ~(1 << OCIE1B);
+    TIMSK3 |= (1 << OCIE3C);
+    TIMSK3 &= ~(1 << OCIE3B);
   }
   else {
-    TIMSK1 &= ~((1 << OCIE1B) | (1 << OCIE1C));
+    TIMSK3 &= ~((1 << OCIE3B) | (1 << OCIE3C));
   }
   //OCR1B = controllFanDuty;
-  OCR1B = 65535 - ((65535/255)*controllFanDuty);
-  OCR1C = 65535 - ((65535/255)*ledFanDuty);
+  OCR3B = 65535 - ((65535/255)*controllFanDuty);
+  OCR3C = 65535 - ((65535/255)*ledFanDuty);
+  sei();
 }
 
-// Setter opp avbuddsvektor for compare A timer 1
-ISR(TIMER1_COMPA_vect){
+// Setter opp avbuddsvektor for compare A timer 3
+ISR(TIMER3_COMPA_vect){
   PORTH |= (1 << PIN5);
 }
-// Setter opp avbuddsvektor for compare B timer 1
-ISR(TIMER1_COMPB_vect){
+// Setter opp avbuddsvektor for compare B timer 3
+ISR(TIMER3_COMPB_vect){
   PORTB |= (1 << PIN4);
 }
-// Setter opp avbuddsvektor for compare C timer 1
-ISR(TIMER1_COMPC_vect){
+// Setter opp avbuddsvektor for compare C timer 3
+ISR(TIMER3_COMPC_vect){
   PORTB |= (1 << PIN5);
 }
-// Setter opp avbruddsvektor for overflow på timer 1
-ISR(TIMER1_OVF_vect){
+// Setter opp avbruddsvektor for overflow på timer 3
+ISR(TIMER3_OVF_vect){
   PORTB &= ~((1 << PIN4) | (1 << PIN5));
   PORTH &= ~(1 << PIN5);
 }
