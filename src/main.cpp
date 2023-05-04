@@ -5,7 +5,6 @@
 #include "getTime/getTime.h"
 #include "utils.h"
 #include <stdio.h>
-#include <I2C/I2C.h>
 
 /*
 Trigger en interrupt hver gang timer er lik ett millisekund.
