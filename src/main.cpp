@@ -4,6 +4,7 @@
 #include <SD.h>
 #include <avr/io.h>
 #include <stdint.h>
+#include <SD.h>
 /**
  * [] Finn ut om man kan få tilgang til minnebrikken uten å åpne opp undersiden
  * [] Finn ut om minnebrikken er formatert
@@ -48,6 +49,15 @@ uint8_t spi_transfer(uint8_t data)
     return SPDR;
 }
 
+
+/**
+ * [] Finn ut om man kan få tilgang til minnebrikken uten å åpne opp undersiden
+ * [] Finn ut om minnebrikken er formatert
+ * [] Finn ut om man kan liste filer på minnebrikken
+*/
+char filename[] = "text.txt";
+File myFile;
+
 void setup(){
 	Serial.begin(9600);
 	Serial.print("Initializing SD card...");
@@ -74,5 +84,11 @@ void setup(){
 	} else {
 		// if the file didn't open, print an error:
 		Serial.println("error opening test.txt");
+	}
+}
+void loop() {
+	// nothing happens after setup
+	if(SD.exists(filename)){
+		Serial.print("ja");
 	}
 }
