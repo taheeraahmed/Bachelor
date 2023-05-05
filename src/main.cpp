@@ -1,8 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <Arduino.h>
-#include <SD.h>
-#include <avr/io.h>
 #include <stdint.h>
 #include <SD.h>
 /**
