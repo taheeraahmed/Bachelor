@@ -3,11 +3,6 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <SD.h>
-/**
- * [] Finn ut om man kan få tilgang til minnebrikken uten å åpne opp undersiden
- * [] Finn ut om minnebrikken er formatert
- * [] Finn ut om man kan liste filer på minnebrikken
-*/
 
 #define SPI_SS   PB0   // Slave Select pin
 #define SPI_MOSI PB2   // Master Out Slave In pin
