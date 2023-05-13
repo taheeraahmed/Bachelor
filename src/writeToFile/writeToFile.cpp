@@ -1,4 +1,6 @@
 #include "writeToFile/writeToFile.h"
+
+
 /**
  * @brief Function which creates a file, with a given filename and header
  * (for either temperatures or errors)
@@ -37,4 +39,12 @@ uint8_t writeToFile(char* filename, char* data, char* datetime){
 		return 0;
 	}
     return 1;
+}
+
+const char* createFileName(const char* patient_id, const char* datetime){
+	char* filename = new char[strlen(patient_id) + strlen("_") + strlen(datetime) + 1];
+	strcpy(filename, patient_id);
+    strcat(filename, "_");
+    strcat(filename, datetime);
+    return filename;
 }
