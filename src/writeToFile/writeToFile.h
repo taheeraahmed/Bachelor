@@ -1,8 +1,8 @@
 #include <SD.h>
 #include <stdio.h>
 
-char filename[] = "text.txt";
-File myFile;
+char temp_headers[] = "datetime, temp_pcb, temp_air, temp_skin, temp_led";
+char error_headers[] = "datetime, error, error_msg";
 
-uint8_t create_file(char* filename);
-uint8_t write_to_file(char* filename, char* temp, char* datetime);
+uint8_t createFile(char* filename);
+uint8_t writeToFile(char* filename, char* temp, char* datetime);

@@ -1,18 +1,21 @@
 #include "writeToFile/writeToFile.h"
-    
-char filename[] = "text.txt";
-File myFile;
 /**
- * @brief Function which writes temperatures and date to csv
+ * @brief Function which creates a file, with a given filename and header
+ * (for either temperatures or errors)
  * @details The file is closed after the write is complete.
  * @param filename: Decieds which filename to create
+ * @param headers: The headers to be written to the file
  * @return 1: If the code has run successfully
 */
-uint8_t create_file(char* filename){
-	FILE *fp;
-	fp = fopen(filename, "w+");
-	fprintf(fp, "This is testing for fprintf...\n");
-	
+uint8_t createFile(char* filename, char* headers){
+	File file;
+	file = SD.open(filename, FILE_WRITE);
+	if (file) {
+		file.println(headers);
+		file.close();
+	} else {
+		return 0;
+	}
     return 1;
 }
 
@@ -20,15 +23,18 @@ uint8_t create_file(char* filename){
  * @brief Function which writes temperatures and date to csv
  * @details The file is closed after the write is complete.
  * @param filename: Decieds which filename to write to 
- * @param temp: The temperatures to be logged 
- * @param date: The timestamp of when the temperatures where taken
+ * @param data: Could be both temperatures or errors to be logged 
+ * @param datetime: The timestamp of when the temperatures where taken
  * @return 1: If the code has run successfully
 */
-uint8_t write_to_file(char* filename, char* temp, char* datetime){
-	FILE *fp;
-	fp = fopen(filename, "w+");
-    fputs(datetime, fp);
-	fputs(temp, fp);
-	fclose(fp);
+uint8_t writeToFile(char* filename, char* data, char* datetime){
+	File file;
+	file = SD.open(filename, FILE_WRITE);
+    if (file) {
+		file.println(data);
+		file.close();
+	} else {
+		return 0;
+	}
     return 1;
 }
