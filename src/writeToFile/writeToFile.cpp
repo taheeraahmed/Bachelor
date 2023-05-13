@@ -10,7 +10,7 @@
  */
 uint8_t createFile(char *filename, char *headers)
 {
-	if (!SD.begin(10))
+	if (!SD.begin(53))
 	{
 		Serial.println("SD card initialization failed! createFile");
 		return 0;
@@ -23,7 +23,8 @@ uint8_t createFile(char *filename, char *headers)
 		file.close();
 	}
 	else
-	{
+	{	
+		Serial.println("File creation failed");
 		return 0;
 	}
 	return 1;
@@ -39,20 +40,18 @@ uint8_t createFile(char *filename, char *headers)
  */
 uint8_t writeToFile(char *filename, const char *data)
 {
-	if (!SD.begin(10))
-	{
-		Serial.println("SD card initialization failed! writeToFile");
-		return 0;
-	}
 	File file;
 	file = SD.open(filename, FILE_WRITE);
-	if (file)
+	if (!file)
 	{
 		file.write(data);
+		Serial.println("File written to successfully");
+		file.read();
 		file.close();
 	}
 	else
-	{
+	{	
+		Serial.println("File not found! writeToFile");
 		return 0;
 	}
 	return 1;

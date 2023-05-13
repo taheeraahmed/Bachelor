@@ -25,14 +25,6 @@ void setup()
 void loop()
 {
 	const char *data = "2021-05-05-12:00:00, 22.3, 23.3, 12.2, 32.3\n";
-	uint8_t write_to_file = writeToFile(filename, data);
-	if (write_to_file == 1)
-	{
-		Serial.println("File written to successfully\n");
-	}
-	else
-	{
-		Serial.println("File write failed\n");
-	}
+	writeToFile(filename, data);
 	delay(3000);
 }
