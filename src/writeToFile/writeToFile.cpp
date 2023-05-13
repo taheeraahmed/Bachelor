@@ -1,7 +1,7 @@
-#include <stdio.h>
-
+#include "writeToFile/writeToFile.h"
     
-
+char filename[] = "text.txt";
+File myFile;
 /**
  * @brief Function which writes temperatures and date to csv
  * @details The file is closed after the write is complete.
@@ -12,8 +12,7 @@ uint8_t create_file(char* filename){
 	FILE *fp;
 	fp = fopen(filename, "w+");
 	fprintf(fp, "This is testing for fprintf...\n");
-	fputs("datetime, temp_air, temp_pcb, temp_led, temp_skin", fp);
-	fclose(fp);
+	
     return 1;
 }
 
