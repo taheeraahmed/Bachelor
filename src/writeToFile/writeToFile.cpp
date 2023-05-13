@@ -1,4 +1,5 @@
 #include "writeToFile/writeToFile.h"
+#include <SD.h>
 
 /**
  * @brief Function which creates a file, with a given filename and header
@@ -15,9 +16,10 @@ uint8_t createFile(char *filename, char *headers)
 		Serial.println("SD card initialization failed! createFile");
 		return 0;
 	}
+	Serial.println("SD card initialized successfully! createFile");
 	File file;
 	file = SD.open(filename, FILE_WRITE);
-	if (!file)
+	if (file)
 	{
 		file.println(headers);
 		file.close();
@@ -41,13 +43,14 @@ uint8_t createFile(char *filename, char *headers)
 uint8_t writeToFile(char *filename, const char *data)
 {
 	File file;
+
 	file = SD.open(filename, FILE_WRITE);
-	if (!file)
+	if (file)
 	{
-		file.write(data);
+		file.println(data);
 		Serial.println("File written to successfully");
-		file.read();
 		file.close();
+		Serial.println("File closed successfully");
 	}
 	else
 	{	
