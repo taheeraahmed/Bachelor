@@ -5,20 +5,52 @@
  * @brief Function which creates a file, with a given filename and header
  * (for either temperatures or errors)
  * @details The file is closed after the write is complete.
- * @param filename: Decieds which filename to create
  * @param headers: The headers to be written to the file
+ * @param start_time: Used for creation of directory
+ * @param is_error: Decides whether to create a file for errors or temperatures
+ * @param patient_id: The patient id to be written to the filename
  * @return 1: If the code has run successfully
  */
-uint8_t createFile(char *filename, char *headers)
+uint8_t createFile(char *headers, uint8_t start_time, bool is_error, uint8_t patient_id)
 {
+	// Initialize SD card
 	if (!SD.begin(53))
 	{
-		Serial.println("SD card initialization failed! createFile");
 		return 0;
 	}
-	Serial.println("SD card initialized successfully! createFile");
+	// Create file
 	File file;
+	
+	// Convert start_time to char for directory name
+	String start_time_str = String(start_time);
+	const char *start_time_char = start_time_str.c_str();
+	char start_time_buffer[20];
+	strcpy(start_time_buffer, start_time_char);
+
+	// Create directory
+	SD.mkdir(start_time_buffer);
+
+	// Create a file given is_error, if is_error is true, then you create file called error.csv, otherwise call it log.csv and it should be
+	// in the directory of the start_time it should also contain the patient id in the filename
+	char filename[50];
+	if (is_error)
+	{
+		strcpy(filename, start_time_buffer);
+		strcat(filename, "/error_");
+		strcat(filename, String(patient_id).c_str());
+		strcat(filename, ".csv");
+	}
+	else
+	{
+		strcpy(filename, start_time_buffer);
+		strcat(filename, "/log");
+		strcat(filename, String(patient_id).c_str());
+		strcat(filename, ".csv");
+	}
+	// Creating a file with the name
 	file = SD.open(filename, FILE_WRITE);
+
+	// If file is created successfully, write headers to file
 	if (file)
 	{
 		file.println(headers);
@@ -26,7 +58,6 @@ uint8_t createFile(char *filename, char *headers)
 	}
 	else
 	{
-		Serial.println("File creation failed");
 		return 0;
 	}
 	return 1;
@@ -37,7 +68,6 @@ uint8_t createFile(char *filename, char *headers)
  * @details The file is closed after the write is complete.
  * @param filename: Decieds which filename to write to
  * @param data: Could be both temperatures or errors to be logged
- * @param datetime: The timestamp of when the temperatures where taken
  * @return 1: If the code has run successfully
  */
 uint8_t writeToFile(char *filename, const char *data)
@@ -45,6 +75,7 @@ uint8_t writeToFile(char *filename, const char *data)
 	File file;
 
 	file = SD.open(filename, FILE_WRITE);
+
 	if (file)
 	{
 		file.println(data);
@@ -58,20 +89,6 @@ uint8_t writeToFile(char *filename, const char *data)
 		return 0;
 	}
 	return 1;
-}
-
-char *createFileName(const char *patient_id, const char *datetime, bool is_error)
-{
-	char *filename = new char[strlen(patient_id) + strlen("_") + strlen(datetime) + strlen(".csv") + 1];
-	strcpy(filename, patient_id);
-	strcat(filename, "/");
-	strcat(filename, datetime);
-	if (is_error)
-	{
-		strcat(filename, "_error");
-	}
-	strcat(filename, ".csv");
-	return filename;
 }
 
 char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *datetime)
