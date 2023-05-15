@@ -3,11 +3,15 @@
 #include <avr/io.h>
 #include <util/atomic.h>
 #include <avr/interrupt.h>
-
 #include "getTime/getTime.h"
 
 volatile unsigned long getTime_timer;
 
+/**
+* @brief Funksjon for å regne ut motstanden til R_ID for identifikajon av LED-array
+*
+*
+*/
 ISR (TIMER1_COMPA_vect)
 {
    getTime_timer++;
