@@ -1,6 +1,7 @@
 #include "writeToFile/writeToFile.h"
 #include <SD.h>
 #include <string.h>
+
 /**
  * @brief Function which creates a file, with a given filename and header
  * (for either temperatures or errors)
@@ -18,9 +19,6 @@ uint8_t createFile(char *headers, uint8_t start_time, bool is_error, uint8_t pat
 	{
 		return 0;
 	}
-	// Create file
-	File file;
-	
 	// Convert start_time to char for directory name
 	String start_time_str = String(start_time);
 	const char *start_time_char = start_time_str.c_str();
@@ -28,7 +26,15 @@ uint8_t createFile(char *headers, uint8_t start_time, bool is_error, uint8_t pat
 	strcpy(start_time_buffer, start_time_char);
 
 	// Create directory
-	SD.mkdir(start_time_buffer);
+	if (!SD.mkdir(start_time_buffer))
+	{
+		Serial.println("Error creating directory!");
+		return 0;
+	}
+	else
+	{
+		Serial.println("Directory created successfully!");
+	}
 
 	// Create a file given is_error, if is_error is true, then you create file called error.csv, otherwise call it log.csv and it should be
 	// in the directory of the start_time it should also contain the patient id in the filename
@@ -48,16 +54,18 @@ uint8_t createFile(char *headers, uint8_t start_time, bool is_error, uint8_t pat
 		strcat(filename, ".csv");
 	}
 	// Creating a file with the name
-	file = SD.open(filename, FILE_WRITE);
+	File file = SD.open("filename.txt", FILE_WRITE);
 
 	// If file is created successfully, write headers to file
 	if (file)
 	{
+		Serial.println("File created successfully");
 		file.println(headers);
 		file.close();
 	}
 	else
 	{
+		Serial.println("File not created");
 		return 0;
 	}
 	return 1;
