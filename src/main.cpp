@@ -5,7 +5,7 @@
 #include "getTime/getTime.h"
 #include "utils.h"
 #include <stdio.h>
-
+#include "PWM/PWM.h"
 /*
 Trigger en interrupt hver gang timer er lik ett millisekund.
 Arduino MEGA 2560 har 16MHz
@@ -22,23 +22,13 @@ int main(void)
   initPort();
   calcLedID();
   initGetTime();
+  initTimer3();
 
   DDRB |= (1<< PIN7);
   PORTB |= (1<< PIN7);
 
   while (1)
   {
-   printADC();
-   _delay_ms(2000);
-
-    unsigned long getTime_current = getTime();
-    long getTime_since;
-
-      if(getTime_current - getTime_since > 2000) {
-        // LED connected to PC0/Analog 0
-        PORTB ^= (1 << PIN7);
-        getTime_since = getTime_current;
-    }
+  //setBuzzerAlarm(1,100,1000);
   }
-  
 }

@@ -1,8 +1,13 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <avr/interrupt.h>
 
-#include <avr/io.h>
+#ifndef TWI_H
+#define TWI_H
 
 //Funksjonsdefinisjoner:
-void initTWI(unsigned long F_SCL);
+void initTWI(void);
 void TWIStartTx(uint8_t address, uint8_t write_reg, uint8_t write_data);
 void TWIStartRx(uint8_t address, uint8_t read_register);
 void TWIStartCond(void);
@@ -13,5 +18,7 @@ uint8_t *getDate(void);
 uint8_t *getTimeStamp(void);
 void resetADC(uint8_t sec, uint8_t min, uint8_t hour, uint8_t date, uint8_t month, uint8_t year);
 
-uint16_t getBatteryState(void);
+uint8_t *getBatteryState(void);
 void setDAC(bool on_off);
+
+#endif // !TWI_H

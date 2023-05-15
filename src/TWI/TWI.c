@@ -6,11 +6,9 @@ https://mansfield-devine.com/speculatrix/2018/02/avr-basics-using-the-i2c-bus-1-
 https://github.com/arduino/ArduinoCore-avr/blob/master/libraries/Wire/src/utility/twi.c
 */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <avr/interrupt.h>
+#include "TWI/TWI.h"
 
-unsigned long f_cpu = 16000000UL;  // Definerer cpu klokke frekvensen.
+#define f_cpu 16000000 // Definerer cpu klokke frekvensen.
 
 //Addresser for ulike komponenter koblet til TWI bussen.
 #define RTC_Address 0b11010000 // RTC er satt opp for avlesning.
@@ -18,20 +16,21 @@ unsigned long f_cpu = 16000000UL;  // Definerer cpu klokke frekvensen.
 #define BBS_Address 0b10101010 // Batteri vakt.
 
 // Variabler som må settes før TWI kommunikasjon kan initiereres.
-uint8_t address_byte;
-uint8_t register_to_read;
-uint8_t transmit_data;
+volatile uint8_t address_byte;
+volatile uint8_t register_to_read;
+volatile uint8_t transmit_data;
 
 // Globale varialbler som innholder returrn veridiene for getDate og getTimeStamp.
 uint8_t calcDate[3];
 uint8_t calcTime[3];
+uint8_t batteryState[2];
 
 
-uint8_t data_flag = 0;      //Flag som settes når data overføring er fullført.
-bool TWI_ongoing = false;   // Forteller om det er en pågående data overføring på gang.
-uint8_t TWI_case = 0;       // Inneholder infor om hvilken state som er neste.
-uint8_t TWI_state = 0;      // Foterller om det er pågående en tx eller rx operasjon.
-uint8_t TWI_queue[39];      // Array som lagrer 40 bytes med data. Dette tilvarer 10 elementer i køen.
+volatile uint8_t data_flag = 0;      //Flag som settes når data overføring er fullført.
+volatile bool TWI_ongoing = false;   // Forteller om det er en pågående data overføring på gang.
+volatile uint8_t TWI_case = 0;       // Inneholder infor om hvilken state som er neste.
+volatile uint8_t TWI_state = 0;      // Foterller om det er pågående en tx eller rx operasjon.
+volatile uint8_t TWI_queue[39];      // Array som lagrer 40 bytes med data. Dette tilvarer 10 elementer i køen.
 
 /**
  * @brief Function to initiate TWI. 
@@ -57,7 +56,7 @@ void initTWI(void){
     uint8_t TWPS_Calculated = TWPS_scales[(TWSR & ((1<<PIN1)|(1<<PIN0)))];
     
     // Beregner instillinger til TWBR og skriver til registeret.
-    TWBR = (uint8_t)(((f_cpu/ 100000)-16)/(2*TWPS_Calculated));
+    TWBR = (uint8_t)(((f_cpu / 100000)-16)/(2*TWPS_Calculated));
     
     // Enabler I2C på pinnene.
     TWCR |= (1 << TWEA) | (1 << TWEN) | (1 << TWIE);
@@ -365,10 +364,9 @@ void resetADC(uint8_t sec, uint8_t min, uint8_t hour, uint8_t date, uint8_t mont
  * Calculates the percentage.
  * @return [batteryCharge] Battery percentage [0 - 100]
 */
-uint16_t getBatteryState(void){
+uint8_t *getBatteryState(void){
   data_flag = 0;
   uint8_t batteryBytes[4];
-  uint16_t batteryCharge;
 
   uint8_t i = 0;  
   while(i == 0){  
@@ -389,9 +387,26 @@ uint16_t getBatteryState(void){
       i = 1;
     }
   }
-  batteryCharge = (batteryBytes[0] << 4) | batteryBytes[1];
+  batteryState[0] = ((batteryBytes[0] << 4) | batteryBytes[1]) / 0xFFFF;
 
-  return batteryCharge;
+  if (batteryState[0] < 20){
+    batteryState[1] = 20;
+  }
+  else if (batteryState[0] < 40){
+    batteryState[1] = 40;
+  }
+  else if (batteryState[0] < 60){
+    batteryState[1] = 60;
+  }
+  else if (batteryState[0] < 80){
+    batteryState[1] = 80;
+  }
+  else{
+    batteryState[1] = 100;
+  }
+
+
+  return batteryState;
 }
 
 
