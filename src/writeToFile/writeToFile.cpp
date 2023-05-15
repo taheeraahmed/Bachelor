@@ -1,6 +1,6 @@
 #include "writeToFile/writeToFile.h"
 #include <SD.h>
-
+#include <string.h>
 /**
  * @brief Function which creates a file, with a given filename and header
  * (for either temperatures or errors)
@@ -25,7 +25,7 @@ uint8_t createFile(char *filename, char *headers)
 		file.close();
 	}
 	else
-	{	
+	{
 		Serial.println("File creation failed");
 		return 0;
 	}
@@ -53,19 +53,38 @@ uint8_t writeToFile(char *filename, const char *data)
 		Serial.println("File closed successfully");
 	}
 	else
-	{	
+	{
 		Serial.println("File not found! writeToFile");
 		return 0;
 	}
 	return 1;
 }
 
-char *createFileName(const char *patient_id, const char *datetime)
+char *createFileName(const char *patient_id, const char *datetime, bool is_error)
 {
 	char *filename = new char[strlen(patient_id) + strlen("_") + strlen(datetime) + strlen(".csv") + 1];
 	strcpy(filename, patient_id);
-	strcat(filename, "_");
+	strcat(filename, "/");
 	strcat(filename, datetime);
+	if (is_error)
+	{
+		strcat(filename, "_error");
+	}
 	strcat(filename, ".csv");
 	return filename;
+}
+
+char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *datetime)
+{
+	char *data = new char[strlen(datetime) + strlen(", ") + 4 * 4 + strlen("\n") + 1];
+	strcpy(data, datetime);
+	strcat(data, ", ");
+	strcat(data, String(temp_pcb).c_str());
+	strcat(data, ", ");
+	strcat(data, String(temp_air).c_str());
+	strcat(data, ", ");
+	strcat(data, String(temp_skin).c_str());
+	strcat(data, ", ");
+	strcat(data, String(temp_led).c_str());
+	return data;
 }
