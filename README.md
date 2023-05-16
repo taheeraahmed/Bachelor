@@ -11,7 +11,10 @@ to the existing prototype.
 ## Structure
 The code is divided into different parts. Each part has its own folder and header file. The header files are located in the src folder. The header files are included in the main code and the functions are used in the main code.
 
+```
 ├── src
+│   ├── main.cpp
+│   ├── utils.h
 │   ├── BlinkeLed.h
 │   ├── PWM
 │   │   ├── PWM.cpp
@@ -28,13 +31,11 @@ The code is divided into different parts. Each part has its own folder and heade
 │   ├── getTime
 │   │   ├── getTime.cpp
 │   │   └── getTime.h
-│   ├── main.cpp
-│   ├── utils.h
 │   └── writeToFile
 │       ├── README.md
 │       ├── writeToFile.cpp
 │       └── writeToFile.h
-
+```
 ### fan
 This part of the code consists of functions that are used to control the fan.
 
