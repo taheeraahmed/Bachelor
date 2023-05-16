@@ -125,7 +125,6 @@ char *createFileName(bool is_error, uint8_t patient_id, uint8_t start_time)
  * @details The file is closed after the write is complete.
  * @param filename: Decieds which filename to write to
  * @param data: Could be both temperatures or errors to be logged
- * @return 1: If the code has run successfully
  */
 void writeToFile(char *filename, char *data)
 {
@@ -146,6 +145,16 @@ void writeToFile(char *filename, char *data)
 	}
 	Serial.println("Write to file done");
 }
+/**
+ * @brief Function which converts temperature data to char
+ * @details The function converts the temperature data to char and returns it
+ * @param temp_pcb: The temperature of the PCB
+ * @param temp_air: The temperature of the air
+ * @param temp_skin: The temperature of the skin
+ * @param temp_led: The temperature of the LED
+ * @param datetime: The datetime to be written to the file
+ * @return data: The data to be written to the file
+*/
 
 char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *datetime)
 {
@@ -162,6 +171,14 @@ char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, u
 	return data;
 }
 
+/**
+ * @brief Function which converts error data to char
+ * @details The function converts the error data to char and returns it
+ * @param error_code: The error code to be written to the file
+ * @param error_message: The error message to be written to the file
+ * @param datetime: The datetime to be written to the file
+ * @return data: The data to be written to the file
+*/
 char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *datetime)
 {
 	char *data = new char[strlen(datetime) + strlen(", ") + 1 + strlen("\n") + 1];
