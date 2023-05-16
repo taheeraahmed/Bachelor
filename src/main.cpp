@@ -1,5 +1,4 @@
 #include "writeToFile/writeToFile.h"
-#include "getTime/getTime.h"
 #include <stdio.h>
 #include <Arduino.h>
 
@@ -21,5 +20,9 @@ void setup()
 }
 void loop()
 {
+	char *data = convertDataToChar(1, 2, 3, 4, "2021-05-12 12:12:12");
+	writeToFile(file_temp, data);
+	char *error = convertErrorToChar(1, "Error message", "2021-05-12 12:12:12");
+	writeToFile(file_error, error);
 	delay(6000);
 }
