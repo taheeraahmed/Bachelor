@@ -16,10 +16,11 @@ uint8_t checkIfFileExists(char *filename)
 
 /**
  * @brief Function which initializes the SD card
- * @details The SD card is initialized on pin 53
+ * @details The SD card is initialized on pin 53. This is the standard for Arduino Mega.
  * @return void
  */
-void initSD(){
+void initSD()
+{
 	// Initialize SD card
 	if (!SD.begin(53))
 	{
@@ -50,11 +51,13 @@ void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id
 
 	uint8_t file_exists = checkIfFileExists(filename);
 
-	if(file_exists){
+	if (file_exists)
+	{
 		Serial.println("File already exists");
 		return;
 	}
-	else {
+	else
+	{
 		// Create directory
 		if (!SD.mkdir(start_time_buffer))
 		{
@@ -156,5 +159,16 @@ char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, u
 	strcat(data, String(temp_skin).c_str());
 	strcat(data, ", ");
 	strcat(data, String(temp_led).c_str());
+	return data;
+}
+
+char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *datetime)
+{
+	char *data = new char[strlen(datetime) + strlen(", ") + 1 + strlen("\n") + 1];
+	strcpy(data, datetime);
+	strcat(data, ", ");
+	strcat(data, String(error_code).c_str());
+	strcat(data, ", ");
+	strcat(data, String(error_message).c_str());
 	return data;
 }
