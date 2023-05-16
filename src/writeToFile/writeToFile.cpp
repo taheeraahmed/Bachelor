@@ -2,6 +2,18 @@
 #include <SD.h>
 #include <string.h>
 
+uint8_t checkIfFileExists(char *filename)
+{
+	if (SD.exists(filename))
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 /**
  * @brief Function which initializes the SD card
  * @details The SD card is initialized on pin 53
@@ -36,33 +48,39 @@ void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id
 	char start_time_buffer[20];
 	strcpy(start_time_buffer, start_time_char);
 
-	
+	uint8_t file_exists = checkIfFileExists(filename);
 
-	// Create directory
-	if (!SD.mkdir(start_time_buffer))
-	{
-		Serial.println("Error creating directory!");
+	if(file_exists){
+		Serial.println("File already exists");
+		return;
 	}
-	else
-	{
-		Serial.println("Directory created successfully!");
-	}
+	else {
+		// Create directory
+		if (!SD.mkdir(start_time_buffer))
+		{
+			Serial.println("Error creating directory!");
+		}
+		else
+		{
+			Serial.println("Directory created successfully!");
+		}
 
-	// Creating a file with the name
-	File file = SD.open(filename, FILE_WRITE);
+		// Creating a file with the name
+		File file = SD.open(filename, FILE_WRITE);
 
-	// If file is created successfully, write headers to file
-	if (file)
-	{
-		Serial.println("File created successfully");
-		file.println(headers);
-		file.close();
+		// If file is created successfully, write headers to file
+		if (file)
+		{
+			Serial.println("File created successfully");
+			file.println(headers);
+			file.close();
+		}
+		else
+		{
+			Serial.println("File not created");
+			delete[] filename;
+		};
 	}
-	else
-	{
-		Serial.println("File not created");
-		delete[] filename;
-	};
 }
 
 /**

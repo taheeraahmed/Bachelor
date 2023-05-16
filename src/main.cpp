@@ -3,10 +3,6 @@
 #include <stdio.h>
 #include <Arduino.h>
 
-/*
-TODO: Check if headers exists
-*/
-
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
 uint8_t patient_id = 123;
