@@ -188,7 +188,7 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
 	return data;
 }
 
-uint8_t findNewExperimentId(void)
+uint8_t getExperimentId(void)
 {
 	// Read experiment id from directory
 	File root = SD.open("/");
