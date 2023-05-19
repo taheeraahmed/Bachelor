@@ -14,6 +14,6 @@ char *createFileName(bool is_error, uint8_t patient_id, uint8_t experiment_id);
 void writeToFile(char *filename, char *data);
 void initSD();
 uint8_t findNewExperimentId(void);
-char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *datetime);
-char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *datetime);
+char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *timestamp);
+char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *timestamp);
 uint8_t checkIfFileExists(char *filename);
