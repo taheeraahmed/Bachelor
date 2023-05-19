@@ -39,7 +39,7 @@ void initSD()
  * @param patient_id: The patient id to be written to the filename
  * @return void
  */
-void createFile(char *headers, char *filename, char* type, uint8_t patient_id, uint8_t experiment_id)
+void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t experiment_id)
 {
 	// Convert experiment_id to char for directory name
 	String experiment_id_str = String(experiment_id);
