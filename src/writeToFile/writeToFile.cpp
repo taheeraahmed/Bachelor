@@ -39,7 +39,7 @@ void initSD()
  * @param patient_id: The patient id to be written to the filename
  * @return void
  */
-void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id, uint8_t experiment_id)
+void createFile(char *headers, char *filename, char* type, uint8_t patient_id, uint8_t experiment_id)
 {
 	// Convert experiment_id to char for directory name
 	String experiment_id_str = String(experiment_id);
@@ -124,7 +124,6 @@ char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id)
 		strcat(filename, String(patient_id).c_str());
 		strcat(filename, ".csv");
 	}
-	Serial.println(filename);
 	return filename;
 }
 
@@ -198,37 +197,33 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
 	return data;
 }
 
+bool isNumber(const char *str)
+{
+	if (str == nullptr || *str == '\0')
+		return false;
+
+	for (int i = 0; str[i] != '\0'; i++)
+	{
+		if (!isdigit(str[i]))
+			return false;
+	}
+
+	return true;
+}
+
 uint8_t getExperimentId(void)
 {
+	initSD();
 	// Read experiment id from directory
-	File root = SD.open("/");
 	uint8_t experiment_id = 0;
 
-	// Search through all directories and find the highest experiment id
-	while (true)
+	String directory_name = String(experiment_id);
+
+	// Check if the folder already exists, and if so, increment the experiment ID and create a new folder name
+	while (SD.exists(String(experiment_id)))
 	{
-		File entry = root.openNextFile();
-		if (!entry)
-		{
-			// No more files
-			break;
-		}
-		if (entry.isDirectory())
-		{
-			// Check if the directory name is a number
-			if (entry.name())
-			{
-				Serial.print("Directory name: ");
-				Serial.println(entry.name());
-				// Convert the directory name to an integer
-				uint8_t experiment_id_temp = atoi(entry.name());
-				if (experiment_id_temp > experiment_id)
-				{
-					experiment_id = experiment_id_temp;
-				}
-			}
-		}
-		entry.close();
+		experiment_id++;
 	}
-	return experiment_id++;
+	Serial.println("Experiment ID: " + String(experiment_id));
+	return experiment_id;
 };

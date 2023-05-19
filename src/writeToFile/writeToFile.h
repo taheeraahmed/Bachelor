@@ -4,8 +4,7 @@
 #include <Arduino.h>
 
 char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id);
-void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id, uint8_t experiment_id);
-char *createFileName(char* type, uint8_t patient_id, uint8_t experiment_id);
+void createFile(char *headers, char *filename, char* type, uint8_t patient_id, uint8_t experiment_id);
 void writeToFile(char *filename, char *data);
 void initSD();
 uint8_t getExperimentId(void);
