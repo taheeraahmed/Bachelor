@@ -63,7 +63,8 @@ void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t exper
 		}
 		else
 		{
-			Serial.println("Directory created successfully!");
+			Serial.print("Directory created successfully: ");
+			Serial.println(experiment_id_buffer);
 		}
 
 		// Creating a file with the name
@@ -72,7 +73,8 @@ void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t exper
 		// If file is created successfully, write headers to file
 		if (file)
 		{
-			Serial.println("File created successfully");
+			Serial.print("File created successfully: ");
+			Serial.println(filename);
 			file.println(headers);
 			file.close();
 		}
@@ -142,15 +144,18 @@ void writeToFile(char *filename, char *data)
 	if (file)
 	{
 		file.println(data);
-		Serial.println("File written to successfully");
+		Serial.print("File written to successfully: ");
+		Serial.println(filename);
 		file.close();
-		Serial.println("File closed successfully");
+		Serial.print("File closed successfully: ");
+		Serial.println(filename);
 	}
 	else
 	{
 		Serial.println("File not found! writeToFile");
 	}
-	Serial.println("Write to file done");
+	Serial.print("Write to file done: ");
+	Serial.println(filename);
 }
 /**
  * @brief Function which converts temperature data to char
@@ -197,23 +202,8 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
 	return data;
 }
 
-bool isNumber(const char *str)
-{
-	if (str == nullptr || *str == '\0')
-		return false;
-
-	for (int i = 0; str[i] != '\0'; i++)
-	{
-		if (!isdigit(str[i]))
-			return false;
-	}
-
-	return true;
-}
-
 uint8_t getExperimentId(void)
 {
-	initSD();
 	// Read experiment id from directory
 	uint8_t experiment_id = 0;
 
