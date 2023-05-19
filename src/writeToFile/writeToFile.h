@@ -3,14 +3,9 @@
 #include <string.h>
 #include <Arduino.h>
 
-/*
-TODO:
-[] Endre alle Serial.print til logging av feilkode i stedet
-[] Bruke faktiske verdier for tid
-*/
-
+char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id);
 void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id, uint8_t experiment_id);
-char *createFileName(bool is_error, uint8_t patient_id, uint8_t experiment_id);
+char *createFileName(char* type, uint8_t patient_id, uint8_t experiment_id);
 void writeToFile(char *filename, char *data);
 void initSD();
 uint8_t getExperimentId(void);

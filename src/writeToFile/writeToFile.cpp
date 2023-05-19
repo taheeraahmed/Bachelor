@@ -92,7 +92,7 @@ void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id
  * @param experiment_id: Used for creation of directory
  * @return void
  */
-char *createFileName(bool is_error, uint8_t patient_id, uint8_t experiment_id)
+char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id)
 {
 	// Convert experiment_id to char for directory name
 	String experiment_id_str = String(experiment_id);
@@ -101,20 +101,30 @@ char *createFileName(bool is_error, uint8_t patient_id, uint8_t experiment_id)
 	strcpy(experiment_id_buffer, experiment_id_char);
 
 	char *filename = new char[50];
-	if (is_error)
-	{
-		strcpy(filename, experiment_id_buffer);
-		strcat(filename, "/err_");
-		strcat(filename, String(patient_id).c_str());
-		strcat(filename, ".csv");
-	}
-	else
+	String type_str = String(type);
+
+	if (type_str == "temp")
 	{
 		strcpy(filename, experiment_id_buffer);
 		strcat(filename, "/log_");
 		strcat(filename, String(patient_id).c_str());
 		strcat(filename, ".csv");
 	}
+	else if (type_str == "error")
+	{
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/err_");
+		strcat(filename, String(patient_id).c_str());
+		strcat(filename, ".csv");
+	}
+	else if (type_str == "info")
+	{
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/info_");
+		strcat(filename, String(patient_id).c_str());
+		strcat(filename, ".csv");
+	}
+	Serial.println(filename);
 	return filename;
 }
 
@@ -208,6 +218,8 @@ uint8_t getExperimentId(void)
 			// Check if the directory name is a number
 			if (entry.name())
 			{
+				Serial.print("Directory name: ");
+				Serial.println(entry.name());
 				// Convert the directory name to an integer
 				uint8_t experiment_id_temp = atoi(entry.name());
 				if (experiment_id_temp > experiment_id)
@@ -218,6 +230,5 @@ uint8_t getExperimentId(void)
 		}
 		entry.close();
 	}
-
-	return experiment_id + 1;
+	return experiment_id++;
 };
