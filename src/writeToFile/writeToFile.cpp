@@ -172,7 +172,8 @@ void writeToFile(char *filename, char *data)
 	{
 		file.println(data);
 		file.close();
-		delay(20);
+		delay(100);
+		Serial.println("Data written to file");
 	}
 	else
 	{
