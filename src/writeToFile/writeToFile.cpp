@@ -56,15 +56,24 @@ void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t exper
 	}
 	else
 	{
-		// Create directory
-		if (!SD.mkdir(experiment_id_buffer))
+		// Create directory if it doesn't exist
+		uint8_t dir_exists = SD.exists(experiment_id_buffer);
+		if (dir_exists)
 		{
-			Serial.println("Error creating directory!");
+			Serial.print("Directory already exists: ");
+			Serial.println(experiment_id_buffer);
 		}
 		else
 		{
-			Serial.print("Directory created successfully: ");
-			Serial.println(experiment_id_buffer);
+			if (!SD.mkdir(experiment_id_buffer))
+			{
+				Serial.println("Error creating directory!");
+			}
+			else
+			{
+				Serial.print("Directory created successfully: ");
+				Serial.println(experiment_id_buffer);
+			}
 		}
 
 		// Creating a file with the name
