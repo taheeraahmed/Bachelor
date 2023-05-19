@@ -154,7 +154,7 @@ char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id)
 		strcpy(filename, experiment_id_buffer);
 		strcat(filename, "/info_");
 		strcat(filename, String(patient_id).c_str());
-		strcat(filename, ".csv");
+		strcat(filename, ".txt");
 	}
 	return filename;
 }
@@ -232,6 +232,11 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
 	return data;
 }
 
+/**
+ * @brief Function which gets the experiment id
+ * @details The function gets the experiment id from the SD card given the directories already existing
+ * @return experiment_id: The experiment id to be used for the current experiment
+*/
 uint8_t getExperimentId(void)
 {
 	// Read experiment id from directory
