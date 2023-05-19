@@ -5,7 +5,7 @@
  * @details The function checks if a file exists on the SD card
  * @param filename: The name of the file to be checked
  * @return uint8_t: Returns 1 if the file exists, 0 if it doesn't
-*/
+ */
 uint8_t checkIfFileExists(char *filename)
 {
 	if (SD.exists(filename))
@@ -92,7 +92,6 @@ void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t exper
 
 	if (file_exists)
 	{
-		Serial.println("File already exists");
 		return;
 	}
 	else
@@ -103,8 +102,6 @@ void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t exper
 		// If file is created successfully, write headers to file
 		if (file)
 		{
-			Serial.print("File created successfully: ");
-			Serial.println(filename);
 			file.println(headers);
 			file.close();
 		}
@@ -174,18 +171,13 @@ void writeToFile(char *filename, char *data)
 	if (file)
 	{
 		file.println(data);
-		Serial.print("File written to successfully: ");
-		Serial.println(filename);
 		file.close();
-		Serial.print("File closed successfully: ");
-		Serial.println(filename);
+		delay(20);
 	}
 	else
 	{
 		Serial.println("File not found! writeToFile");
 	}
-	Serial.print("Write to file done: ");
-	Serial.println(filename);
 }
 /**
  * @brief Function which converts temperature data to char
@@ -236,7 +228,7 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
  * @brief Function which gets the experiment id
  * @details The function gets the experiment id from the SD card given the directories already existing
  * @return experiment_id: The experiment id to be used for the current experiment
-*/
+ */
 uint8_t getExperimentId(void)
 {
 	// Read experiment id from directory
@@ -253,16 +245,16 @@ uint8_t getExperimentId(void)
 	return experiment_id;
 };
 /**
-* @brief Function which writes info to csv
-* @details The file is closed after the write is complete.
-* @param mode: The mode to be written to the file
-* @param pvm_freq: The PVM frequency to be written to the file
-* @param start_timestamp: The start timestamp to be written to the file
-* @param duration: The duration to be written to the file
-* @param filename: The filename to be written to the file
-* @param experiment_id: The experiment ID to be written to the file
-* @param patient_id: The patient ID to be written to the file
-*/
+ * @brief Function which writes info to csv
+ * @details The file is closed after the write is complete.
+ * @param mode: The mode to be written to the file
+ * @param pvm_freq: The PVM frequency to be written to the file
+ * @param start_timestamp: The start timestamp to be written to the file
+ * @param duration: The duration to be written to the file
+ * @param filename: The filename to be written to the file
+ * @param experiment_id: The experiment ID to be written to the file
+ * @param patient_id: The patient ID to be written to the file
+ */
 void writeInfoFile(char *mode, char *pvm_freq, char *start_timestamp, char *duration, char *filename, uint8_t experiment_id, uint8_t patient_id)
 {
 	File file;
@@ -289,6 +281,4 @@ void writeInfoFile(char *mode, char *pvm_freq, char *start_timestamp, char *dura
 	{
 		Serial.println("File not found! writeToFile");
 	}
-	Serial.print("Write to file: ");
-	Serial.println(filename);
 }

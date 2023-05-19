@@ -20,6 +20,7 @@ const char *timestamp = "2021-05-12T12:12:12";
 void setup()
 {
   Serial.begin(9600);
+  Serial.println("Setup started");
   initSD();
   int experiment_id = getExperimentId();
   int patient_id = 123;
@@ -33,9 +34,10 @@ void setup()
   createFile(error_headers, file_error, patient_id, experiment_id);
   createFile("Information about experiment", file_info, patient_id, experiment_id);
   writeInfoFile(mode, pvm_freq, start_timestamp, duration, file_info, experiment_id, patient_id);
-
+  Serial.println("Setup complete");
   while(1){
-    Serial.println("Writing to file");
+    Serial.println("Looping");
+    delay(10);
     char *data = convertDataToChar(1, 2, 3, 4, timestamp);
     writeToFile(file_temp, data);
     char *error = convertErrorToChar(1, "Error message", timestamp);
