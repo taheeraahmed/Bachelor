@@ -24,6 +24,7 @@ void setup()
   int experiment_id = getExperimentId();
   int patient_id = 123;
 
+  createDirectory(experiment_id);
   file_temp = createFileName("temp", patient_id, experiment_id);
   file_error = createFileName("error", patient_id, experiment_id);
   file_info = createFileName("info", patient_id, experiment_id);
@@ -32,12 +33,13 @@ void setup()
   createFile(error_headers, file_error, patient_id, experiment_id);
   createFile("Information about experiment", file_info, patient_id, experiment_id);
   writeInfoFile(mode, pvm_freq, start_timestamp, duration, file_info, experiment_id, patient_id);
-}
-void loop()
-{
-  char *data = convertDataToChar(1, 2, 3, 4, timestamp);
-  writeToFile(file_temp, data);
-  char *error = convertErrorToChar(1, "Error message", timestamp);
-  writeToFile(file_error, error);
-  delay(500);
+
+  while(1){
+    Serial.println("Writing to file");
+    char *data = convertDataToChar(1, 2, 3, 4, timestamp);
+    writeToFile(file_temp, data);
+    char *error = convertErrorToChar(1, "Error message", timestamp);
+    writeToFile(file_error, error);
+    delay(1000); // Add a delay of 1 second (1000 milliseconds) between iterations
+  }
 }

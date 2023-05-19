@@ -1,5 +1,11 @@
 #include "writeToFile/writeToFile.h"
 
+/**
+ * @brief Function which checks if a file exists
+ * @details The function checks if a file exists on the SD card
+ * @param filename: The name of the file to be checked
+ * @return uint8_t: Returns 1 if the file exists, 0 if it doesn't
+*/
 uint8_t checkIfFileExists(char *filename)
 {
 	if (SD.exists(filename))
@@ -31,6 +37,41 @@ void initSD()
 }
 
 /**
+ * @brief Function which creates a directory
+ * @details The directory is created on the SD card
+ * @param experiment_id: Used for creation of directory
+ * @return void
+ */
+void createDirectory(uint8_t experiment_id)
+{
+	// Convert experiment_id to char for directory name
+	String experiment_id_str = String(experiment_id);
+	const char *experiment_id_char = experiment_id_str.c_str();
+	char experiment_id_buffer[20];
+	strcpy(experiment_id_buffer, experiment_id_char);
+
+	// Create directory if it doesn't exist
+	uint8_t dir_exists = SD.exists(experiment_id_buffer);
+	if (dir_exists)
+	{
+		Serial.print("Directory already exists: ");
+		Serial.println(experiment_id_buffer);
+	}
+	else
+	{
+		if (!SD.mkdir(experiment_id_buffer))
+		{
+			Serial.println("Error creating directory!");
+		}
+		else
+		{
+			Serial.print("Directory created successfully: ");
+			Serial.println(experiment_id_buffer);
+		}
+	}
+}
+
+/**
  * @brief Function which creates a file
  * @details The file is closed after the write is complete.
  * @param headers: The headers to be written to the file
@@ -56,26 +97,6 @@ void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t exper
 	}
 	else
 	{
-		// Create directory if it doesn't exist
-		uint8_t dir_exists = SD.exists(experiment_id_buffer);
-		if (dir_exists)
-		{
-			Serial.print("Directory already exists: ");
-			Serial.println(experiment_id_buffer);
-		}
-		else
-		{
-			if (!SD.mkdir(experiment_id_buffer))
-			{
-				Serial.println("Error creating directory!");
-			}
-			else
-			{
-				Serial.print("Directory created successfully: ");
-				Serial.println(experiment_id_buffer);
-			}
-		}
-
 		// Creating a file with the name
 		File file = SD.open(filename, FILE_WRITE);
 
@@ -226,7 +247,17 @@ uint8_t getExperimentId(void)
 	Serial.println("Experiment ID: " + String(experiment_id));
 	return experiment_id;
 };
-
+/**
+* @brief Function which writes info to csv
+* @details The file is closed after the write is complete.
+* @param mode: The mode to be written to the file
+* @param pvm_freq: The PVM frequency to be written to the file
+* @param start_timestamp: The start timestamp to be written to the file
+* @param duration: The duration to be written to the file
+* @param filename: The filename to be written to the file
+* @param experiment_id: The experiment ID to be written to the file
+* @param patient_id: The patient ID to be written to the file
+*/
 void writeInfoFile(char *mode, char *pvm_freq, char *start_timestamp, char *duration, char *filename, uint8_t experiment_id, uint8_t patient_id)
 {
 	File file;
@@ -253,5 +284,6 @@ void writeInfoFile(char *mode, char *pvm_freq, char *start_timestamp, char *dura
 	{
 		Serial.println("File not found! writeToFile");
 	}
-	Serial.println("Write to file done");
+	Serial.print("Write to file: ");
+	Serial.println(filename);
 }
