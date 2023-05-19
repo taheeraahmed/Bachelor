@@ -15,6 +15,11 @@ char *file_temp = createFileName("temp", patient_id, experiment_id);
 char *file_error = createFileName("error", patient_id, experiment_id);
 char *file_info = createFileName("info", patient_id, experiment_id);
 
+char *mode = "Placebo";
+char *pvm_freq = "10";
+char *start_timestamp = "2021-05-12T12:12:12";
+char *duration = "45 min";
+
 void setup()
 {
   Serial.begin(9600);
@@ -22,6 +27,7 @@ void setup()
   createFile(temp_headers, file_temp, patient_id, experiment_id);
   createFile(error_headers, file_error, patient_id, experiment_id);
   createFile("Information about experiment", file_info, patient_id, experiment_id);
+  writeInfoFile(mode, pvm_freq, start_timestamp, duration, file_info, experiment_id, patient_id);
 }
 void loop()
 {

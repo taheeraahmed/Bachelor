@@ -227,3 +227,32 @@ uint8_t getExperimentId(void)
 	Serial.println("Experiment ID: " + String(experiment_id));
 	return experiment_id;
 };
+
+void writeInfoFile(char *mode, char *pvm_freq, char *start_timestamp, char *duration, char *filename, uint8_t experiment_id, uint8_t patient_id)
+{
+	File file;
+
+	file = SD.open(filename, FILE_WRITE);
+
+	if (file)
+	{
+		file.print("Experiment ID: ");
+		file.println(experiment_id);
+		file.print("Patient ID: ");
+		file.println(patient_id);
+		file.print("Mode: ");
+		file.println(mode);
+		file.print("PVM Frequency: ");
+		file.println(pvm_freq);
+		file.print("Start timestamp: ");
+		file.println(start_timestamp);
+		file.print("Duration: ");
+		file.println(duration);
+		file.close();
+	}
+	else
+	{
+		Serial.println("File not found! writeToFile");
+	}
+	Serial.println("Write to file done");
+}
