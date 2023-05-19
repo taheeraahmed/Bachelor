@@ -1,6 +1,4 @@
 #include "writeToFile/writeToFile.h"
-#include <SD.h>
-#include <string.h>
 
 uint8_t checkIfFileExists(char *filename)
 {
@@ -36,18 +34,18 @@ void initSD()
  * @brief Function which creates a file
  * @details The file is closed after the write is complete.
  * @param headers: The headers to be written to the file
- * @param start_time: Used for creation of directory
+ * @param experiment_id: Used for creation of directory
  * @param is_error: Decides whether to create a file for errors or temperatures
  * @param patient_id: The patient id to be written to the filename
  * @return void
  */
-void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id, uint8_t start_time)
+void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id, uint8_t experiment_id)
 {
-	// Convert start_time to char for directory name
-	String start_time_str = String(start_time);
-	const char *start_time_char = start_time_str.c_str();
-	char start_time_buffer[20];
-	strcpy(start_time_buffer, start_time_char);
+	// Convert experiment_id to char for directory name
+	String experiment_id_str = String(experiment_id);
+	const char *experiment_id_char = experiment_id_str.c_str();
+	char experiment_id_buffer[20];
+	strcpy(experiment_id_buffer, experiment_id_char);
 
 	uint8_t file_exists = checkIfFileExists(filename);
 
@@ -59,7 +57,7 @@ void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id
 	else
 	{
 		// Create directory
-		if (!SD.mkdir(start_time_buffer))
+		if (!SD.mkdir(experiment_id_buffer))
 		{
 			Serial.println("Error creating directory!");
 		}
@@ -91,28 +89,28 @@ void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id
  * @details The file is closed after the write is complete.
  * @param is_error: Decides whether to create a file for errors or temperatures
  * @param patient_id: The patient id to be written to the filename
- * @param start_time: Used for creation of directory
+ * @param experiment_id: Used for creation of directory
  * @return void
  */
-char *createFileName(bool is_error, uint8_t patient_id, uint8_t start_time)
+char *createFileName(bool is_error, uint8_t patient_id, uint8_t experiment_id)
 {
-	// Convert start_time to char for directory name
-	String start_time_str = String(start_time);
-	const char *start_time_char = start_time_str.c_str();
-	char start_time_buffer[20];
-	strcpy(start_time_buffer, start_time_char);
+	// Convert experiment_id to char for directory name
+	String experiment_id_str = String(experiment_id);
+	const char *experiment_id_char = experiment_id_str.c_str();
+	char experiment_id_buffer[20];
+	strcpy(experiment_id_buffer, experiment_id_char);
 
 	char *filename = new char[50];
 	if (is_error)
 	{
-		strcpy(filename, start_time_buffer);
+		strcpy(filename, experiment_id_buffer);
 		strcat(filename, "/err_");
 		strcat(filename, String(patient_id).c_str());
 		strcat(filename, ".csv");
 	}
 	else
 	{
-		strcpy(filename, start_time_buffer);
+		strcpy(filename, experiment_id_buffer);
 		strcat(filename, "/log_");
 		strcat(filename, String(patient_id).c_str());
 		strcat(filename, ".csv");
@@ -154,7 +152,7 @@ void writeToFile(char *filename, char *data)
  * @param temp_led: The temperature of the LED
  * @param datetime: The datetime to be written to the file
  * @return data: The data to be written to the file
-*/
+ */
 
 char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *datetime)
 {
@@ -178,7 +176,7 @@ char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, u
  * @param error_message: The error message to be written to the file
  * @param datetime: The datetime to be written to the file
  * @return data: The data to be written to the file
-*/
+ */
 char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *datetime)
 {
 	char *data = new char[strlen(datetime) + strlen(", ") + 1 + strlen("\n") + 1];
@@ -189,3 +187,37 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
 	strcat(data, String(error_message).c_str());
 	return data;
 }
+
+uint8_t findNewExperimentId(void)
+{
+	// Read experiment id from directory
+	File root = SD.open("/");
+	uint8_t experiment_id = 0;
+
+	// Search through all directories and find the highest experiment id
+	while (true)
+	{
+		File entry = root.openNextFile();
+		if (!entry)
+		{
+			// No more files
+			break;
+		}
+		if (entry.isDirectory())
+		{
+			// Check if the directory name is a number
+			if (entry.name())
+			{
+				// Convert the directory name to an integer
+				uint8_t experiment_id_temp = atoi(entry.name());
+				if (experiment_id_temp > experiment_id)
+				{
+					experiment_id = experiment_id_temp;
+				}
+			}
+		}
+		entry.close();
+	}
+
+	return experiment_id + 1;
+};

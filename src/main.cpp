@@ -1,43 +1,29 @@
-#include <avr/io.h>
-#include <util/delay.h>
-#include <Arduino.h>
-#include <Temp/Temp.h>
+#include "writeToFile/writeToFile.h"
 #include "getTime/getTime.h"
-#include "utils.h"
 #include <stdio.h>
+#include <Arduino.h>
 
-/*
-Trigger en interrupt hver gang timer er lik ett millisekund.
-Arduino MEGA 2560 har 16MHz
+char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
+char error_headers[50] = "datetime,error_code,error_msg";
+uint8_t patient_id = 123;
+uint8_t experiment_id = findNewExperimentId();
 
-16MHz/1000 som deles på en prescale 8 gir oss 2000. Hver gang
-teller er 2000 så har ett millisekund gått. Dette kan vi lage til en macro
-*/
+char *file_temp = createFileName(false, patient_id, experiment_id);
+char *file_error = createFileName(true, patient_id, experiment_id);
 
-int main(void)
+void setup()
 {
   Serial.begin(9600);
-  initADC();
-  initPort();
-  calcLedID();
-  initGetTime();
-
-  DDRB |= (1 << PIN7);
-  PORTB |= (1 << PIN7);
-
-  while (1)
-  {
-    printADC();
-    _delay_ms(2000);
-
-    unsigned long getTime_current = getTime();
-    long getTime_since;
-
-    if (getTime_current - getTime_since > 2000)
-    {
-      // LED connected to PC0/Analog 0
-      PORTB ^= (1 << PIN7);
-      getTime_since = getTime_current;
-    }
-  }
+  Serial.println("Starting program..");
+  initSD();
+  createFile(temp_headers, file_temp, false, patient_id, experiment_id);
+  createFile(error_headers, file_error, true, patient_id, experiment_id);
+}
+void loop()
+{
+  char *data = convertDataToChar(1, 2, 3, 4, "2021-05-12 12:12:12");
+  writeToFile(file_temp, data);
+  char *error = convertErrorToChar(1, "Error message", "2021-05-12 12:12:12");
+  writeToFile(file_error, error);
+  delay(2000);
 }
