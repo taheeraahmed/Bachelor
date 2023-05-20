@@ -19,6 +19,9 @@ uint8_t TestTime;
 uint8_t NirSettings;
 uint8_t TestMode;
 
+char getKey(){
+    return '0';
+}
 
 
 void waitForPassword(void){
@@ -54,7 +57,7 @@ void waitForPassword(void){
     }
 }
 
-char *setPatientID(void){
+void setPatientID(void){
     while (counter <= 2){
 
         // Sett inn grafikk her
@@ -74,10 +77,10 @@ char *setPatientID(void){
     }
 } 
 
-uint8_t setTime(){
+void setTime(){
     char customKey = '0';
     while (customKey == '0'){
-        customKey = getTime();
+        customKey = getKey();
 
         // Sett inn grafikk her
 
@@ -96,17 +99,17 @@ uint8_t setTime(){
 
 void showLed(uint8_t ledHead){
     char customKey;
-    while (customKey != '*'){}
+    while (customKey != '*'){
         customKey = getKey();
 
         // Sett in skjermbilde med led hode.
     }
 }
 
-uint8_t chooseNIRsettings(void){
+void chooseNIRsettings(void){
     char customKey = '0';
     while (customKey == '0'){
-        customKey = getTime();
+        customKey = getKey();
 
         // Sett inn grafikk her
     }
@@ -122,11 +125,11 @@ uint8_t chooseNIRsettings(void){
     }
 }
 
-uint8_t chooseTestsettings(void){
+void chooseTestsettings(void){
     char customKey = '0';
     while (customKey == '0'){
         // Sett inn grafikk her
-        customKey = getTime();
+        customKey = getKey();
     }
 
     if (customKey == '1'){
@@ -150,27 +153,30 @@ void showSettings(void){
     }
 }
 
-uint8_t SaveOrExit(void){
+void SaveOrExit(void){
     char customKey = '0';
     while (customKey == '0'){
 
         // Sett inn grafikk her
-        customKey = getTime();
+        customKey = getKey();
     }
 
     if (customKey == '*'){
-        PasientID = tempPasientID;
+        PasientID[0] = tempPasientID[0];
+        PasientID[1] = tempPasientID[1];
         TestTime = tempTestTime;
         NirSettings = tempNirSettings;
         TestMode = tempTestMode;
 
-        tempPasientID = {};
+        PasientID[0] = '0';
+        PasientID[1] = '0';
         tempTestTime  = 0; 
         tempNirSettings = 0;
         tempTestMode = 0;
     }
     else if (customKey == '#'){
-        tempPasientID = {};
+        PasientID[0] = '0';
+        PasientID[1] = '0';
         tempTestTime  = 0; 
         tempNirSettings = 0;
         tempTestMode = 0;
