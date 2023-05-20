@@ -121,40 +121,40 @@ void createFile(char *headers, char *filename, TestChoices test_choices)
  * @param experiment_id: Used for creation of directory
  * @return void
  */
-char *createFileName(char *type, TestChoices test_choices)
+char *createFileName(FileType type, TestChoices test_choices)
 {
-	// Convert experiment_id to char for directory name
-	String experiment_id_str = String(test_choices.experiment_id);
-	const char *experiment_id_char = experiment_id_str.c_str();
-	char experiment_id_buffer[20];
-	strcpy(experiment_id_buffer, experiment_id_char);
+    // Convert experiment_id to char for directory name
+    String experiment_id_str = String(test_choices.experiment_id);
+    const char *experiment_id_char = experiment_id_str.c_str();
+    char experiment_id_buffer[20];
+    strcpy(experiment_id_buffer, experiment_id_char);
 
-	char *filename = new char[50];
-	String type_str = String(type);
+    char *filename = new char[50];
 
-	if (type_str == "temp")
-	{
-		strcpy(filename, experiment_id_buffer);
-		strcat(filename, "/log_");
-		strcat(filename, String(test_choices.patient_id).c_str());
-		strcat(filename, ".csv");
-	}
-	else if (type_str == "error")
-	{
-		strcpy(filename, experiment_id_buffer);
-		strcat(filename, "/err_");
-		strcat(filename, String(test_choices.patient_id).c_str());
-		strcat(filename, ".csv");
-	}
-	else if (type_str == "info")
-	{
-		strcpy(filename, experiment_id_buffer);
-		strcat(filename, "/info_");
-		strcat(filename, String(test_choices.patient_id).c_str());
-		strcat(filename, ".txt");
-	}
-	return filename;
+    if (type == TEMP)
+    {
+        strcpy(filename, experiment_id_buffer);
+        strcat(filename, "/log_");
+        strcat(filename, String(test_choices.patient_id).c_str());
+        strcat(filename, ".csv");
+    }
+    else if (type == ERROR)
+    {
+        strcpy(filename, experiment_id_buffer);
+        strcat(filename, "/err_");
+        strcat(filename, String(test_choices.patient_id).c_str());
+        strcat(filename, ".csv");
+    }
+    else if (type == INFO)
+    {
+        strcpy(filename, experiment_id_buffer);
+        strcat(filename, "/info_");
+        strcat(filename, String(test_choices.patient_id).c_str());
+        strcat(filename, ".txt");
+    }
+    return filename;
 }
+
 
 /**
  * @brief Function which writes temperatures and date to csv

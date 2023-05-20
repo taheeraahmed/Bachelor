@@ -2,6 +2,11 @@
 #define STRUCTS_H
 #include <Arduino.h>
 
+typedef enum {
+  INFO = 1,
+  TEMP,
+  ERROR
+} FileType;
 
 /**
  * @brief This struct is used to store the information about the settings of the test

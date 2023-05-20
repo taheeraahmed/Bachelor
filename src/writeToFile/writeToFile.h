@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <utils.h>
 
-char *createFileName(char *type, TestChoices test_choices);
+char *createFileName(FileType type, TestChoices test_choices);
 void createFile(char *headers, char *filename, TestChoices test_choices);
 void createDirectory(uint8_t experiment_id);
 void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename);

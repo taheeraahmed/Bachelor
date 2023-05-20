@@ -24,9 +24,9 @@ void setup()
   const char *start_timestamp = "2021-05-12T12:12:12";
 
   createDirectory(test.experiment_id);
-  char *file_temp = createFileName("temp", test);
-  char *file_error = createFileName("error", test);
-  char *file_info = createFileName("info", test);
+  char *file_temp = createFileName(TEMP, test);
+  char *file_error = createFileName(ERROR, test);
+  char *file_info = createFileName(INFO, test);
 
   createFile(temp_headers, file_temp, test);
   createFile(error_headers, file_error, test);
