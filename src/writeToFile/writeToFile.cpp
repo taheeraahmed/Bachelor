@@ -80,10 +80,10 @@ void createDirectory(uint8_t experiment_id)
  * @param patient_id: The patient id to be written to the filename
  * @return void
  */
-void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t experiment_id)
+void createFile(char *headers, char *filename, TestChoices test_choices)
 {
 	// Convert experiment_id to char for directory name
-	String experiment_id_str = String(experiment_id);
+	String experiment_id_str = String(test_choices.experiment_id);
 	const char *experiment_id_char = experiment_id_str.c_str();
 	char experiment_id_buffer[20];
 	strcpy(experiment_id_buffer, experiment_id_char);
@@ -121,10 +121,10 @@ void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t exper
  * @param experiment_id: Used for creation of directory
  * @return void
  */
-char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id)
+char *createFileName(char *type, TestChoices test_choices)
 {
 	// Convert experiment_id to char for directory name
-	String experiment_id_str = String(experiment_id);
+	String experiment_id_str = String(test_choices.experiment_id);
 	const char *experiment_id_char = experiment_id_str.c_str();
 	char experiment_id_buffer[20];
 	strcpy(experiment_id_buffer, experiment_id_char);
@@ -136,21 +136,21 @@ char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id)
 	{
 		strcpy(filename, experiment_id_buffer);
 		strcat(filename, "/log_");
-		strcat(filename, String(patient_id).c_str());
+		strcat(filename, String(test_choices.patient_id).c_str());
 		strcat(filename, ".csv");
 	}
 	else if (type_str == "error")
 	{
 		strcpy(filename, experiment_id_buffer);
 		strcat(filename, "/err_");
-		strcat(filename, String(patient_id).c_str());
+		strcat(filename, String(test_choices.patient_id).c_str());
 		strcat(filename, ".csv");
 	}
 	else if (type_str == "info")
 	{
 		strcpy(filename, experiment_id_buffer);
 		strcat(filename, "/info_");
-		strcat(filename, String(patient_id).c_str());
+		strcat(filename, String(test_choices.patient_id).c_str());
 		strcat(filename, ".txt");
 	}
 	return filename;
@@ -256,7 +256,7 @@ uint8_t getExperimentId(void)
  * @param experiment_id: The experiment ID to be written to the file
  * @param patient_id: The patient ID to be written to the file
  */
-void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename, uint8_t experiment_id, uint8_t patient_id)
+void writeInfoFile(TestChoices test_choices, const char *start_timestamp, char *filename)
 {
 	File file;
 
@@ -265,17 +265,17 @@ void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename
 	if (file)
 	{
 		file.print("Experiment ID: ");
-		file.println(experiment_id);
+		file.println(test_choices.experiment_id);
 		file.print("Patient ID: ");
-		file.println(patient_id);
+		file.println(test_choices.patient_id);
 		file.print("Mode: ");
-		file.println(test.mode);
+		file.println(test_choices.mode);
 		file.print("PVM Frequency: ");
-		file.println(test.pvm_freq);
+		file.println(test_choices.pvm_freq);
 		file.print("Start timestamp: ");
 		file.println(start_timestamp);
 		file.print("Duration: ");
-		file.println(test.duration);
+		file.println(test_choices.duration);
 		file.close();
 	}
 	else

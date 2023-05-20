@@ -32,6 +32,8 @@ typedef struct {
   Mode mode;
   Duration duration;
   PvmFreq pvm_freq;
+  uint8_t patient_id;
+  uint8_t experiment_id;
 } TestChoices;
 /**
  * @brief This struct is used to store the information about the pins belonging to the memory extension

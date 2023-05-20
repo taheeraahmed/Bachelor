@@ -4,10 +4,10 @@
 #include <Arduino.h>
 #include <utils.h>
 
-char *createFileName(char *type, uint8_t patient_id, uint8_t experiment_id);
-void createFile(char *headers, char *filename, uint8_t patient_id, uint8_t experiment_id);
+char *createFileName(char *type, TestChoices test_choices);
+void createFile(char *headers, char *filename, TestChoices test_choices);
 void createDirectory(uint8_t experiment_id);
-void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename, uint8_t experiment_id, uint8_t patient_id);
+void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename);
 void writeToFile(char *filename, char *data);
 void initSD(int CS);
 uint8_t getExperimentId(void);

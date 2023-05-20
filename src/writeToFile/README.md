@@ -14,7 +14,7 @@ It logs the data in two files, one for the temperature data and one for the erro
 
 ### initSD
 
-`void initSD` initializes the SD card.
+`void initSD` initializes the SD card, and takes in one parameter, the chip select pin.
 
 ### createFile
 
@@ -28,6 +28,13 @@ It logs the data in two files, one for the temperature data and one for the erro
 
 `char *convertErrorToChar` converts the error data to a char array. It takes in three parameters, the first one is the error code, the second parameter is the error message and the third parameter is the date and time.
 
+### getExperimentId
+`void getExperimentId` gets the experiment id from the SD card. It takes no parameters. It uses the folders already existing on the SD-card and increments the highest by one. If there is no previous experiment id it sets the experiment id to 0.
+
+### writeInfoFile
+`void writeInfoFile` writes the information about the experiment to the info file. It takes in five parameters, the first one is the test choices, the second parameter is the start time of the measurement, the third parameter is the file name, the fourth parameter is the experiment id and the fifth parameter is the patient id.
+
+
 ## Usage
 
 This is only example usage of the functions. The functions can be used in the main code like the example below.
@@ -36,39 +43,37 @@ This is only example usage of the functions. The functions can be used in the ma
 #include "writeToFile/writeToFile.h"
 #include <stdio.h>
 #include <Arduino.h>
+#include "utils.h"
 
 
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
 
-char *file_temp;
-char *file_error;
-char *file_info;
-
-const char *mode = "Placebo";
-const char *pvm_freq = "10";
-const char *start_timestamp = "2021-05-12T12:12:12";
-const char *duration = "45 min";
-
 const char *timestamp = "2021-05-12T12:12:12";
+MEMORY_EXTENSION_PINS mem_ext_pins; 
 
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("Setup started");
-  initSD();
-  int experiment_id = getExperimentId();
+  initSD(mem_ext_pins.CS);
+
+  TestChoices test;
+  test.mode = PLACEBO;
+  test.duration = DURATION_30_MIN;
+  test.pvm_freq = LOW_FREQUENCY;
+  const char *start_timestamp = "2021-05-12T12:12:12";
+  uint8_t experiment_id = getExperimentId();
   int patient_id = 123;
 
   createDirectory(experiment_id);
-  file_temp = createFileName("temp", patient_id, experiment_id);
-  file_error = createFileName("error", patient_id, experiment_id);
-  file_info = createFileName("info", patient_id, experiment_id);
+  char *file_temp = createFileName("temp", patient_id, experiment_id);
+  char *file_error = createFileName("error", patient_id, experiment_id);
+  char *file_info = createFileName("info", patient_id, experiment_id);
 
   createFile(temp_headers, file_temp, patient_id, experiment_id);
   createFile(error_headers, file_error, patient_id, experiment_id);
   createFile("Information about experiment", file_info, patient_id, experiment_id);
-  writeInfoFile(mode, pvm_freq, start_timestamp, duration, file_info, experiment_id, patient_id);
+  writeInfoFile(test, start_timestamp, file_info, experiment_id, patient_id);
   Serial.println("Setup complete");
   while(1){
     Serial.println("Looping");
