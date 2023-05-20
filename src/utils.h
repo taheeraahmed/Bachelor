@@ -2,6 +2,14 @@
 #define STRUCTS_H
 #include <Arduino.h>
 
+/**
+ * @brief This struct is used to store the information about the file type
+ * @details
+ * The info file contains the information about the test.
+ * The temp file contains the temperature data.
+ * The error file contains the error data.
+ * @returns A struct containing the file type with the following values: info, temp and error
+*/
 typedef enum {
   INFO = 1,
   TEMP,
@@ -13,7 +21,7 @@ typedef enum {
  * @details 
  * The mode should be either placebo, not placebo or PWM. 
  * The duration should be either 30 min or 45 min. 
- * The pvm_freq should be either ??, ?? or ??
+ * The pvm_freq should be either continous, low frequency or high frequency.
  * @returns A struct containing the test settings with the following values: mode, duration and pvm_freq
 */
 typedef enum {
