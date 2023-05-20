@@ -23,10 +23,10 @@ uint8_t checkIfFileExists(char *filename)
  * @details The SD card is initialized on pin 53. This is the standard for Arduino Mega.
  * @return void
  */
-void initSD()
+void initSD(int CS)
 {
 	// Initialize SD card
-	if (!SD.begin(53))
+	if (!SD.begin(CS))
 	{
 		Serial.println("SD card initialization failed!");
 	}
@@ -256,7 +256,7 @@ uint8_t getExperimentId(void)
  * @param experiment_id: The experiment ID to be written to the file
  * @param patient_id: The patient ID to be written to the file
  */
-void writeInfoFile(char *mode, char *pvm_freq, char *start_timestamp, char *duration, char *filename, uint8_t experiment_id, uint8_t patient_id)
+void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename, uint8_t experiment_id, uint8_t patient_id)
 {
 	File file;
 
@@ -269,13 +269,13 @@ void writeInfoFile(char *mode, char *pvm_freq, char *start_timestamp, char *dura
 		file.print("Patient ID: ");
 		file.println(patient_id);
 		file.print("Mode: ");
-		file.println(mode);
+		file.println(test.mode);
 		file.print("PVM Frequency: ");
-		file.println(pvm_freq);
+		file.println(test.pvm_freq);
 		file.print("Start timestamp: ");
 		file.println(start_timestamp);
 		file.print("Duration: ");
-		file.println(duration);
+		file.println(test.duration);
 		file.close();
 	}
 	else

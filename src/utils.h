@@ -1,3 +1,5 @@
+#ifndef STRUCTS_H
+#define STRUCTS_H
 #include <Arduino.h>
 
 
@@ -9,12 +11,28 @@
  * The pvm_freq should be either ??, ?? or ??
  * @returns A struct containing the test settings with the following values: mode, duration and pvm_freq
 */
-typedef struct {
-  int mode;
-  int duration;
-  int pvm_freq;
-} TestChoices;
+typedef enum {
+  PLACEBO = 1,
+  NOT_PLACEBO,
+  DOUBLE_BLINDED
+} Mode;
 
+typedef enum {
+  DURATION_30_MIN = 1,
+  DURATION_45_MIN
+} Duration;
+
+typedef enum {
+  CONTINUOUS = 1,
+  LOW_FREQUENCY,
+  HIGH_FREQUENCY
+} PvmFreq;
+
+typedef struct {
+  Mode mode;
+  Duration duration;
+  PvmFreq pvm_freq;
+} TestChoices;
 /**
  * @brief This struct is used to store the information about the pins belonging to the memory extension
  * @details 
@@ -76,3 +94,5 @@ struct Error {
   String error_text;
   String failed_part;
 };
+
+#endif // STRUCTS_H

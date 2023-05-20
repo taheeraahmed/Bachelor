@@ -34,32 +34,50 @@ This is only example usage of the functions. The functions can be used in the ma
 
 ```cpp
 #include "writeToFile/writeToFile.h"
-#include "getTime/getTime.h"
 #include <stdio.h>
 #include <Arduino.h>
 
+
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
-uint8_t patient_id = 123;
-uint8_t start_time = 0;
 
-char *file_temp = createFileName(false, patient_id, start_time);
-char *file_error = createFileName(true, patient_id, start_time);
+char *file_temp;
+char *file_error;
+char *file_info;
+
+const char *mode = "Placebo";
+const char *pvm_freq = "10";
+const char *start_timestamp = "2021-05-12T12:12:12";
+const char *duration = "45 min";
+
+const char *timestamp = "2021-05-12T12:12:12";
 
 void setup()
 {
-	Serial.begin(9600);
-	Serial.println("Starting program..");
-	initSD();
-	createFile(temp_headers, file_temp, false, patient_id, start_time);
-	createFile(error_headers, file_error, true, patient_id, start_time);
-}
-void loop()
-{
-	char *data = convertDataToChar(1, 2, 3, 4, "2021-05-12 12:12:12");
-	writeToFile(file_temp, data);
-	char *error = convertErrorToChar(1, "Error message", "2021-05-12 12:12:12");
-	writeToFile(file_error, error);
-	delay(6000);
+  Serial.begin(9600);
+  Serial.println("Setup started");
+  initSD();
+  int experiment_id = getExperimentId();
+  int patient_id = 123;
+
+  createDirectory(experiment_id);
+  file_temp = createFileName("temp", patient_id, experiment_id);
+  file_error = createFileName("error", patient_id, experiment_id);
+  file_info = createFileName("info", patient_id, experiment_id);
+
+  createFile(temp_headers, file_temp, patient_id, experiment_id);
+  createFile(error_headers, file_error, patient_id, experiment_id);
+  createFile("Information about experiment", file_info, patient_id, experiment_id);
+  writeInfoFile(mode, pvm_freq, start_timestamp, duration, file_info, experiment_id, patient_id);
+  Serial.println("Setup complete");
+  while(1){
+    Serial.println("Looping");
+    delay(10);
+    char *data = convertDataToChar(1, 2, 3, 4, timestamp);
+    writeToFile(file_temp, data);
+    char *error = convertErrorToChar(1, "Error message", timestamp);
+    writeToFile(file_error, error);
+    delay(1000); // Add a delay of 1 second (1000 milliseconds) between iterations
+  }
 }
 ```

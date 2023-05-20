@@ -1,39 +1,37 @@
 #include "writeToFile/writeToFile.h"
 #include <stdio.h>
 #include <Arduino.h>
+#include "utils.h"
 
 
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
 
-char *file_temp;
-char *file_error;
-char *file_info;
-
-char *mode = "Placebo";
-char *pvm_freq = "10";
-char *start_timestamp = "2021-05-12T12:12:12";
-char *duration = "45 min";
-
 const char *timestamp = "2021-05-12T12:12:12";
+MEMORY_EXTENSION_PINS mem_ext_pins; 
 
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("Setup started");
-  initSD();
-  int experiment_id = getExperimentId();
+  initSD(mem_ext_pins.CS);
+
+  TestChoices test;
+  test.mode = PLACEBO;
+  test.duration = DURATION_30_MIN;
+  test.pvm_freq = LOW_FREQUENCY;
+  const char *start_timestamp = "2021-05-12T12:12:12";
+  uint8_t experiment_id = getExperimentId();
   int patient_id = 123;
 
   createDirectory(experiment_id);
-  file_temp = createFileName("temp", patient_id, experiment_id);
-  file_error = createFileName("error", patient_id, experiment_id);
-  file_info = createFileName("info", patient_id, experiment_id);
+  char *file_temp = createFileName("temp", patient_id, experiment_id);
+  char *file_error = createFileName("error", patient_id, experiment_id);
+  char *file_info = createFileName("info", patient_id, experiment_id);
 
   createFile(temp_headers, file_temp, patient_id, experiment_id);
   createFile(error_headers, file_error, patient_id, experiment_id);
   createFile("Information about experiment", file_info, patient_id, experiment_id);
-  writeInfoFile(mode, pvm_freq, start_timestamp, duration, file_info, experiment_id, patient_id);
+  writeInfoFile(test, start_timestamp, file_info, experiment_id, patient_id);
   Serial.println("Setup complete");
   while(1){
     Serial.println("Looping");
