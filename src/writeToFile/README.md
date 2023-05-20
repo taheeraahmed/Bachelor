@@ -49,11 +49,11 @@ This is only example usage of the functions. The functions can be used in the ma
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
 
-const char *timestamp = "2021-05-12T12:12:12";
-MEMORY_EXTENSION_PINS mem_ext_pins; 
 
 void setup()
 {
+  MEMORY_EXTENSION_PINS mem_ext_pins; 
+
   Serial.begin(9600);
   initSD(mem_ext_pins.CS);
 
@@ -61,19 +61,25 @@ void setup()
   test.mode = PLACEBO;
   test.duration = DURATION_30_MIN;
   test.pvm_freq = LOW_FREQUENCY;
+  test.patient_id = 123;
+  test.experiment_id = getExperimentId();
   const char *start_timestamp = "2021-05-12T12:12:12";
-  uint8_t experiment_id = getExperimentId();
-  int patient_id = 123;
+  const char *timestamp = "2021-05-12T12:12:12";
 
-  createDirectory(experiment_id);
-  char *file_temp = createFileName("temp", patient_id, experiment_id);
-  char *file_error = createFileName("error", patient_id, experiment_id);
-  char *file_info = createFileName("info", patient_id, experiment_id);
 
-  createFile(temp_headers, file_temp, patient_id, experiment_id);
-  createFile(error_headers, file_error, patient_id, experiment_id);
-  createFile("Information about experiment", file_info, patient_id, experiment_id);
-  writeInfoFile(test, start_timestamp, file_info, experiment_id, patient_id);
+  delay(10);
+
+  createDirectory(test.experiment_id);
+  char *file_temp = createFileName(TEMP, test);
+  char *file_error = createFileName(ERROR, test);
+  char *file_info = createFileName(INFO, test);
+
+  delay(10);
+
+  createFile(temp_headers, file_temp, test);
+  createFile(error_headers, file_error, test);
+  createFile("Information about experiment", file_info, test);
+  writeInfoFile(test, start_timestamp, file_info);
   Serial.println("Setup complete");
   while(1){
     Serial.println("Looping");
