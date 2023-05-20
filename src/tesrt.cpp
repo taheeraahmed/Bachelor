@@ -1,5 +1,4 @@
-#include <avr/io.h>
-#include <stdbool.h>
+#include "tesrt.h"
 
 uint8_t key;
 bool PasswordCorrect = 0;
@@ -14,10 +13,7 @@ uint8_t tempNirSettings;
 uint8_t tempTestMode;
 
 
-char PasientID[2];
-uint8_t TestTime;
-uint8_t NirSettings;
-uint8_t TestMode;
+
 
 char getKey(){
     return '0';
