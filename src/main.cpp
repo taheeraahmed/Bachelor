@@ -43,6 +43,7 @@ void setup()
     delay(10);
     char *data = convertDataToChar(1, 2, 3, 4, timestamp);
     writeToFile(file_temp, data);
+    delay(10);
     char *error = convertErrorToChar(1, "Error message", timestamp);
     writeToFile(file_error, error);
     delay(1000); // Add a delay of 1 second (1000 milliseconds) between iterations

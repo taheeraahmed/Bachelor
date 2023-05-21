@@ -1,24 +1,6 @@
 #include "writeToFile/writeToFile.h"
 
 /**
- * @brief Function which checks if a file exists
- * @details The function checks if a file exists on the SD card
- * @param filename: The name of the file to be checked
- * @return uint8_t: Returns 1 if the file exists, 0 if it doesn't
- */
-uint8_t checkIfFileExists(char *filename)
-{
-	if (SD.exists(filename))
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-/**
  * @brief Function which initializes the SD card
  * @details The SD card is initialized on pin 53. This is the standard for Arduino Mega.
  * @return void
@@ -123,38 +105,37 @@ void createFile(char *headers, char *filename, TestChoices test_choices)
  */
 char *createFileName(FileType type, TestChoices test_choices)
 {
-    // Convert experiment_id to char for directory name
-    String experiment_id_str = String(test_choices.experiment_id);
-    const char *experiment_id_char = experiment_id_str.c_str();
-    char experiment_id_buffer[20];
-    strcpy(experiment_id_buffer, experiment_id_char);
+	// Convert experiment_id to char for directory name
+	String experiment_id_str = String(test_choices.experiment_id);
+	const char *experiment_id_char = experiment_id_str.c_str();
+	char experiment_id_buffer[20];
+	strcpy(experiment_id_buffer, experiment_id_char);
 
-    char *filename = new char[50];
+	char *filename = new char[50];
 
-    if (type == TEMP)
-    {
-        strcpy(filename, experiment_id_buffer);
-        strcat(filename, "/log_");
-        strcat(filename, String(test_choices.patient_id).c_str());
-        strcat(filename, ".csv");
-    }
-    else if (type == ERROR)
-    {
-        strcpy(filename, experiment_id_buffer);
-        strcat(filename, "/err_");
-        strcat(filename, String(test_choices.patient_id).c_str());
-        strcat(filename, ".csv");
-    }
-    else if (type == INFO)
-    {
-        strcpy(filename, experiment_id_buffer);
-        strcat(filename, "/info_");
-        strcat(filename, String(test_choices.patient_id).c_str());
-        strcat(filename, ".txt");
-    }
-    return filename;
+	if (type == TEMP)
+	{
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/log_");
+		strcat(filename, String(test_choices.patient_id).c_str());
+		strcat(filename, ".csv");
+	}
+	else if (type == ERROR)
+	{
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/err_");
+		strcat(filename, String(test_choices.patient_id).c_str());
+		strcat(filename, ".csv");
+	}
+	else if (type == INFO)
+	{
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/info_");
+		strcat(filename, String(test_choices.patient_id).c_str());
+		strcat(filename, ".txt");
+	}
+	return filename;
 }
-
 
 /**
  * @brief Function which writes temperatures and date to csv
@@ -164,87 +145,44 @@ char *createFileName(FileType type, TestChoices test_choices)
  */
 void writeToFile(char *filename, char *data)
 {
-	File file;
+  File file;
 
-	file = SD.open(filename, FILE_WRITE);
+  file = SD.open(filename, FILE_WRITE);
 
-	if (file)
-	{
-		file.println(data);
-		file.close();
-		delay(100);
-		Serial.println("Data written to file");
-	}
-	else
-	{
-		Serial.println("File not found! writeToFile");
-	}
-}
-/**
- * @brief Function which converts temperature data to char
- * @details The function converts the temperature data to char and returns it
- * @param temp_pcb: The temperature of the PCB
- * @param temp_air: The temperature of the air
- * @param temp_skin: The temperature of the skin
- * @param temp_led: The temperature of the LED
- * @param timestamp: The timestamp to be written to the file
- * @return data: The data to be written to the file
- */
+  if (file)
+  {
+		if (file.write(data, strlen(data)))
+		{
+			// Data write successful
+			file.close();
+			Serial.println("Data written to file");
+		}
+		else
+		{
+			// Error writing data
+			file.close();
+			Serial.println("Error writing to file!");
+		}
+  }
+  else
+  {
+    Serial.print("Failed to open file: ");
+    Serial.println(filename);
+  }
 
-char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *timestamp)
-{
-	char *data = new char[strlen(timestamp) + strlen(", ") + 4 * 4 + strlen("\n") + 1];
-	strcpy(data, timestamp);
-	strcat(data, ", ");
-	strcat(data, String(temp_pcb).c_str());
-	strcat(data, ", ");
-	strcat(data, String(temp_air).c_str());
-	strcat(data, ", ");
-	strcat(data, String(temp_skin).c_str());
-	strcat(data, ", ");
-	strcat(data, String(temp_led).c_str());
-	return data;
+  // Print any SD card errors, if present
+  if (!SD.begin(53))
+  {
+    Serial.println("Failed to initialize SD card!");
+    return;
+  }
+
+  if (!SD.exists(filename))
+  {
+    Serial.println("File does not exist!");
+  }
 }
 
-/**
- * @brief Function which converts error data to char
- * @details The function converts the error data to char and returns it
- * @param error_code: The error code to be written to the file
- * @param error_message: The error message to be written to the file
- * @param timestamp: The timestamp to be written to the file
- * @return data: The data to be written to the file
- */
-char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *timestamp)
-{
-	char *data = new char[strlen(timestamp) + strlen(", ") + 1 + strlen("\n") + 1];
-	strcpy(data, timestamp);
-	strcat(data, ", ");
-	strcat(data, String(error_code).c_str());
-	strcat(data, ", ");
-	strcat(data, String(error_message).c_str());
-	return data;
-}
-
-/**
- * @brief Function which gets the experiment id
- * @details The function gets the experiment id from the SD card given the directories already existing
- * @return experiment_id: The experiment id to be used for the current experiment
- */
-uint8_t getExperimentId(void)
-{
-	// Read experiment id from directory
-	uint8_t experiment_id = 0;
-
-	String directory_name = String(experiment_id);
-
-	// Check if the folder already exists, and if so, increment the experiment ID and create a new folder name
-	while (SD.exists(String(experiment_id)))
-	{
-		experiment_id++;
-	}
-	Serial.println("Experiment ID: " + String(experiment_id));
-	return experiment_id;
-};
 /**
  * @brief Function which writes info to csv
  * @details The file is closed after the write is complete.
@@ -269,13 +207,13 @@ void writeInfoFile(TestChoices test_choices, const char *start_timestamp, char *
 		file.print("Patient ID: ");
 		file.println(test_choices.patient_id);
 		file.print("Mode: ");
-		file.println(test_choices.mode);
+		file.println(modeToString(test_choices.mode));
 		file.print("PVM Frequency: ");
-		file.println(test_choices.pvm_freq);
+		file.println(pvmFreqToString(test_choices.pvm_freq));
 		file.print("Start timestamp: ");
 		file.println(start_timestamp);
 		file.print("Duration: ");
-		file.println(test_choices.duration);
+		file.println(durationToString(test_choices.duration));
 		file.close();
 	}
 	else
