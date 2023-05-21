@@ -3,6 +3,7 @@
 /**
  * @brief Function which initializes the SD card
  * @details The SD card is initialized on pin 53. This is the standard for Arduino Mega.
+ * @param CS: Chip select pin
  * @return void
  */
 void initSD(int CS)
@@ -18,6 +19,13 @@ void initSD(int CS)
 	}
 }
 
+/**
+ * @brief Function which initializes the SD card
+ * @details The SD card is initialized on pin 53. This is the standard for Arduino Mega.
+ * @param CS: Chip select pin
+ * @param card: SD card
+ * @return void
+ */
 void initCard(int CS, Sd2Card card)
 {
 	if (!card.init(SPI_HALF_SPEED, CS))
@@ -75,9 +83,8 @@ void createDirectory(uint8_t experiment_id)
  * @brief Function which creates a file
  * @details The file is closed after the write is complete.
  * @param headers: The headers to be written to the file
- * @param experiment_id: Used for creation of directory
- * @param is_error: Decides whether to create a file for errors or temperatures
- * @param patient_id: The patient id to be written to the filename
+ * @param filename: The filename to be created
+ * @param test_choices: The test choices struct 
  * @return void
  */
 void createFile(char *headers, char *filename, TestChoices test_choices)
@@ -116,9 +123,8 @@ void createFile(char *headers, char *filename, TestChoices test_choices)
 /**
  * @brief Function which creates a filename
  * @details The file is closed after the write is complete.
- * @param is_error: Decides whether to create a file for errors or temperatures
- * @param patient_id: The patient id to be written to the filename
- * @param experiment_id: Used for creation of directory
+ * @param type: The type of file to be created either temp, error or info
+ * @param test_choices: The test choices struct
  * @return void
  */
 char *createFileName(FileType type, TestChoices test_choices)
@@ -173,31 +179,19 @@ void writeToFile(char *filename, char *data)
 		{
 			// Data write successful
 			file.close();
-			Serial.println("Data written to file");
 		}
 		else
 		{
 			// Error writing data
 			file.close();
-			Serial.println("Error writing to file!");
+			Serial.print("Error writing to file: ");
+			Serial.println(filename);
 		}
 	}
 	else
 	{
 		Serial.print("Failed to open file: ");
 		Serial.println(filename);
-	}
-
-	// Print any SD card errors, if present
-	if (!SD.begin(53))
-	{
-		Serial.println("Failed to initialize SD card!");
-		return;
-	}
-
-	if (!SD.exists(filename))
-	{
-		Serial.println("File does not exist!");
 	}
 }
 

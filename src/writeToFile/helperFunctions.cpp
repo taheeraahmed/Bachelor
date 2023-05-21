@@ -49,12 +49,14 @@ uint8_t checkIfFileExists(char *filename)
  */
 char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *timestamp)
 {
-    char *data = new char[strlen(timestamp) + strlen(", ") + 1 + strlen("\n") + 1];
+    size_t dataLength = strlen(timestamp) + strlen(", ") + 3 + strlen(error_message) + strlen("\n") + 1;
+    char *data = new char[dataLength];
     strcpy(data, timestamp);
     strcat(data, ", ");
     strcat(data, String(error_code).c_str());
     strcat(data, ", ");
-    strcat(data, String(error_message).c_str());
+    strcat(data, error_message);
+    strcat(data, "\n");
     return data;
 }
 

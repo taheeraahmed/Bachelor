@@ -5,6 +5,7 @@
 
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
+char info_header[29] = "Information about experiment";
 
 Sd2Card card;
 MEMORY_EXTENSION_PINS mem_ext_pins;
@@ -29,22 +30,20 @@ void setup()
   char *file_error = createFileName(ERROR, test);
   char *file_info = createFileName(INFO, test);
 
-  char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
-  char error_headers[50] = "datetime,error_code,error_msg";
   createFile(temp_headers, file_temp, test);
   createFile(error_headers, file_error, test);
-  createFile("Information about experiment", file_info, test);
+  createFile(info_header, file_info, test);
   writeInfoFile(test, start_timestamp, file_info);
   Serial.println("Setup complete");
 
   while (1)
   {
-    Serial.println("Looping");
     delay(10);
     char *data = convertDataToChar(1, 2, 3, 4, timestamp);
     writeToFile(file_temp, data);
     delay(10);
-    char *error = convertErrorToChar(1, "Error message", timestamp);
+    const char *error_message = "Error message";
+    char *error = convertErrorToChar(1, error_message, timestamp);
     writeToFile(file_error, error);
     delay(1000); // Add a delay of 1 second (1000 milliseconds) between iterations
   }
