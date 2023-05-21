@@ -7,6 +7,7 @@
 
 // Write to file
 void initSD(int CS);
+void initCard(int CS, Sd2Card card);
 void createDirectory(uint8_t experiment_id);
 char *createFileName(FileType type, TestChoices test_choices);
 void createFile(char *headers, char *filename, TestChoices test_choices);

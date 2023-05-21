@@ -18,6 +18,24 @@ void initSD(int CS)
 	}
 }
 
+void initCard(int CS, Sd2Card card)
+{
+	if (!card.init(SPI_HALF_SPEED, CS))
+	{
+
+		Serial.println("initialization failed. Things to check:");
+		Serial.println("* is a card inserted?");
+		Serial.println("* is your wiring correct?");
+		Serial.println("* did you change the chipSelect pin to match your shield or module?");
+		while (1)
+			;
+	}
+	else
+	{
+		Serial.println("Wiring is correct and a card is present.");
+	}
+}
+
 /**
  * @brief Function which creates a directory
  * @details The directory is created on the SD card
@@ -145,12 +163,12 @@ char *createFileName(FileType type, TestChoices test_choices)
  */
 void writeToFile(char *filename, char *data)
 {
-  File file;
+	File file;
 
-  file = SD.open(filename, FILE_WRITE);
+	file = SD.open(filename, FILE_WRITE);
 
-  if (file)
-  {
+	if (file)
+	{
 		if (file.write(data, strlen(data)))
 		{
 			// Data write successful
@@ -163,24 +181,24 @@ void writeToFile(char *filename, char *data)
 			file.close();
 			Serial.println("Error writing to file!");
 		}
-  }
-  else
-  {
-    Serial.print("Failed to open file: ");
-    Serial.println(filename);
-  }
+	}
+	else
+	{
+		Serial.print("Failed to open file: ");
+		Serial.println(filename);
+	}
 
-  // Print any SD card errors, if present
-  if (!SD.begin(53))
-  {
-    Serial.println("Failed to initialize SD card!");
-    return;
-  }
+	// Print any SD card errors, if present
+	if (!SD.begin(53))
+	{
+		Serial.println("Failed to initialize SD card!");
+		return;
+	}
 
-  if (!SD.exists(filename))
-  {
-    Serial.println("File does not exist!");
-  }
+	if (!SD.exists(filename))
+	{
+		Serial.println("File does not exist!");
+	}
 }
 
 /**

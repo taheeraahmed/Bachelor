@@ -80,6 +80,7 @@ char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, u
     strcat(data, String(temp_skin).c_str());
     strcat(data, ", ");
     strcat(data, String(temp_led).c_str());
+    strcat(data, "\n");
     return data;
 }
 

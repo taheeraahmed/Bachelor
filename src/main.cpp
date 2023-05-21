@@ -3,18 +3,17 @@
 #include <Arduino.h>
 #include "utils.h"
 
-
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
 
-
+Sd2Card card;
+MEMORY_EXTENSION_PINS mem_ext_pins;
 
 void setup()
 {
-  MEMORY_EXTENSION_PINS mem_ext_pins; 
-
   Serial.begin(9600);
   initSD(mem_ext_pins.CS);
+  initCard(mem_ext_pins.CS, card);
 
   TestChoices test;
   test.mode = PLACEBO;
@@ -38,7 +37,8 @@ void setup()
   writeInfoFile(test, start_timestamp, file_info);
   Serial.println("Setup complete");
 
-  while(1){
+  while (1)
+  {
     Serial.println("Looping");
     delay(10);
     char *data = convertDataToChar(1, 2, 3, 4, timestamp);
