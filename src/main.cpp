@@ -1,50 +1,43 @@
-#include "writeToFile/writeToFile.h"
-#include <stdio.h>
+#include <avr/io.h>
+#include <util/delay.h>
 #include <Arduino.h>
+#include <Temp/Temp.h>
+#include "getTime/getTime.h"
 #include "utils.h"
+#include <stdio.h>
 
-char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
-char error_headers[50] = "datetime,error_code,error_msg";
-char info_header[29] = "Information about experiment";
+/*
+Trigger en interrupt hver gang timer er lik ett millisekund.
+Arduino MEGA 2560 har 16MHz
 
-Sd2Card card;
-MEMORY_EXTENSION_PINS mem_ext_pins;
+16MHz/1000 som deles på en prescale 8 gir oss 2000. Hver gang
+teller er 2000 så har ett millisekund gått. Dette kan vi lage til en macro
+*/
 
-void setup()
+int main(void)
 {
   Serial.begin(9600);
-  initSD(mem_ext_pins.CS);
-  initCard(mem_ext_pins.CS, card);
+  initADC();
+  initPort();
+  calcLedID();
+  initGetTime();
 
-  TestChoices test;
-  test.mode = PLACEBO;
-  test.duration = DURATION_30_MIN;
-  test.pvm_freq = LOW_FREQUENCY;
-  test.patient_id = 123;
-  test.experiment_id = getExperimentId();
-  const char *start_timestamp = "2021-05-12T12:12:12";
-  const char *timestamp = "2021-05-12T12:12:12";
-
-  createDirectory(test.experiment_id);
-  char *file_temp = createFileName(TEMP, test);
-  char *file_error = createFileName(ERROR, test);
-  char *file_info = createFileName(INFO, test);
-
-  createFile(temp_headers, file_temp, test);
-  createFile(error_headers, file_error, test);
-  createFile(info_header, file_info, test);
-  writeInfoFile(test, start_timestamp, file_info);
-  Serial.println("Setup complete");
+  DDRB |= (1 << PIN7);
+  PORTB |= (1 << PIN7);
 
   while (1)
   {
-    delay(10);
-    char *data = convertDataToChar(1, 2, 3, 4, timestamp);
-    writeToFile(file_temp, data);
-    delay(10);
-    const char *error_message = "Error message";
-    char *error = convertErrorToChar(1, error_message, timestamp);
-    writeToFile(file_error, error);
-    delay(1000); // Add a delay of 1 second (1000 milliseconds) between iterations
+    printADC();
+    _delay_ms(2000);
+
+    unsigned long getTime_current = getTime();
+    long getTime_since;
+
+    if (getTime_current - getTime_since > 2000)
+    {
+      // LED connected to PC0/Analog 0
+      PORTB ^= (1 << PIN7);
+      getTime_since = getTime_current;
+    }
   }
 }
