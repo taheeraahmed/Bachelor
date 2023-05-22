@@ -14,8 +14,9 @@ void setPatientID(void);
 void setTime();
 void showLed(uint8_t ledHead);
 void chooseNIRsettings(void);
-void chooseTestsettings(void);
+void chooseMode(void);
 void showSettings(void);
 void SaveOrExit(void);
+void systemWaiting(void);
 
 #endif

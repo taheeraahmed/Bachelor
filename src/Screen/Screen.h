@@ -10,16 +10,30 @@
 #define SCREEN_H
 
 void initScreen();
-void headingdrawtext(char *text, uint16_t color);
-void skinContactdrawtext(char *text, uint16_t color);
-void testdrawtext(char *text, uint16_t color);
-unsigned char batteryState(uint8_t batterycharge);
-void homeScreen();
 void clearScreen();
+
+void drawtextHeading(char *text, uint16_t color);
+void drawtextSkinContact(char *text, uint16_t color);
+void drawtextDate(char *text, uint16_t color);
+void drawtextNormal(char *text, uint16_t color);
+
+
+void homeScreen();
+void setPasswordScreen();
+void setPatientIDScreen();
+void chooseTimeScreen();
+void getLEDHeadScreen();
+void NIRSettingsScreen();
+void chooseModeScreen();
+void showSettingsScreen();
+void SaveOrExitScreen();
+void wrongPasswordScreen();
 
 //Firkanter med tekst og fargefyll for å indikere status på hudkontakten
 void greenRectangle();
 void yellowRectangle();
 void redRectangle();
+
+unsigned char batteryState(uint8_t batterycharge);
 
 #endif
