@@ -1,32 +1,46 @@
+/*
+ * Temp.c
+ * 
+ * Created: 19.05.2023
+ * 
+ * Sourced from:
+ * William, Elliott. (2014). Make: AVR Programming. Utgiversted: O'Reilly Media.
+ */ 
+
 #include <avr/io.h>
-#include <util/delay.h>
-#include <Arduino.h>
 #include "Temp/Temp.h"
 #include "getTime/getTime.h"
+#include "getError/getError.h"
 
 #define R_resistance 10000
 #define V_source 5
 #define offset 0
 #define delay_ADC 5000
 
-volatile bool flagg_LED;
-volatile bool flagg_PCB;
-volatile bool flagg_skin;
-volatile bool flagg_air;
-volatile bool flagg_skin_contact;
-volatile bool flagg_error_ADC;
+/*Om variabel er satt høy må systemet skrues av*/
+volatile int flagg_skin_contact;
 
+/*Om flagget er satt kjøres ikke for-løkken*/
+volatile int flagg_error_ADC;
+
+/*Variabeler hvor det lagres antall ganger på rad temperatur er oversteget en terskel*/
 volatile int threshold_skin_contact;
 volatile int threshold_LED;
 volatile int threshold_PCB;
 volatile int threshold_skin;
 volatile int threshold_air;
 
+/*Variabel hvor motstandsverdien til NIR-lyset lagres*/
 volatile int ID_NIR_LED;
-uint8_t temp_value_array[4];
 
+/*Hvert femte sekund lagres de fem temperaturene i dette arrayet*/
+volatile int temp_value_array[4];
+
+/*Tid sist getTime ble lest av*/
 unsigned long getTime_since_ADC = 0;
-const float voltage_factor = 1.88; //voltage_factor er spenningsverdien målt ved temperaturenen 100 grader og 0 grader1.
+
+/*voltage_factor er spenningsverdien målt ved temperaturenen 100 grader og 0 grader.*/
+const float voltage_factor = 1.88; 
 
 /**
 * @brief Funksjon for å initiere ADC-en.
@@ -71,7 +85,7 @@ void initPort(void)
 uint16_t readADC(uint8_t pin_ADC)
 {
   /*Setter pin_ADC som inngang*/
-  ADMUX = (0xf0 & ADMUX) | (pin_ADC); 
+  ADMUX |= (pin_ADC); 
 
   /*Starter en samtale/avlesning*/
   ADCSRA |= (1<<ADSC);
@@ -117,7 +131,7 @@ float calcADC(uint16_t value_ADC)
 *
 * @return Returnerer et array med de fire temperaturene som er registrert.
 */
-uint8_t *setFlaggADC(void)
+void setFlaggADC(void)
 {
   uint16_t bit_val_ADC;
   float temp_val_ADC;
@@ -178,26 +192,24 @@ uint8_t *setFlaggADC(void)
     getTime_since_ADC = getTime_current_ADC;
   }
   /*Om temperatur er over 85 grader i ett minutt settes flagg*/
-  flagg_LED = (threshold_LED >= 12) ? 1 : 0; 
+  get_error[0] = (threshold_LED >= 12) ? 1 : 0; 
 
   /*Om temp på PCB er over 70 grader i ett minutt settes flagg*/
-  flagg_PCB = (threshold_PCB >= 12) ? 1 : 0; 
+  get_error[1] = (threshold_PCB >= 12) ? 1 : 0; 
 
   /*Om temp på hud er over 43 grader i ett halvt minutt settes flagg*/
-  flagg_skin = (threshold_skin >= 6) ? 1 : 0;
+  get_error[2] = (threshold_skin >= 6) ? 1 : 0;
 
   /*Om temp i luften mellom LED-array og hud er over 43 grader i ett minutt settes flagg*/
-  flagg_air = (threshold_air >= 12) ? 1 : 0;
+  get_error[3] = (threshold_air >= 12) ? 1 : 0;
 
   /*Om temp på hud er under 28 grader i ett minutt settes flagg*/
   flagg_skin_contact = (threshold_skin_contact >= 12) ? 1 : 0;
-
-  return temp_value_array;  
+ 
 }
 
 /**
 * @brief Funksjon for å regne ut motstanden til R_ID for identifikajon av LED-array
-*
 *
 */
 void calcLedID (void)

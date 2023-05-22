@@ -1,3 +1,11 @@
+/*
+ * getTime.h
+ * 
+ * Created: 19.05.2023
+ * 
+ * Sourced from: https://adnbr.co.uk/articles/counting-milliseconds
+ */ 
+
 #ifndef getTime_H_
 #define getTime_H_
 
