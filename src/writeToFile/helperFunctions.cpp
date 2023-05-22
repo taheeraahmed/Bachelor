@@ -70,7 +70,7 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
  * @param timestamp: The timestamp to be written to the file
  * @return data: The data to be written to the file
  */
-char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *timestamp)
+char *convertDataToChar(float temp_pcb, float temp_air, float temp_skin, float temp_led, const char *timestamp)
 {
     char *data = new char[strlen(timestamp) + strlen(", ") + 4 * 4 + strlen("\n") + 1];
     strcpy(data, timestamp);
