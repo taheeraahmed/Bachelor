@@ -20,5 +20,5 @@ uint8_t checkIfFileExists(char *filename);
 const char *modeToString(Mode mode);
 const char *durationToString(Duration duration);
 const char *pvmFreqToString(PvmFreq pvmFreq);
-char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *timestamp);
+char *convertDataToChar(float temp_pcb, float temp_air, float temp_skin, float temp_led, const char *timestamp);
 char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *timestamp);
