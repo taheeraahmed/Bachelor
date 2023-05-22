@@ -52,9 +52,9 @@ char *convertErrorToChar(uint8_t error_code, const char *error_message, const ch
     size_t dataLength = strlen(timestamp) + strlen(", ") + 3 + strlen(error_message) + strlen("\n") + 1;
     char *data = new char[dataLength];
     strcpy(data, timestamp);
-    strcat(data, ", ");
+    strcat(data, ",");
     strcat(data, String(error_code).c_str());
-    strcat(data, ", ");
+    strcat(data, ",");
     strcat(data, error_message);
     strcat(data, "\n");
     return data;
@@ -74,13 +74,13 @@ char *convertDataToChar(float temp_pcb, float temp_air, float temp_skin, float t
 {
     char *data = new char[strlen(timestamp) + strlen(", ") + 4 * 4 + strlen("\n") + 1];
     strcpy(data, timestamp);
-    strcat(data, ", ");
+    strcat(data, ",");
     strcat(data, String(temp_pcb).c_str());
-    strcat(data, ", ");
+    strcat(data, ",");
     strcat(data, String(temp_air).c_str());
-    strcat(data, ", ");
+    strcat(data, ",");
     strcat(data, String(temp_skin).c_str());
-    strcat(data, ", ");
+    strcat(data, ",");
     strcat(data, String(temp_led).c_str());
     strcat(data, "\n");
     return data;
