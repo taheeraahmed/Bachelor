@@ -1,7 +1,9 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <avr/interrupt.h>
+#include <string.h>
 
 #ifndef TWI_H
 #define TWI_H
@@ -14,11 +16,24 @@ void TWIStartCond(void);
 void TWIWrite(uint8_t data);
 uint8_t TWIRecieveWithAck(void);
 
-uint8_t *getDate(void);
-uint8_t *getTimeStamp(void);
-void resetADC(uint8_t sec, uint8_t min, uint8_t hour, uint8_t date, uint8_t month, uint8_t year);
+void getDate(void);
+void formatDateToChar(uint8_t dateArray[3]);
+void getTimeStamp(void);
+void formatTimeToChar(uint8_t timeArray[3]);
+void formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]);
+void resetRTC(uint8_t sec, uint8_t min, uint8_t hour, uint8_t date, uint8_t month, uint8_t year);
 
-uint8_t *getBatteryState(void);
+void getBatteryState(void);
 void setDAC(bool on_off);
+
+// Globale varialbler som innholder returrn veridiene for getDate og getTimeStamp.
+extern uint8_t calcDate[3];
+extern uint8_t calcTime[3];
+extern uint8_t batteryState[3];
+
+extern char timeChar[8];
+extern char dateChar[8];
+extern char dateTimeChar[17];
+
 
 #endif // !TWI_H
