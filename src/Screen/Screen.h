@@ -11,14 +11,15 @@
 
 void initScreen();
 void clearScreen();
+void homeScreen();
+
 
 void drawtextHeading(char *text, uint16_t color);
 void drawtextSkinContact(char *text, uint16_t color);
 void drawtextDate(char *text, uint16_t color);
 void drawtextNormal(char *text, uint16_t color);
 
-
-void homeScreen();
+//Skjermbildene for å kjøre koden til "RunSientistMenu"
 void setPasswordScreen();
 void setPatientIDScreen();
 void chooseTimeScreen();
@@ -28,12 +29,13 @@ void chooseModeScreen();
 void showSettingsScreen();
 void SaveOrExitScreen();
 
-
+//Skjermbildene for å kjøre koden til "RunUserMenu"
 void getSkinContactScreen();
 void selectStartButtonScreen();
 void runExperimentScreen();
 void exitExperimentScreen();
 
+//Skjermbildene for feilmeldinger på skjermen
 void wrongPasswordScreen();
 void overheatingScreen();
 void noSkinContactScreen();
