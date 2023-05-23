@@ -150,7 +150,7 @@ void showLed(uint8_t ledHead){
     char customKey = '0';
     // Sett in skjermbilde med led hode.
         clearScreen();
-        getLEDHeadScreen(1,"22-05-23", ledHead);
+        getLEDHeadScreen(1,"22-05-23");
     while (customKey != '*'){
         customKey = customKeypad.getKey();
 

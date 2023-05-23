@@ -24,18 +24,16 @@ VCC –› 5V
 #define mode_1 "NIR-lys"
 #define mode_2 "Placebo"
 #define mode_3 "Randomisert"
-/*
-char led_0[9] = "avkoblet";
-char led_1[9]  = "1";
-char led_2[9] = "2";
-char led_3[9] = "3";
-*/
+
+#define led_0 "avkoblet"
+#define led_1 "1"
+#define led_2 "2"
+#define led_3 "3"
+
 
 const int TFT_CS = 32;          // (CS)
 const int TFT_DC = 34;          // (A0)
 const int TFT_RST = 33;         // (RESET)
-
-char ledText[1];
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);  // Bruker maskinvare SPI der SCLK (SCK) er koblet til pinne 52 og MOSI (SDA) er på pinne 51
 
@@ -169,21 +167,7 @@ void chooseTimeScreen(uint8_t battery, char date[8]){
   
 }
 
-void getLEDHeadScreen(uint8_t battery, char date[8], uint8_t ledHead){
-  
-  if (ledHead == 0){
-      ledText[0] = "0";
-  }
-  else if (ledHead == 1){
-      ledText[0] = "1";
-  }
-  else if (ledHead == 2){
-      ledText[0] = "2";
-  }
-  else if (ledHead == 3){
-      ledText[0] = "3";
-  }
-
+void getLEDHeadScreen(uint8_t battery, char date[8]){
   clearScreen();
   tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
   drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
@@ -195,7 +179,7 @@ void getLEDHeadScreen(uint8_t battery, char date[8], uint8_t ledHead){
   tft.setCursor(60,80);
   drawtextNormal("Hode: ", ST7735_WHITE);
   tft.setCursor(100,80);
-  tft.println(ledHead);
+  drawtextNormal("X", ST7735_WHITE);      //input
 }
 
 void pulseNIRSettingsScreen(uint8_t battery, char date[8]){

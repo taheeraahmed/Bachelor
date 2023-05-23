@@ -23,7 +23,7 @@ void drawtextNormal(char *text, uint16_t color);
 void setPasswordScreen(uint8_t battery, char date[8]);
 void setPatientIDScreen(uint8_t battery, char date[8]);
 void chooseTimeScreen(uint8_t battery, char date[8]);
-void getLEDHeadScreen(uint8_t battery, char date[8], uint8_t ledHead);
+void getLEDHeadScreen(uint8_t battery, char date[8]);
 void pulseNIRSettingsScreen(uint8_t battery, char date[8]);
 void chooseModeScreen(uint8_t battery, char date[8]);
 void showSettingsScreen(uint8_t battery, char date[8]);
