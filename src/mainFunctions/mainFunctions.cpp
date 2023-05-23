@@ -16,7 +16,7 @@ void runMenu(void){
     //Her kjøres Mina sin meny kode.
 }
 
-void runTest(unsigned long testLength){
+void testDataUpdate(unsigned long testLength){
     // Timer variables:
     unsigned long test_time_start = getTime();
     unsigned long test_time_new = getTime();
@@ -64,6 +64,7 @@ void runTest(unsigned long testLength){
     testIndicatorOff();
     greenLedOff();
 }
-void systemExit(void){
+void setSystemSleep(void){
+    //clearScreen();
     SMCR = (1 << PIN2) | (1 << PIN0);
 }

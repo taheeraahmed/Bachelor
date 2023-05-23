@@ -12,7 +12,22 @@ void setup(void){
 }
 
 void loop(void){
-  runTest(3000);
+  testDataUpdate(3000);
+}
+
+void systemFlow(void){
+  switch (system_state){
+    case 0:
+      // Sleeping
+      setSystemSleep();
+      break;
+    case 1:
+      // System is initiated
+      initiateSystem();
+      // APT logo is shown
+      // systemWaiting();
+      break;
+  }
 }
 
 
@@ -26,5 +41,8 @@ void initPinChangeInterrupt(void){
 }
 
 ISR(PCINT1_vect){
-  SMCR &= ~((1 << PIN2) | (1 << PIN0));
+  if (system_state == 0){
+    SMCR &= ~((1 << PIN2) | (1 << PIN0));
+    system_state = 1;
+  }
 }

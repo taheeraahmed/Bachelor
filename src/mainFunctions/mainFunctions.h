@@ -13,7 +13,7 @@
 
 void initiateSystem(void);
 void runMenu(void);
-void runTest(unsigned long testLength);
-void systemExit(void);
+void testDataUpdate(unsigned long testLength);
+void setSystemSleep(void);
 
 #endif // !
