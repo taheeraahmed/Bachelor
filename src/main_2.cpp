@@ -9,5 +9,5 @@ initScreen();
 
 
 void loop() {
-  RunMenu();
+systemWaiting();
 }

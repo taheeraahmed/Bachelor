@@ -7,7 +7,8 @@ bool PasswordCorrect = 0;
 char password[6] = {'2','7','8','2','7','8'};   // Passorder for å aktivere funksjonalitetene til forskeren kan kun bestå av 6 siffer.
 char password_in[6];
 uint8_t counter = 0;
-uint8_t menuState = 0;
+uint8_t menuSientistState = 0;
+uint8_t menuUserState =0;
 
 //Midlertidig variabler som skal lagres eller forkastes
 char tempPasientID[2];
@@ -45,8 +46,7 @@ void waitForPassword(void){
     bool exit = 0;
     counter = 0;
     // Tømmer skjermen og setter inn grafikk for skjerm for CASE1
-    clearScreen();
-    setPasswordScreen();
+    setPasswordScreen(1,"22-05-23");
 
     while (counter < 6){
         key = customKeypad.getKey();
@@ -92,7 +92,7 @@ void waitForPassword(void){
         else{
             PasswordCorrect = false;
             clearScreen();
-            wrongPasswordScreen();
+            wrongPasswordScreen(1,"22-05-23");
             delay(1000);
             break;
             // Tilbake til apt logo
@@ -103,7 +103,7 @@ void waitForPassword(void){
 void setPatientID(void){
     // Sett inn grafikk her
             clearScreen();
-            setPatientIDScreen();
+            setPatientIDScreen(1,"22-05-23");
     while (counter < 2){
 
         
@@ -129,7 +129,7 @@ void setTime(){
     char customKey = '0';
 
     clearScreen();
-    chooseTimeScreen();
+    chooseTimeScreen(1,"22-05-23");
     while (customKey != '1' & customKey != '2' & customKey != '3'){
         customKey = customKeypad.getKey();
         
@@ -150,7 +150,7 @@ void showLed(uint8_t ledHead){
     char customKey = '0';
     // Sett in skjermbilde med led hode.
         clearScreen();
-        getLEDHeadScreen();
+        getLEDHeadScreen(1,"22-05-23", ledHead);
     while (customKey != '*'){
         customKey = customKeypad.getKey();
 
@@ -163,7 +163,7 @@ void chooseNIRsettings(void){
 
     // Sett inn grafikk her
     clearScreen();
-    pulseNIRSettingsScreen();
+    pulseNIRSettingsScreen(1,"22-05-23");
     
     while (customKey != '1' & customKey != '2' & customKey != '3'){
         customKey = customKeypad.getKey();
@@ -176,15 +176,15 @@ void chooseNIRsettings(void){
     else if (customKey == '2'){
         tempNirSettings = 2;         // Høyfrekvent pulsering
     }
-    else if (customKey == '3'){      // Lavfrekvent pulsering
-        tempNirSettings = 3;
+    else if (customKey == '3'){      
+        tempNirSettings = 3;         // Lavfrekvent pulsering
     }
 }
 
 void chooseMode(void){
     char customKey = '0';
     clearScreen();
-    chooseModeScreen();
+    chooseModeScreen(1,"22-05-23");
 
     while (customKey != '1' & customKey != '2' & customKey != '3'){
         customKey = customKeypad.getKey();
@@ -205,7 +205,7 @@ void chooseMode(void){
 void showSettings(void){
      char customKey = '0';
     clearScreen();
-    showSettingsScreen();
+    showSettingsScreen(1,"22-05-23");
     while(customKey != '*'){
         customKey = customKeypad.getKey();
 
@@ -216,7 +216,7 @@ void showSettings(void){
 void SaveOrExit(void){
     char customKey = '0';
     clearScreen();
-    SaveOrExitScreen();
+    SaveOrExitScreen(1,"22-05-23");
     while (customKey != '*' & customKey != '#'){
         customKey = customKeypad.getKey();
         
@@ -228,7 +228,7 @@ void SaveOrExit(void){
         TestTime = tempTestTime;
         NirSettings = tempNirSettings;
         TestMode = tempTestMode;
-
+                                            //Virker som at settingene nullstilles før lagring
         PasientID[0] = '0';
         PasientID[1] = '0';
         tempTestTime  = 0; 
@@ -247,68 +247,112 @@ void SaveOrExit(void){
 void systemWaiting(void){
     char customKey = '0'; //forandret på denne sånn at man hopper tilbake til hjemskjermen var char customKey;
     clearScreen();
-    homeScreen();
-    while (customKey != '*'){
+    homeScreen(1,"22-05-23");
+    while (customKey != '*'& customKey !='1'){
 
         customKey = customKeypad.getKey();
     }
+    if (customKey == '*'){
+        menuSientistState = 1;
+        RunSientistMenu();
+    }
+    else if(customKey == '1'){
+        menuUserState = 1;
+        RunUserMenu();
+    }
 }
 
-void RunMenu(void){
-    while(1){
-        switch(menuState){
-            case 0:
-                systemWaiting();
-                menuState = 1;
+void getSkinContact(void){
+    getSkinContactScreen(1,"22-05-23");
+}
+void selectStartButton(void){
+    selectStartButtonScreen(1,"22-05-23");
+}
+void runExperiment(void){
+    runExperimentScreen(1,"22-05-23","33","22",1);
+}
+void exitExperiment(void){
+    exitExperimentScreen(1,"22-05-23");
+}
+
+void RunUserMenu(void){
+while(menuUserState !=0){
+    delay(1000);
+        switch(menuUserState){
+             case 0:
+                getSkinContact();
+                menuUserState = 1;
                 break;
 
+            case 1:
+                selectStartButton();
+                menuUserState = 2;
+                break;
+
+            case 2:
+                runExperiment();
+                menuUserState = 3;
+                delay(5000);
+                break;
+
+            case 3:
+                exitExperiment();
+                menuUserState = 0;
+                break;
+        }
+    }    
+}
+    
+void RunSientistMenu(void){
+    while(menuSientistState!=0){
+        switch(menuSientistState){
              case 1:
                 waitForPassword();
                 if (PasswordCorrect == true){
-                    menuState = 2;
+                    menuSientistState = 2;
                 }
                 else{
-                    menuState = 3; // hvorfor hit og ikke direkte til 0?
+                    menuSientistState = 3; // hvorfor hit og ikke direkte til 0?
                 }
                 break;
 
             case 2:
 
                 setPatientID();
-                menuState = 4;
+                menuSientistState = 4;
                 break;
 
             case 3: 
-                menuState = 0;
+                menuSientistState = 0;
                 break;
 
             case 4:
                 setTime();
-                menuState = 10;
+                menuSientistState = 10;
                 break;
             
             case 10:
                 showLed(1);
-                menuState = 5;
+                menuSientistState = 5;
                 break;
             case 5:
                 chooseNIRsettings();
-                menuState = 6;
+                menuSientistState = 6;
                 break;
 
             case 6:
                 chooseMode();
-                menuState = 7;
+                menuSientistState = 7;
                 break;
 
             case 7:
                 showSettings();
-                menuState = 8;
+                menuSientistState = 8;
                 break;
 
             case 8: 
                 SaveOrExit();
-                menuState = 0;
+                menuSientistState = 0;
                 break;
         }
     }
