@@ -27,7 +27,7 @@ int main(void)
 
   while (1)
   {
-    printADC();
+    //printADC();
     _delay_ms(2000);
 
     unsigned long getTime_current = getTime();
