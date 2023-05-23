@@ -23,11 +23,20 @@ void setPasswordScreen();
 void setPatientIDScreen();
 void chooseTimeScreen();
 void getLEDHeadScreen();
-void NIRSettingsScreen();
+void pulseNIRSettingsScreen();
 void chooseModeScreen();
 void showSettingsScreen();
 void SaveOrExitScreen();
+
+
+void getSkinContactScreen();
+void selectStartButtonScreen();
+void runExperimentScreen();
+void exitExperimentScreen();
+
 void wrongPasswordScreen();
+void overheatingScreen();
+void noSkinContactScreen();
 
 //Firkanter med tekst og fargefyll for å indikere status på hudkontakten
 void greenRectangle();

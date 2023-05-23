@@ -1,3 +1,9 @@
+/*
+
+Brukte denne eksempelkoden til inspirasjon for å bitmappe 
+https://github.com/STEMpedia/eviveProjects/blob/master/imageToFlashMemoryIconsForTFT/tftIcons/tftIcons.ino
+
+*/
 #ifndef LOGOGRAY_H
 #define LOGOGRAY_H
 

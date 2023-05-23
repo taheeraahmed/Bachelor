@@ -36,6 +36,7 @@ void clearScreen(){                 // tømmer skjermen for innhold
 
 void drawtextHeading(char *text, uint16_t color) {
   tft.setCursor(10, 30);
+  tft.setTextSize(2);
   tft.setTextColor(color);
   tft.setTextWrap(true);
   tft.print(text);
@@ -62,7 +63,7 @@ void drawtextNormal(char *text, uint16_t color){
   tft.print(text);
 }
 
-
+/*
 unsigned char batteryState(uint8_t batterycharge){
   unsigned char batt;
   if (batterycharge == 1){ // 
@@ -82,87 +83,115 @@ unsigned char batteryState(uint8_t batterycharge){
   }
   return batt;
 }
-
+*/
 
 void homeScreen(){
+  clearScreen();
   tft.drawBitmap(130,1, batteri_1_5,30,15, ST7735_WHITE);     //Her er possisjon og icon til batteriet batteryState her senere
   tft.drawBitmap(0,16,logoAPT,160,113, ST7735_WHITE);         //her er APT sin logo
   drawtextDate("\n Dato: 4. mai 2023 ", ST7735_WHITE);        //Her kan man sette inn datofunksjonen til Vilma
 }
 
 void setPasswordScreen(){
+  clearScreen();
   tft.drawBitmap(130,1, batteri_2_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
   drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
   tft.setTextSize(2);
   drawtextHeading("\n Passord: ", ST7735_WHITE);
   tft.setTextSize(1);
   tft.setCursor(20,110);
-  drawtextNormal("\n ............ ", ST7735_WHITE);
+  drawtextNormal(" .................. ", ST7735_WHITE);
 }
 
 void setPatientIDScreen(){
-  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
-  drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
+  clearScreen();
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); 
+  drawtextDate("\n Dato: ", ST7735_WHITE);
   tft.setTextSize(2);
   drawtextHeading("\n Pasient ID: ", ST7735_WHITE);
   tft.setTextSize(1);
   tft.setCursor(20,110);
-  drawtextNormal("\n ............ ", ST7735_WHITE);
+  drawtextNormal(" .................. ", ST7735_WHITE);
 }
 
 void chooseTimeScreen(){
+  clearScreen();
   tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
   drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
   tft.setTextSize(2);
   drawtextHeading("\n Velg tid: ", ST7735_WHITE);
   tft.setTextSize(1);
-  tft.setCursor(20,110);
-  drawtextNormal("\n ............ ", ST7735_WHITE);
+  tft.setCursor(10,70);
+  drawtextNormal(" 1. 20 min", ST7735_WHITE);
+  tft.setCursor(10,90);
+  drawtextNormal(" 2. 30 min", ST7735_WHITE);
+  tft.setCursor(10,110);
+  drawtextNormal(" 3. 40 min", ST7735_WHITE);
+  
 }
 
 void getLEDHeadScreen(){
+  clearScreen();
   tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
   drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
   tft.setTextSize(2);
-  drawtextHeading("\n Hode: ", ST7735_WHITE);
+    drawtextHeading("\n LED-hode: ", ST7735_WHITE);
   tft.setTextSize(1);
-  tft.setCursor(20,110);
-  drawtextNormal("\n ............ ", ST7735_WHITE);
+  tft.setCursor(60,80);
+  drawtextNormal("Hode: ", ST7735_WHITE);
+  tft.setCursor(100,80);
+  drawtextNormal("X", ST7735_WHITE);      //input
 }
-void NIRSettingsScreen(){
-  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
-  drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
+
+void pulseNIRSettingsScreen(){
+  clearScreen();
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);          //input
+  drawtextDate("\n Dato: ", ST7735_WHITE);                         //input
   tft.setTextSize(2);
-  drawtextHeading("\n NIR-lys: ", ST7735_WHITE);
+    tft.setTextSize(2);
+    drawtextHeading("\n Pulsering: ", ST7735_WHITE);
   tft.setTextSize(1);
-  tft.setCursor(20,110);
-  drawtextNormal("\n ............ ", ST7735_WHITE);
+  tft.setCursor(10,70);
+  drawtextNormal(" 1. Kontinuelig", ST7735_WHITE);                //input
+  tft.setCursor(10,90);
+  drawtextNormal(" 2. Hoyfrekvent pulsering", ST7735_WHITE);      //input
+  tft.setCursor(10,110);
+  drawtextNormal(" 3. Lavfrekvent pulsering", ST7735_WHITE);      //input
 }
+
 void wrongPasswordScreen(){
-  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
-  drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
+  clearScreen();
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);           // input
+  drawtextDate("\n Dato: ", ST7735_WHITE);                          // input
   tft.setCursor(10,50);
   tft.setTextSize(2);
   tft.setTextColor(ST7735_WHITE);
   tft.print("Feil passord");
 }
 
+
 void chooseModeScreen(){
-  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
-  drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
+  clearScreen();
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);         //input
+  drawtextDate("\n Dato: ", ST7735_WHITE);                        //input
   tft.setTextSize(2);
   drawtextHeading("\n Modus: ", ST7735_WHITE);
   tft.setTextSize(1);
-  tft.setCursor(20,110);
-  drawtextNormal("\n ............ ", ST7735_WHITE);
+  tft.setCursor(10,70);
+  drawtextNormal(" 1. Nir-lys", ST7735_WHITE);            //input
+  tft.setCursor(10,90);
+  drawtextNormal(" 2. Placebo", ST7735_WHITE);            //input
+  tft.setCursor(10,110);
+  drawtextNormal(" 3. Randomisert", ST7735_WHITE);        //input
 }
 
 void showSettingsScreen(){
+  clearScreen();
   tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);       //input batteri
   tft.setTextColor(ST7735_WHITE);
   tft.setTextSize(1);
   tft.setCursor(0, 0);
-  tft.println("Dato: ");                //input Dato
+  tft.println("\n Dato: ");                //input Dato
   tft.setCursor(0, 30);
   tft.println("PasientID: ");
   tft.setCursor(65, 30);
@@ -184,11 +213,86 @@ void showSettingsScreen(){
   tft.setCursor(65, 110);
   tft.println("NIR");                   //input Modus
 }
+
 void SaveOrExitScreen(){
-  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE); //Her er possisjon og icon til batteriet batteryState her senere
-  drawtextDate("\n Dato: ", ST7735_WHITE); //Her kan man sette inn datofunksjonen til Vilma
+  clearScreen();
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);     //input
+  drawtextDate("\n Dato: ", ST7735_WHITE);                    //input
   tft.setTextSize(2);
-  drawtextHeading("\n Lagre: * \n Exit: #: ", ST7735_WHITE);
+  drawtextHeading("\n Lagre -> * \n Exit -> # ", ST7735_WHITE);
+}
+
+void getSkinContactScreen(){
+  clearScreen();
+  drawtextDate("\n Dato: ", ST7735_WHITE);
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);
+  drawtextHeading("\n Opprett \n hudkontakt", ST7735_WHITE);
+  redRectangle();
+}
+
+void selectStartButtonScreen(){
+  clearScreen();
+  drawtextDate("\n Dato: ", ST7735_WHITE);
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);
+  drawtextHeading("\n Trykk -> \n start knapp", ST7735_WHITE);
+  redRectangle();
+}
+
+void runExperimentScreen(){
+  clearScreen();
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);       //input batteri
+  tft.setTextColor(ST7735_WHITE);
+  tft.setTextSize(1);
+  tft.setCursor(0, 0);
+  tft.println("Dato: ");                //input Dato
+  tft.setCursor(0, 30);
+  tft.println("PasientID: ");
+  tft.setCursor(65, 30);
+  tft.println("x x");                    //input pasientID
+  tft.setCursor(0, 50);
+  tft.println("Gjenstaaende tid: ");
+  tft.setCursor(20, 70);
+  tft.println("60");                   //input Tid
+  tft.setCursor(20, 90);
+  tft.println("30");                      //input LED-hode
+  tft.setCursor(40, 70);
+  tft.println("min ");                   //input Tid
+  tft.setCursor(40, 90);
+  tft.println("sek"); 
+  redRectangle();
+}
+
+void exitExperimentScreen(){
+  clearScreen();
+  drawtextDate("\n Dato: ", ST7735_WHITE);
+  tft.drawBitmap(130,1, batteri_3_5,30,15, ST7735_WHITE);
+  drawtextHeading("\n \n Test ferdig!", ST7735_WHITE);
+}
+
+
+void overheatingScreen(){
+  clearScreen();
+  tft.setCursor(0,50);
+  tft.setTextSize(2);
+  tft.setTextColor(ST7735_WHITE);
+  tft.print("Overoppheting");
+  tft.setTextSize(1);
+  tft.setCursor(8,70);
+  drawtextNormal("Slaa av, prov igjen om 3 \n minutter", ST7735_WHITE);
+
+}
+
+void noSkinContactScreen(){
+  clearScreen();
+  tft.setTextSize(2);
+  tft.setTextColor(ST7735_WHITE);
+  tft.setCursor(50,10);
+  tft.print("Ingen");
+  tft.setCursor(25,40);
+  tft.print("hudkontakt");
+  tft.setCursor(30,70);
+  tft.print("opprettet");
+  redRectangle();                   //input
 }
 
 void greenRectangle(){

@@ -163,7 +163,7 @@ void chooseNIRsettings(void){
 
     // Sett inn grafikk her
     clearScreen();
-    NIRSettingsScreen();
+    pulseNIRSettingsScreen();
     
     while (customKey != '1' & customKey != '2' & customKey != '3'){
         customKey = customKeypad.getKey();
