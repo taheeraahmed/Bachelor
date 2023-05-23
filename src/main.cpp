@@ -1,44 +1,31 @@
-#include <avr/io.h>
-#include <util/delay.h>
-#include <Arduino.h>
-#include <Temp/Temp.h>
-#include "getTime/getTime.h"
-#include "utils.h"
-#include <stdio.h>
-#include "PWM/PWM.h"
-/*
-Trigger en interrupt hver gang timer er lik ett millisekund.
-Arduino MEGA 2560 har 16MHz
+#include "mainFunctions/mainFunctions.h"
+#include <Adafruit_I2CDevice.h>
 
-16MHz/1000 som deles på en prescale 8 gir oss 2000. Hver gang
-teller er 2000 så har ett millisekund gått. Dette kan vi lage til en macro
-*/
+void initPinChangeInterrupt(void);
+uint8_t system_state = 0;
 
-int main(void)
-{
-  Serial.begin(9600);
-  initADC();
-  initPort();
-  calcLedID();
-  initGetTime();
-  initTimer3();
+int main(void){
 
-  DDRB |= (1 << PIN7);
-  PORTB |= (1 << PIN7);
+  initPinChangeInterrupt();
+  initiateSystem();
 
   while (1)
   {
-    printADC();
-    _delay_ms(2000);
 
-    unsigned long getTime_current = getTime();
-    long getTime_since;
-
-    if (getTime_current - getTime_since > 2000)
-    {
-      // LED connected to PC0/Analog 0
-      PORTB ^= (1 << PIN7);
-      getTime_since = getTime_current;
-    }
   }
+  return 0;
+}
+
+
+void initPinChangeInterrupt(void){
+  // Setting  
+  DDRJ &= ~(1 << PIN1);
+  
+  // set up interrupt vector table
+  PCICR |= (1 << PIN1); // Enable PCINT for Port J
+  PCMSK1 |= (1 << PIN1); // Enable PCINT3 for PORTJ PIN!
+}
+
+ISR(PCINT1_vect){
+  SMCR &= ~((1 << PIN2) | (1 << PIN0));
 }
