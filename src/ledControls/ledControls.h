@@ -1,6 +1,6 @@
 
-#ifndef LED_H_
-#define LED_H_
+#ifndef LED_H
+#define LED_H
 
 // Her deklareres alle funksjoner som kontrollerer LED-ene på styringsenheten
 void initLedPins(void);

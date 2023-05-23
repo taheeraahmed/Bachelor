@@ -1,4 +1,4 @@
-#include <mainFunctions/mainFunctions.h>
+#include "mainFunctions/mainFunctions.h"
 
 void initiateSystem(void){
     initADC();
@@ -8,6 +8,7 @@ void initiateSystem(void){
     initTimer0();
     initTimer3();
     initTWI();
+    initVariant();
 
     sei();
 }
@@ -16,7 +17,7 @@ void runMenu(void){
     //Her kjøres Mina sin meny kode.
 }
 
-void testDataUpdate(unsigned long testLength){
+void runTest(unsigned long testLength){
     // Timer variables:
     unsigned long test_time_start = getTime();
     unsigned long test_time_new = getTime();
@@ -60,11 +61,11 @@ void testDataUpdate(unsigned long testLength){
         }
         */
     }
-    endNIR();
+    void endNIR(void);
     testIndicatorOff();
     greenLedOff();
 }
-void setSystemSleep(void){
-    //clearScreen();
+
+void systemExit(void){
     SMCR = (1 << PIN2) | (1 << PIN0);
 }

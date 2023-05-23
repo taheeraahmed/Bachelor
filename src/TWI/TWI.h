@@ -4,6 +4,12 @@
 #include <stdbool.h>
 #include <avr/interrupt.h>
 #include <string.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <avr/interrupt.h>
+#include <string.h>
 
 #ifndef TWI_H_
 #define TWI_H_

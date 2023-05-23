@@ -1,7 +1,10 @@
 #include <mainFunctions/mainFunctions.h>
 #include <Adafruit_I2CDevice.h>
 
+void initPinChangeInterrupt(void);
+uint8_t system_state = 0;
 
+void setup(void){
 void initPinChangeInterrupt(void);
 uint8_t system_state = 0;
 
