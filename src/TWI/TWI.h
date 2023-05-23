@@ -5,8 +5,8 @@
 #include <avr/interrupt.h>
 #include <string.h>
 
-#ifndef TWI_H
-#define TWI_H
+#ifndef TWI_H_
+#define TWI_H_
 
 //Funksjonsdefinisjoner:
 void initTWI(void);

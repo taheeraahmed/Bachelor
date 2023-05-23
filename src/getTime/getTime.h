@@ -6,8 +6,7 @@
  * Sourced from: https://adnbr.co.uk/articles/counting-milliseconds
  */ 
 
-#ifndef getTime_H_
-#define getTime_H_
+
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -22,4 +21,3 @@ void initGetTime(void);
 */
 unsigned long getTime(void);
 
-#endif

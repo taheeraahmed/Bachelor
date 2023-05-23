@@ -1,4 +1,4 @@
-#include "mainFunctions/mainFunctions.h"
+#include <mainFunctions/mainFunctions.h>
 
 void initiateSystem(void){
     initADC();
@@ -8,7 +8,6 @@ void initiateSystem(void){
     initTimer0();
     initTimer3();
     initTWI();
-    initVariant();
 
     sei();
 }
@@ -61,11 +60,10 @@ void runTest(unsigned long testLength){
         }
         */
     }
-    void endNIR(void);
+    endNIR();
     testIndicatorOff();
     greenLedOff();
 }
-
 void systemExit(void){
     SMCR = (1 << PIN2) | (1 << PIN0);
 }
