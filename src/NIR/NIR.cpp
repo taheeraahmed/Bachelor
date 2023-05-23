@@ -18,7 +18,7 @@ uint8_t nirData[3];       // Collects all data on the chosen LED-head {ledWaveLe
  * The function sets the clock prescaler to 256 and enables the owerflov vector.
  * Timer0 is used to controll the NIR light.
 */
-void initTimer0(){
+void initTimer2(){
   // Setter opp compare Match instillinger for teller 0.
   TCCR2A |= (1 << COM0A1) | (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
   TCCR2B |= (1 << CS02);
@@ -39,8 +39,21 @@ void initTimer0(){
  * Timer0 is used to controll the PWM frequency for the NIR light. 
  * For IC_HG to function it also needs to be enabled by setting the DAC output voltage to 5V
 */
-void setNIR(uint8_t NIRDuty, uint8_t R_ID){
-  // Sammenlikner R_ID med de ulike instillingene
+void startNIR(uint8_t NIRmode, uint8_t NIRfreq, uint8_t R_ID){
+  uint8_t NIRDuty;
+
+  // Setter duty cycle ut ifra bruker input
+  switch(NIRfreq){
+    case 0:     
+      NIRDuty = 255;  // Kontinuerlig pulsering med 100% duty cycle
+      break;
+    case 1:
+      NIRDuty = 188;  // Høyfrekvent pulsering med 75% duty cycle
+      break;
+    case 2:
+      NIRDuty = 70;  // Lavfrekvent pulsering med 25% duty cycle
+      break;
+  }
   for (uint8_t i = 0; i <= 3; i++){
     if (LED_ID[i] == R_ID){
       // nir_data samler all relevant informasjon om LED-hodet som blir benyttet
@@ -50,8 +63,23 @@ void setNIR(uint8_t NIRDuty, uint8_t R_ID){
     }
   }
 
-  // Skrur på spenningsforsyning til IC-HG LED-driveren. 
-  setDAC(true);
+  // Setter NIR-modus ut ifra bruker input
+  switch (NIRmode){
+    case 0:
+      setDAC(true);           // Modus 0: NIR-belysning
+      break;
+    case 1:
+      setDAC(false);          // Modus 1: Placebo
+      break;
+    case 2:
+      if(rand() % 2 == 0){     // Modus 3: Randomisering
+        setDAC(false);
+      }
+      else{
+        setDAC(true);
+      }
+  }
+  
   
   // Omvend PWM der pinnen settes lav fra start og skiftes til høy ved Compare Match.
   // For rett lengde for på signalet må dutyCycle omskrives.
