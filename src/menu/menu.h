@@ -7,6 +7,7 @@
 #include <util/delay.h>
 #include "Screen/Screen.h"
 #include "Keypad.h"
+#include "utils/utils.h"
 
 //void RunMenu(void);
 void RunSientistMenu(void);
