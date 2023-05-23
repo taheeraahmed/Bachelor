@@ -4,11 +4,10 @@
 void initPinChangeInterrupt(void);
 uint8_t system_state = 0;
 
-int main(void){
+void setup(){
 
   initPinChangeInterrupt();
-  initiateSystem();
-  return 0;
+  //initiateSystem();
 }
 
 

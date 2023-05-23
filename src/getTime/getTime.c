@@ -7,7 +7,7 @@
  */ 
 
 
-#define one_millisecond ((F_CPU / 1000) / 8)
+unsigned long one_millisecond = ((F_CPU / 1000) / 8);
 
 #include <avr/io.h>
 #include <util/atomic.h>

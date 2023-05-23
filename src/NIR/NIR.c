@@ -20,11 +20,11 @@ uint8_t nirData[3];       // Collects all data on the chosen LED-head {ledWaveLe
 */
 void initTimer0(){
   // Setter opp compare Match instillinger for teller 0.
-  TCCR0A |= (1 << COM0A1) | (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
-  TCCR0B |= (1 << CS02);
+  TCCR2A |= (1 << COM0A1) | (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
+  TCCR2B |= (1 << CS02);
 
   // Skrur på interrupt for teller 0.
-  TIMSK0 |= (1 << TOIE0);
+  TIMSK2 |= (1 << TOIE0);
 
   //Setter alle pinner som styres av teller 0 til utganger.
   DDRE |= (1 << PIN5) | (1 << PIN4) | (1 << PIN3);
@@ -71,7 +71,7 @@ void endNIR(void){
  * Sets ISR for Compare Match A interrupt on timer 0.
  * Turns the activated pins on.
 */
-ISR(TIMER0_COMPA_vect){
+ISR(TIMER2_COMPA_vect){
   if (nirData[2] == 1){
     PORTE |= (1 << PIN4);
   }
@@ -109,7 +109,7 @@ ISR(TIMER0_COMPA_vect){
  * Sets ISR for overflow interrupt on timer 0.
  * Turns all pins connected to the EN pins on the IC_HG LED-driver off.
 */
-ISR(TIMER0_OVF_vect){
+ISR(TIMER2_OVF_vect){
   PORTE &= ~((1 << PIN5) | (1 << PIN4) | (1 << PIN3));
   PORTG &= ~((1 << PIN5));
   PORTH &= ~((1 << PIN4) | (1 << PIN3));  

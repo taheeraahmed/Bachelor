@@ -54,6 +54,7 @@ void greenLedOn(void){
 
 /**
 * @brief Binks green led with interval of 500 ms.
+*/
 void greenLedBlink(void){
     green_led_blink_new = getTime();
 
