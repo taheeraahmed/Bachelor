@@ -247,7 +247,7 @@ void SaveOrExit(void){
 void systemWaiting(void){
     char customKey = '0'; //forandret på denne sånn at man hopper tilbake til hjemskjermen var char customKey;
     clearScreen();
-    homeScreen(1,"22-05-23");
+    homeScreen(0, "22-05-23");
     while (customKey != '*'& customKey !='1'){
 
         customKey = customKeypad.getKey();
@@ -263,10 +263,10 @@ void systemWaiting(void){
 }
 
 void getSkinContact(void){
-    getSkinContactScreen(1,"22-05-23");
+    getSkinContactScreen(1,"22-05-23",1);
 }
 void selectStartButton(void){
-    selectStartButtonScreen(1,"22-05-23");
+    selectStartButtonScreen(1,"22-05-23",1);
 }
 void runExperiment(void){
     runExperimentScreen(1,"22-05-23","33","22",1);

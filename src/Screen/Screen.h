@@ -12,6 +12,10 @@
 void initScreen();
 void clearScreen();
 void homeScreen(uint8_t battery, char date[8]);
+void batteryCharge(uint8_t battery_charge);
+void skinContactStatus(uint8_t skin_contact);
+
+//unsigned char batteryUpdate(uint8_t battery_charge); //fjerne kanskje?
 
 
 void drawtextHeading(char *text, uint16_t color);
@@ -30,8 +34,8 @@ void showSettingsScreen(uint8_t battery, char date[8]);
 void SaveOrExitScreen(uint8_t battery, char date[8]);
 
 //Skjermbildene for å kjøre koden til "RunUserMenu"
-void getSkinContactScreen(uint8_t battery, char date[8]);
-void selectStartButtonScreen(uint8_t battery, char date[8]);
+void getSkinContactScreen(uint8_t battery, char date[8], uint8_t skin_contact);
+void selectStartButtonScreen(uint8_t battery, char date[8], uint8_t skin_contact);
 void runExperimentScreen(uint8_t battery, char date[8], char remaining_seconds[2], char remaining_minutes[2], uint8_t skin_contact);
 void exitExperimentScreen(uint8_t battery, char date[8]);
 
