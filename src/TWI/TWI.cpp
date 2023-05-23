@@ -263,7 +263,7 @@ void getDate(void){
  * @param dateArray The functions uses the Array output from getDate.
  * @return One sting in dd-mm-yy format.
 */
-void formatDateToChar(uint8_t dateArray[3]){
+char *formatDateToChar(uint8_t dateArray[3]){
   dateChar[0] = '\0';
 
   char dd[2];
@@ -279,6 +279,8 @@ void formatDateToChar(uint8_t dateArray[3]){
   strcat(dateChar, mm);
   strcat(dateChar, "-");
   strcat(dateChar, yy);
+
+  return dateChar;
 }
 
 /**
@@ -342,7 +344,7 @@ void getTimeStamp(void){
  * @param timeArray The functions uses the Array output from getTimeStamp.
  * @return One sting in hh:mm:ss format.
 */
-void formatTimeToChar(uint8_t timeArray[3]){
+char *formatTimeToChar(uint8_t timeArray[3]){
   timeChar[0] = '\0';
 
   char seconds[2];
@@ -358,6 +360,8 @@ void formatTimeToChar(uint8_t timeArray[3]){
   strcat (timeChar, minutes);
   strcat (timeChar, ":");
   strcat (timeChar, seconds);
+
+  return timeChar;
 }
 
 
@@ -366,7 +370,7 @@ void formatTimeToChar(uint8_t timeArray[3]){
  * @param dateArray The functions uses the Array output from getDate.
  * @return One sting in dd-mm-yy format.
 */
-void formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]){
+char *formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]){
   dateTimeChar[0] = '\0';
   char dd[2];
   char mm[2];
@@ -397,6 +401,8 @@ void formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]){
   strcat (dateTimeChar, minutes);
   strcat (dateTimeChar, ":");
   strcat (dateTimeChar, seconds);
+
+  return dateTimeChar;
 }
 
 /**
@@ -521,7 +527,7 @@ void getBatteryState(void){
   batteryState[0] = ((batteryBytes[0] << 4) | batteryBytes[1]) / 0xFFFF;
 
   // Finner StateOfHealth prosent - Setter sammen verdiene hentet for % entet fra registerene 0x20 og ox21
-  batteryState[1] = ((batteryBytes[2] << 4) | batteryBytes[3]) / 0xFFFF;
+  batteryState[2] = ((batteryBytes[2] << 4) | batteryBytes[3]) / 0xFFFF;
 
   // Finner verdi som skal vises på batteri ikonet på skjermen i femttedeler.
   if (batteryState[0] < 20){

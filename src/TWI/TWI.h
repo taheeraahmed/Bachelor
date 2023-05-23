@@ -21,12 +21,14 @@ void TWIStartRx(uint8_t address, uint8_t read_register);
 void TWIStartCond(void);
 void TWIWrite(uint8_t data);
 uint8_t TWIRecieveWithAck(void);
+uint8_t TWIRecieveWithNack(void);
+void TWIStopCond(void);
 
 void getDate(void);
-void formatDateToChar(uint8_t dateArray[3]);
+char *formatDateToChar(uint8_t dateArray[3]);
 void getTimeStamp(void);
-void formatTimeToChar(uint8_t timeArray[3]);
-void formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]);
+char *formatTimeToChar(uint8_t timeArray[3]);
+char *formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]);
 void resetRTC(uint8_t sec, uint8_t min, uint8_t hour, uint8_t date, uint8_t month, uint8_t year);
 
 void getBatteryState(void);
