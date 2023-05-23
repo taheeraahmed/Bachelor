@@ -10,6 +10,7 @@
 #define getTime_H_
 
 #include <avr/interrupt.h>
+#include <avr/io.h>
 
 /**
 * @brief Initierer

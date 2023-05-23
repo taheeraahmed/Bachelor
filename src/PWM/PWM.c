@@ -1,9 +1,4 @@
 #include "PWM/PWM.h"
-#include <stdint.h>
-#include <avr/interrupt.h>
-#include <avr/io.h>
-#include <getTime/getTime.h>
-
 
 unsigned long current_time__buzzer;
 unsigned long old_time_buzzer;
@@ -11,20 +6,20 @@ bool buzzer_trig;
 
 
 /**
- * @brief Function to initiate PWM on timer1. 
+ * @brief Function to initiate PWM on timer3. 
  * @details 
- * The function sets the clock frequency to XXX and enables the owerflow vector.
- * Timer1 is used to controll the the fans on the controll unit and the LED-head including the buzzer.
+ * The function sets the clock frequency prescaler to 256 and enables the owerflow vector.
+ * Timer3 is used to controll the the fans on the controll unit and the LED-head including the buzzer.
 */
 void initTimer3(void){
-  // Setter opp compare match insillinger for teller 1.
+  // Setter opp compare match insillinger for teller 3.
   TCCR3A |= (1 << COM3A1) | (1 << COM3B1) | (1 << COM3C1) | (1 << WGM31) | (1 << WGM30);
   TCCR3B |= (1 << CS31) | (1 << CS30);
-  // Skrur på interrupt på teller 1.
+  // Skrur på interrupt på teller 3.
   TIMSK3 |= (1<< TOIE3);
 
-  //Setter alle pinner som styres av teller 1 til utganger.
-  DDRB |= ((1 << PIN4) | (1 << PIN5));
+  //Setter alle pinner som styres av teller 3 til utganger.
+  DDRB |= ((1 << PIN4) | (1 << PIN5));  
   DDRH |= (1 << PIN5);
 }
 
@@ -34,15 +29,16 @@ void initTimer3(void){
  * To turn the buzzer on/off, the timer on the compare match A is enabled/disabled.
  * The duty cycle is set by writing to the OCR1A register.
  * By using the getTime function the buzzer is turned on and off when enabled.
- * @param [buzzerState] Enables buzzer [0-1]
- * @param [buzzDuty] Sets the dutyCycle [0-255]
- * @param [interval] Sets the interval wich the buzzer will be turned on/off [ms]
+ * @param buzzerState Enables buzzer [0-1]
+ * @param buzzDuty Sets the dutyCycle [0-255]
+ * @param interval Sets the interval wich the buzzer will be turned on/off [ms]
 */
 void setBuzzerAlarm(bool buzzerState, uint8_t buzzDuty, uint16_t interval){
   if (buzzerState == true){
 
     current_time__buzzer = getTime();
 
+    // Sjekker om 
     if ((current_time__buzzer - old_time_buzzer) > interval){
       if (buzzer_trig == false){
         buzzer_trig = true;
@@ -99,18 +95,22 @@ void setFans(bool controllFans, bool ledFans, uint8_t controllFanDuty, uint8_t l
 
 // Setter opp avbuddsvektor for compare A timer 3
 ISR(TIMER3_COMPA_vect){
+  // Skrir på PWM 8 pinnen koblet til buzzer.
   PORTH |= (1 << PIN5);
 }
 // Setter opp avbuddsvektor for compare B timer 3
 ISR(TIMER3_COMPB_vect){
+  // Skrir på PWM 10 pinnen koblet til viftene på styringsenheten.
   PORTB |= (1 << PIN4);
 }
 // Setter opp avbuddsvektor for compare C timer 3
 ISR(TIMER3_COMPC_vect){
+  // Skrir på PWM 11 pinnen koblet til viften på LED-hodet.
   PORTB |= (1 << PIN5);
 }
 // Setter opp avbruddsvektor for overflow på timer 3
 ISR(TIMER3_OVF_vect){
+  // Alle pinner blir skrudd av
   PORTB &= ~((1 << PIN4) | (1 << PIN5));
   PORTH &= ~(1 << PIN5);
 }
