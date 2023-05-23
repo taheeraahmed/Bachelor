@@ -1,28 +1,15 @@
 #include "writeToFile/writeToFile.h"
-#include <SD.h>
-#include <string.h>
-
-uint8_t checkIfFileExists(char *filename)
-{
-	if (SD.exists(filename))
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
 
 /**
  * @brief Function which initializes the SD card
  * @details The SD card is initialized on pin 53. This is the standard for Arduino Mega.
+ * @param CS: Chip select pin
  * @return void
  */
-void initSD()
+void initSD(int CS)
 {
 	// Initialize SD card
-	if (!SD.begin(53))
+	if (!SD.begin(CS))
 	{
 		Serial.println("SD card initialization failed!");
 	}
@@ -33,48 +20,95 @@ void initSD()
 }
 
 /**
- * @brief Function which creates a file
- * @details The file is closed after the write is complete.
- * @param headers: The headers to be written to the file
- * @param start_time: Used for creation of directory
- * @param is_error: Decides whether to create a file for errors or temperatures
- * @param patient_id: The patient id to be written to the filename
+ * @brief Function which initializes the SD card
+ * @details The SD card is initialized on pin 53. This is the standard for Arduino Mega.
+ * @param CS: Chip select pin
+ * @param card: SD card
  * @return void
  */
-void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id, uint8_t start_time)
+void initCard(int CS, Sd2Card card)
 {
-	// Convert start_time to char for directory name
-	String start_time_str = String(start_time);
-	const char *start_time_char = start_time_str.c_str();
-	char start_time_buffer[20];
-	strcpy(start_time_buffer, start_time_char);
-
-	uint8_t file_exists = checkIfFileExists(filename);
-
-	if (file_exists)
+	if (!card.init(SPI_HALF_SPEED, CS))
 	{
-		Serial.println("File already exists");
-		return;
+
+		Serial.println("initialization failed. Things to check:");
+		Serial.println("* is a card inserted?");
+		Serial.println("* is your wiring correct?");
+		Serial.println("* did you change the chipSelect pin to match your shield or module?");
+		while (1)
+			;
 	}
 	else
 	{
-		// Create directory
-		if (!SD.mkdir(start_time_buffer))
+		Serial.println("Wiring is correct and a card is present.");
+	}
+}
+
+/**
+ * @brief Function which creates a directory
+ * @details The directory is created on the SD card
+ * @param experiment_id: Used for creation of directory
+ * @return void
+ */
+void createDirectory(uint8_t experiment_id)
+{
+	// Convert experiment_id to char for directory name
+	String experiment_id_str = String(experiment_id);
+	const char *experiment_id_char = experiment_id_str.c_str();
+	char experiment_id_buffer[20];
+	strcpy(experiment_id_buffer, experiment_id_char);
+
+	// Create directory if it doesn't exist
+	uint8_t dir_exists = SD.exists(experiment_id_buffer);
+	if (dir_exists)
+	{
+		Serial.print("Directory already exists: ");
+		Serial.println(experiment_id_buffer);
+	}
+	else
+	{
+		if (!SD.mkdir(experiment_id_buffer))
 		{
 			Serial.println("Error creating directory!");
 		}
 		else
 		{
-			Serial.println("Directory created successfully!");
+			Serial.print("Directory created successfully: ");
+			Serial.println(experiment_id_buffer);
 		}
+	}
+}
 
+/**
+ * @brief Function which creates a file
+ * @details The file is closed after the write is complete.
+ * @param headers: The headers to be written to the file
+ * @param filename: The filename to be created
+ * @param test_choices: The test choices struct 
+ * @return void
+ */
+void createFile(char *headers, char *filename, TestChoices test_choices)
+{
+	// Convert experiment_id to char for directory name
+	String experiment_id_str = String(test_choices.experiment_id);
+	const char *experiment_id_char = experiment_id_str.c_str();
+	char experiment_id_buffer[20];
+	strcpy(experiment_id_buffer, experiment_id_char);
+
+	uint8_t file_exists = checkIfFileExists(filename);
+
+	if (file_exists)
+	{
+		return;
+	}
+	else
+	{
 		// Creating a file with the name
 		File file = SD.open(filename, FILE_WRITE);
 
 		// If file is created successfully, write headers to file
 		if (file)
 		{
-			Serial.println("File created successfully");
 			file.println(headers);
 			file.close();
 		}
@@ -89,33 +123,40 @@ void createFile(char *headers, char *filename, bool is_error, uint8_t patient_id
 /**
  * @brief Function which creates a filename
  * @details The file is closed after the write is complete.
- * @param is_error: Decides whether to create a file for errors or temperatures
- * @param patient_id: The patient id to be written to the filename
- * @param start_time: Used for creation of directory
+ * @param type: The type of file to be created either temp, error or info
+ * @param test_choices: The test choices struct
  * @return void
  */
-char *createFileName(bool is_error, uint8_t patient_id, uint8_t start_time)
+char *createFileName(FileType type, TestChoices test_choices)
 {
-	// Convert start_time to char for directory name
-	String start_time_str = String(start_time);
-	const char *start_time_char = start_time_str.c_str();
-	char start_time_buffer[20];
-	strcpy(start_time_buffer, start_time_char);
+	// Convert experiment_id to char for directory name
+	String experiment_id_str = String(test_choices.experiment_id);
+	const char *experiment_id_char = experiment_id_str.c_str();
+	char experiment_id_buffer[20];
+	strcpy(experiment_id_buffer, experiment_id_char);
 
 	char *filename = new char[50];
-	if (is_error)
+
+	if (type == TEMP)
 	{
-		strcpy(filename, start_time_buffer);
-		strcat(filename, "/err_");
-		strcat(filename, String(patient_id).c_str());
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/log_");
+		strcat(filename, String(test_choices.patient_id).c_str());
 		strcat(filename, ".csv");
 	}
-	else
+	else if (type == ERROR)
 	{
-		strcpy(filename, start_time_buffer);
-		strcat(filename, "/log_");
-		strcat(filename, String(patient_id).c_str());
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/err_");
+		strcat(filename, String(test_choices.patient_id).c_str());
 		strcat(filename, ".csv");
+	}
+	else if (type == INFO)
+	{
+		strcpy(filename, experiment_id_buffer);
+		strcat(filename, "/info_");
+		strcat(filename, String(test_choices.patient_id).c_str());
+		strcat(filename, ".txt");
 	}
 	return filename;
 }
@@ -134,58 +175,61 @@ void writeToFile(char *filename, char *data)
 
 	if (file)
 	{
-		file.println(data);
-		Serial.println("File written to successfully");
+		if (file.write(data, strlen(data)))
+		{
+			// Data write successful
+			file.close();
+		}
+		else
+		{
+			// Error writing data
+			file.close();
+			Serial.print("Error writing to file: ");
+			Serial.println(filename);
+		}
+	}
+	else
+	{
+		Serial.print("Failed to open file: ");
+		Serial.println(filename);
+	}
+}
+
+/**
+ * @brief Function which writes info to csv
+ * @details The file is closed after the write is complete.
+ * @param mode: The mode to be written to the file
+ * @param pvm_freq: The PVM frequency to be written to the file
+ * @param start_timestamp: The start timestamp to be written to the file
+ * @param duration: The duration to be written to the file
+ * @param filename: The filename to be written to the file
+ * @param experiment_id: The experiment ID to be written to the file
+ * @param patient_id: The patient ID to be written to the file
+ */
+void writeInfoFile(TestChoices test_choices, const char *start_timestamp, char *filename)
+{
+	File file;
+
+	file = SD.open(filename, FILE_WRITE);
+
+	if (file)
+	{
+		file.print("Experiment ID: ");
+		file.println(test_choices.experiment_id);
+		file.print("Patient ID: ");
+		file.println(test_choices.patient_id);
+		file.print("Mode: ");
+		file.println(modeToString(test_choices.mode));
+		file.print("PVM Frequency: ");
+		file.println(pvmFreqToString(test_choices.pvm_freq));
+		file.print("Start timestamp: ");
+		file.println(start_timestamp);
+		file.print("Duration: ");
+		file.println(durationToString(test_choices.duration));
 		file.close();
-		Serial.println("File closed successfully");
 	}
 	else
 	{
 		Serial.println("File not found! writeToFile");
 	}
-	Serial.println("Write to file done");
-}
-/**
- * @brief Function which converts temperature data to char
- * @details The function converts the temperature data to char and returns it
- * @param temp_pcb: The temperature of the PCB
- * @param temp_air: The temperature of the air
- * @param temp_skin: The temperature of the skin
- * @param temp_led: The temperature of the LED
- * @param datetime: The datetime to be written to the file
- * @return data: The data to be written to the file
-*/
-
-char *convertDataToChar(uint8_t temp_pcb, uint8_t temp_air, uint8_t temp_skin, uint8_t temp_led, const char *datetime)
-{
-	char *data = new char[strlen(datetime) + strlen(", ") + 4 * 4 + strlen("\n") + 1];
-	strcpy(data, datetime);
-	strcat(data, ", ");
-	strcat(data, String(temp_pcb).c_str());
-	strcat(data, ", ");
-	strcat(data, String(temp_air).c_str());
-	strcat(data, ", ");
-	strcat(data, String(temp_skin).c_str());
-	strcat(data, ", ");
-	strcat(data, String(temp_led).c_str());
-	return data;
-}
-
-/**
- * @brief Function which converts error data to char
- * @details The function converts the error data to char and returns it
- * @param error_code: The error code to be written to the file
- * @param error_message: The error message to be written to the file
- * @param datetime: The datetime to be written to the file
- * @return data: The data to be written to the file
-*/
-char *convertErrorToChar(uint8_t error_code, const char *error_message, const char *datetime)
-{
-	char *data = new char[strlen(datetime) + strlen(", ") + 1 + strlen("\n") + 1];
-	strcpy(data, datetime);
-	strcat(data, ", ");
-	strcat(data, String(error_code).c_str());
-	strcat(data, ", ");
-	strcat(data, String(error_message).c_str());
-	return data;
 }

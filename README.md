@@ -58,3 +58,30 @@ This part of the code consists of functions that are used to communicate with th
 This part of the code consists of functions that are used to write data to the SD card. 
 
 It logs the data in two files, one for the temperature data and one for the error data. The temperature data is logged every 30 seconds and the error data is logged when an error occurs.
+
+## Example code for getting started with the prototype
+
+This is a simple function for testing if the red and green LEDs works. By putting the code in the main function, the LEDs will blink when the button is pressed.
+
+```c
+#include <avr/io.h>
+// Enkel funksjon som får Rød og grønn led til å lyse ved knappetrykk.
+// Skal kun brukes som referanse for koding av leds og knapp.
+
+void BlinkeLed(){
+  DDRG |= (1 << PIN1) | (1 << PIN0);
+  DDRL |= (1 << PIN7);
+  DDRH &= ~(1 << PIN6);
+
+  while(1){
+    if (PINH & (1 << PIN6)){
+      PORTG |= (1 << PIN0);
+      PORTL &= ~(1 << PIN7);
+    }
+    else {
+      PORTL |= (1 << PIN7);
+      PORTG &= ~(1 << PIN0);
+    }
+  }
+}
+```

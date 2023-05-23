@@ -14,7 +14,7 @@ It logs the data in two files, one for the temperature data and one for the erro
 
 ### initSD
 
-`void initSD` initializes the SD card.
+`void initSD` initializes the SD card, and takes in one parameter, the chip select pin.
 
 ### createFile
 
@@ -28,38 +28,66 @@ It logs the data in two files, one for the temperature data and one for the erro
 
 `char *convertErrorToChar` converts the error data to a char array. It takes in three parameters, the first one is the error code, the second parameter is the error message and the third parameter is the date and time.
 
+### getExperimentId
+`void getExperimentId` gets the experiment id from the SD card. It takes no parameters. It uses the folders already existing on the SD-card and increments the highest by one. If there is no previous experiment id it sets the experiment id to 0.
+
+### writeInfoFile
+`void writeInfoFile` writes the information about the experiment to the info file. It takes in five parameters, the first one is the test choices, the second parameter is the start time of the measurement, the third parameter is the file name, the fourth parameter is the experiment id and the fifth parameter is the patient id.
+
+
 ## Usage
 
 This is only example usage of the functions. The functions can be used in the main code like the example below.
 
 ```cpp
 #include "writeToFile/writeToFile.h"
-#include "getTime/getTime.h"
 #include <stdio.h>
 #include <Arduino.h>
+#include "utils.h"
 
 char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
 char error_headers[50] = "datetime,error_code,error_msg";
-uint8_t patient_id = 123;
-uint8_t start_time = 0;
+char info_header[29] = "Information about experiment";
 
-char *file_temp = createFileName(false, patient_id, start_time);
-char *file_error = createFileName(true, patient_id, start_time);
+Sd2Card card;
+MEMORY_EXTENSION_PINS mem_ext_pins;
 
 void setup()
 {
-	Serial.begin(9600);
-	Serial.println("Starting program..");
-	initSD();
-	createFile(temp_headers, file_temp, false, patient_id, start_time);
-	createFile(error_headers, file_error, true, patient_id, start_time);
-}
-void loop()
-{
-	char *data = convertDataToChar(1, 2, 3, 4, "2021-05-12 12:12:12");
-	writeToFile(file_temp, data);
-	char *error = convertErrorToChar(1, "Error message", "2021-05-12 12:12:12");
-	writeToFile(file_error, error);
-	delay(6000);
+  Serial.begin(9600);
+  initSD(mem_ext_pins.CS);
+  initCard(mem_ext_pins.CS, card);
+
+  TestChoices test;
+  test.mode = PLACEBO;
+  test.duration = DURATION_30_MIN;
+  test.pvm_freq = LOW_FREQUENCY;
+  test.patient_id = 123;
+  test.experiment_id = getExperimentId();
+  const char *start_timestamp = "2021-05-12T12:12:12";
+  const char *timestamp = "2021-05-12T12:12:12";
+
+  createDirectory(test.experiment_id);
+  char *file_temp = createFileName(TEMP, test);
+  char *file_error = createFileName(ERROR, test);
+  char *file_info = createFileName(INFO, test);
+
+  createFile(temp_headers, file_temp, test);
+  createFile(error_headers, file_error, test);
+  createFile(info_header, file_info, test);
+  writeInfoFile(test, start_timestamp, file_info);
+  Serial.println("Setup complete");
+
+  while (1)
+  {
+    delay(10);
+    char *data = convertDataToChar(1, 2, 3, 4, timestamp);
+    writeToFile(file_temp, data);
+    delay(10);
+    const char *error_message = "Error message";
+    char *error = convertErrorToChar(1, error_message, timestamp);
+    writeToFile(file_error, error);
+    delay(1000); // Add a delay of 1 second (1000 milliseconds) between iterations
+  }
 }
 ```

@@ -8,11 +8,6 @@ int main(void){
 
   initPinChangeInterrupt();
   initiateSystem();
-
-  while (1)
-  {
-
-  }
   return 0;
 }
 
