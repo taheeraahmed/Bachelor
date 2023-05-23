@@ -5,11 +5,11 @@ const char *modeToString(Mode mode)
     switch (mode)
     {
     case NIR_LIGHT:
-        return "PLACEBO";
+        return "NIR-lys";
     case PLACEBO:
-        return "NOT_PLACEBO";
+        return "Placebo";
     case RANDOMIZED:
-        return "DOUBLE_BLINDED";
+        return "Randomisert";
     default:
         return "UNKNOWN_MODE";
     }
@@ -20,11 +20,11 @@ const char *durationToString(Duration duration)
     switch (duration)
     {
     case DURATION_20_MIN:
-        return "DURATION_20_MIN";
+        return "20 min";
     case DURATION_30_MIN:
-        return "DURATION_35_MIN";
+        return "30 min";
     case DURATION_40_MIN:
-        return "DURATION_40_MIN";
+        return "40 min";
     default:
         return "UNKNOWN_DURATION";
     }
@@ -35,11 +35,11 @@ const char *pvmFreqToString(PvmFreq pvmFreq)
     switch (pvmFreq)
     {
     case CONTINOUS:
-        return "CONTINUOUS";
+        return "Kontinuerlig";
     case LOW_FREQ:
-        return "LOW_FREQUENCY";
+        return "Lav frekvent";
     case HIGH_FREQ:
-        return "HIGH_FREQUENCY";
+        return "Høy frekvent";
     default:
         return "UNKNOWN_PVM_FREQ";
     }

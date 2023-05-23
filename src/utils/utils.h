@@ -137,4 +137,7 @@ struct Error
     String failed_part;
 };
 
+const char *modeToString(Mode mode);
+const char *durationToString(Duration duration);
+const char *pvmFreqToString(PvmFreq pvmFreq);
 #endif // STRUCTS_H
