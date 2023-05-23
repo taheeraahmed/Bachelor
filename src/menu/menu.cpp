@@ -15,6 +15,7 @@ uint8_t tempTestTime;
 uint8_t tempNirSettings;
 uint8_t tempTestMode;
 
+TestChoices temp_test_choices;
 TestChoices test_choices;
 
 // Variablene som skal lagres til CSV
@@ -134,9 +135,9 @@ void setPatientID(void)
         }
     }
     // Turn tempPasient into a number and concatenate
-    int patient_id = (tempPasientID[0]-'0')* 10 + (tempPasientID[1]-'0');
-    test_choices.patient_id = patient_id;
-    Serial.println(test_choices.patient_id);
+    int patient_id = (tempPasientID[0] - '0') * 10 + (tempPasientID[1] - '0');
+    temp_test_choices.patient_id = patient_id;
+    Serial.println(temp_test_choices.patient_id);
 }
 
 void setTime()
@@ -152,17 +153,17 @@ void setTime()
 
     if (customKey == '1')
     {
-        test_choices.duration = DURATION_20_MIN;
+        temp_test_choices.duration = DURATION_20_MIN;
         tempTestTime = 20; // default minutter
     }
     else if (customKey == '2')
     {
-        test_choices.duration = DURATION_30_MIN;
+        temp_test_choices.duration = DURATION_30_MIN;
         tempTestTime = 30; // default minutter
     }
     else if (customKey == '3')
     {
-        test_choices.duration = DURATION_40_MIN;
+        temp_test_choices.duration = DURATION_40_MIN;
         tempTestTime = 40; // default minutter
     }
 }
@@ -194,18 +195,18 @@ void chooseNIRsettings(void)
 
     if (customKey == '1')
     {
-        tempTestMode = 1; //Kontinuerlilg
-        test_choices.pvm_freq = CONTINOUS; // Kontinuelig
+        tempTestMode = 1;                       // Kontinuerlilg
+        temp_test_choices.pvm_freq = CONTINOUS; // Kontinuelig
     }
     else if (customKey == '2')
     {
-        tempTestMode = 2; // Høyfrekvent pulsering
-        test_choices.pvm_freq = HIGH_FREQ; // Høyfrekvent pulsering
+        tempTestMode = 2;                       // Høyfrekvent pulsering
+        temp_test_choices.pvm_freq = HIGH_FREQ; // Høyfrekvent pulsering
     }
     else if (customKey == '3')
     {
-        tempTestMode = 3; // Lavfrekvent pulsering
-        test_choices.pvm_freq = LOW_FREQ; // Lavfrekvent pulsering
+        tempTestMode = 3;                      // Lavfrekvent pulsering
+        temp_test_choices.pvm_freq = LOW_FREQ; // Lavfrekvent pulsering
     }
 }
 
@@ -222,18 +223,18 @@ void chooseMode(void)
 
     if (customKey == '1')
     {
-        test_choices.mode = NIR_LIGHT;
+        temp_test_choices.mode = NIR_LIGHT;
         tempTestMode = 1; // NIR-LYS
     }
     else if (customKey == '2')
     {
-        test_choices.mode = PLACEBO; // PLACEBO
-        tempTestMode = 2; // PLACEBO
+        temp_test_choices.mode = PLACEBO; // PLACEBO
+        tempTestMode = 2;                 // PLACEBO
     }
     else if (customKey == '3')
     {
-        test_choices.mode = RANDOMIZED; // RANDOMISERT
-        tempTestMode = 3; // RANDOMISERT
+        temp_test_choices.mode = RANDOMIZED; // RANDOMISERT
+        tempTestMode = 3;                    // RANDOMISERT
     }
 }
 
@@ -241,7 +242,7 @@ void showSettings(void)
 {
     char customKey = '0';
     clearScreen();
-    showSettingsScreen(1, "22-05-23");
+    showSettingsScreen(1, "22-05-23", temp_test_choices);
     while (customKey != '*')
     {
         customKey = customKeypad.getKey();
@@ -262,6 +263,7 @@ void SaveOrExit(void)
 
     if (customKey == '*')
     {
+        test_choices = temp_test_choices;
         PasientID[0] = tempPasientID[0];
         PasientID[1] = tempPasientID[1];
         TestTime = tempTestTime;

@@ -5,6 +5,7 @@
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
 #include "logoGray.h"
+#include "utils/utils.h"
 
 #ifndef SCREEN_H
 #define SCREEN_H
@@ -26,7 +27,7 @@ void chooseTimeScreen(uint8_t battery, char date[8]);
 void getLEDHeadScreen(uint8_t battery, char date[8]);
 void pulseNIRSettingsScreen(uint8_t battery, char date[8]);
 void chooseModeScreen(uint8_t battery, char date[8]);
-void showSettingsScreen(uint8_t battery, char date[8]);
+void showSettingsScreen(uint8_t battery, char date[8], TestChoices test_choices);
 void SaveOrExitScreen(uint8_t battery, char date[8]);
 
 //Skjermbildene for å kjøre koden til "RunUserMenu"
