@@ -3,16 +3,16 @@
 Koden setter opp grunnleggende funksjoner for TWI kommunikasjon fra ATmega2560. 
 Det implementeres logikk for gjennomføring av hele kommunikasjonsprosessen.
 
-### Funksjoner som starter TWI logikk
-#### void TWIStartTx(uint8_t address, uint8_t write_reg, uint8_t write_data);
+## Funksjoner som starter TWI logikk
+### void TWIStartTx(uint8_t address, uint8_t write_reg, uint8_t write_data);
 Oppstart av TWI kommunikasjon med tx-modus.
 Om det allerede et en aktiv TWI økt vil dataene settes i køen og startes opp når bussen blir ledig.
-#### void TWIStartRx(uint8_t address, uint8_t read_register);
+### void TWIStartRx(uint8_t address, uint8_t read_register);
 Oppstart av TWI kommunikasjon med rx-modus.
 Om det allerede et en aktiv TWI økt vil dataene settes i køen og startes opp når bussen blir ledig.
 
-### Funksjoner for innhenting av data fra slaver
-#### RTC
+## Funksjoner for innhenting av data fra slaver
+### RTC
  - void getDate(void);
         Henter ut dato fra RTC.
         Motatt data lagres i den globale variabelen calcDate[3] på formatet [dd,mm,åå]
@@ -35,7 +35,7 @@ Om det allerede et en aktiv TWI økt vil dataene settes i køen og startes opp n
         Resetter RTC og oppdater dato og tid.
         Må gjøres hver gang RTC-en har mistet strømtilførsel.
 
-#### Batterivakt
+### Batterivakt
  - void getBatteryState(void);
         Henter ut data om Batteriet.
         Lagres i arrayet batteryState[3]:
@@ -43,7 +43,7 @@ Om det allerede et en aktiv TWI økt vil dataene settes i køen og startes opp n
             - batteryState[1]   -   Verdi fra 1-5 for batteri indikator på skjermen [1-5]
             - batteryState[2]   -   Batteriets StateOfHealt [0-100]
 
-#### Digital til Analog konverterer
+### Digital til Analog konverterer
  - void setDAC(bool on_off);
         Setter utgangsspenningen på DAC.
         Når den skrus på settes 5V ut.
