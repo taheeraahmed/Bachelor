@@ -271,8 +271,11 @@ void initPinChangeInterrupt(void){
 
 ISR(PCINT1_vect){
     // Når systemet sover vil trykk på grønn knapp vekke systemet og gå til skjermens forside.
-    if (system_state == 0){
+    if ((system_state == 0) && (threshold_skin_contact == 0)){
     SMCR &= ~((1 << PIN2) | (1 << PIN0));
     system_state = 1;
+    }
+    if ((system_state == 2) && (threshold_skin_contact == 0)){
+        // Start forsøk i meny.
     }
 }
