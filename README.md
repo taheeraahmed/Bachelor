@@ -12,27 +12,53 @@ to the existing prototype.
 The code is divided into different parts. Each part has its own folder and header file. The header files are located in the src folder. The header files are included in the main code and the functions are used in the main code.
 
 ```
+├── README.md
 ├── src
-│   ├── main.cpp
-│   ├── utils.h
-│   ├── BlinkeLed.h
+│   ├── NIR
+│   │   ├── NIR.c
+│   │   └── NIR.h
 │   ├── PWM
-│   │   ├── PWM.cpp
+│   │   ├── PWM.c
 │   │   └── PWM.h
+│   ├── Screen
+│   │   ├── README.md
+│   │   ├── Screen.cpp
+│   │   ├── Screen.h
+│   │   └── logoGray.h
 │   ├── TWI
-│   │   ├── TWI.cpp
+│   │   ├── TWI.c
 │   │   └── TWI.h
 │   ├── Temp
-│   │   ├── Temp.cpp
+│   │   ├── Temp.c
 │   │   └── Temp.h
-│   ├── fan
-│   │   ├── fan.cpp
-│   │   └── fan.h
+│   ├── getError
+│   │   ├── README.md
+│   │   ├── getError.c
+│   │   └── getError.h
 │   ├── getTime
-│   │   ├── getTime.cpp
+│   │   ├── getTime.c
 │   │   └── getTime.h
+│   ├── ledControls
+│   │   ├── ledControls.c
+│   │   └── ledControls.h
+│   ├── main.cpp
+│   ├── mainFunctions
+│   │   ├── mainFunctions.cpp
+│   │   └── mainFunctions.h
+│   ├── menu
+│   │   ├── menu.cpp
+│   │   └── menu.h
+│   ├── settings
+│   │   ├── README.md
+│   │   ├── settings.cpp
+│   │   └── settings.h
+│   ├── utils
+│   │   ├── pins.h
+│   │   ├── utils.cpp
+│   │   └── utils.h
 │   └── writeToFile
 │       ├── README.md
+│       ├── helper.cpp
 │       ├── writeToFile.cpp
 │       └── writeToFile.h
 ```
