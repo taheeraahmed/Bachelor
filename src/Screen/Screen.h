@@ -13,16 +13,11 @@
 void initScreen();
 void clearScreen();
 void homeScreen(uint8_t battery, char date[8]);
+
+// Oppdatering av batteriprosent og 
 void batteryCharge(uint8_t battery_charge);
 void skinContactStatus(uint8_t skin_contact);
-
-//unsigned char batteryUpdate(uint8_t battery_charge); //fjerne kanskje?
-
-
-void drawtextHeading(char *text, uint16_t color);
-void drawtextSkinContact(char *text, uint16_t color);
-void drawtextDate(char *text, uint16_t color);
-void drawtextNormal(char *text, uint16_t color);
+void drawDateAndBatteyCharge(uint8_t battery_charge, char date[8]);
 
 //Skjermbildene for å kjøre koden til "RunSientistMenu"
 void setPasswordScreen(uint8_t battery, char date[8]);
@@ -42,10 +37,10 @@ void exitExperimentScreen(uint8_t battery, char date[8]);
 
 //Skjermbildene for feilmeldinger på skjermen
 void wrongPasswordScreen(uint8_t battery, char date[8]);
-void overheatingScreen();
+void criticalErrorScreen();
 void noSkinContactScreen();
 
-//Firkanter med tekst og fargefyll for å indikere status på hudkontakten
+//Firkanter med plassering tekst og fargefyll for å indikere status på hudkontakten
 void greenRectangle();
 void yellowRectangle();
 void redRectangle();

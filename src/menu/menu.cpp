@@ -53,7 +53,7 @@ void waitForPassword(void)
     while (counter < 6)
     {
         key = customKeypad.getKey();
-        if (key == '1' | key == '2' | key == '3' | key == '4' | key == '5' | key == '6' | key == '7' | key == '8' | key == '9' | key == '0')
+        if ((key == '1') | (key == '2') | (key == '3') | (key == '4') | (key == '5') | (key == '6') | (key == '7') | (key == '8') | (key == '9') | (key == '0'))
         {
 
             if (counter == 0)
@@ -120,7 +120,7 @@ void setPatientID(void)
     {
 
         key = customKeypad.getKey();
-        if (key == '1' | key == '2' | key == '3' | key == '4' | key == '5' | key == '6' | key == '7' | key == '8' | key == '9' | key == '0')
+        if ((key == '1') | (key == '2') | (key == '3') | (key == '4') | (key == '5') | (key == '6') | (key == '7') | (key == '8') | (key == '9') | (key == '0'))
         {
 
             if (counter == 0)
@@ -146,7 +146,7 @@ void setTime()
 
     clearScreen();
     chooseTimeScreen(1, "22-05-23");
-    while (customKey != '1' & customKey != '2' & customKey != '3')
+    while ((customKey != '1') & (customKey != '2') & (customKey != '3'))
     {
         customKey = customKeypad.getKey();
     }
@@ -188,7 +188,7 @@ void chooseNIRsettings(void)
     clearScreen();
     pulseNIRSettingsScreen(4, "22-05-23");
 
-    while (customKey != '1' & customKey != '2' & customKey != '3')
+    while ((customKey != '1') & (customKey != '2') & (customKey != '3'))
     {
         customKey = customKeypad.getKey();
     }
@@ -216,7 +216,7 @@ void chooseMode(void)
     clearScreen();
     chooseModeScreen(2, "22-05-23");
 
-    while (customKey != '1' & customKey != '2' & customKey != '3')
+    while ((customKey != '1') & (customKey != '2') & (customKey != '3'))
     {
         customKey = customKeypad.getKey();
     }
@@ -256,7 +256,7 @@ void SaveOrExit(void)
     char customKey = '0';
     clearScreen();
     SaveOrExitScreen(1, "22-05-23");
-    while (customKey != '*' & customKey != '#')
+    while ((customKey != '*') & (customKey != '#'))
     {
         customKey = customKeypad.getKey();
     }
@@ -291,7 +291,7 @@ void systemWaiting(void)
     char customKey = '0'; // forandret på denne sånn at man hopper tilbake til hjemskjermen var char customKey;
     clearScreen();
     homeScreen(3, "22-05-23");
-    while (customKey != '*'& customKey !='1'){
+    while ((customKey != '*') & (customKey !='1')){
 
         customKey = customKeypad.getKey();
     }
