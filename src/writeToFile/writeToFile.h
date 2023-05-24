@@ -14,8 +14,6 @@ void createFile(char *headers, char *filename, TestChoices test_choices);
 void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename);
 void writeToFile(char *filename, char *data);
 
-
-
 // Helper functions
 uint8_t getExperimentId(void);
 uint8_t checkIfFileExists(const char *filename);

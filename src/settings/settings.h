@@ -4,5 +4,5 @@
 #include <SPI.h>
 
 // Used for getting and saving settings
-void saveSettingsToFile(TestChoices test_choices, char *filename);
-TestChoices getSettingsFromFile(char *filename);
+void saveSettingsToFile(TestChoices test_choices);
+TestChoices getSettingsFromFile();
