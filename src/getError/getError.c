@@ -6,8 +6,8 @@
 
 #include <avr/io.h>
 
-volatile int get_error[21];
-volatile int write_error[21];
+volatile int get_error[26];
+volatile int write_error[26];
 int j = 0;
 
 /**
@@ -19,7 +19,7 @@ int j = 0;
 * til et array hvilket flagg som er satt.
 */
 void getError(void){
-    for (int i = 0; i < 21; i++)
+    for (int i = 0; i < 26; i++)
     {
         int error_flagg = get_error[i];
 
