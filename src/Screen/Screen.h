@@ -4,17 +4,18 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
-#include "logoGray.h"
+#include "Screen/logoGray.h"
 #include "utils/utils.h"
 
 #ifndef SCREEN_H
 #define SCREEN_H
 
 void initScreen();
+void testInitScreen();                              //Slett senere
 void clearScreen();
 void homeScreen(uint8_t battery, char date[8]);
 
-// Oppdatering av batteriprosent og 
+// Oppdatering av batteriprosent og status på hudkontakt
 void batteryCharge(uint8_t battery_charge);
 void skinContactStatus(uint8_t skin_contact);
 void drawDateAndBatteyCharge(uint8_t battery_charge, char date[8]);
@@ -40,7 +41,7 @@ void wrongPasswordScreen(uint8_t battery, char date[8]);
 void criticalErrorScreen();
 void noSkinContactScreen();
 
-//Firkanter med plassering tekst og fargefyll for å indikere status på hudkontakten
+//Firkanter med plassering an tekst og fargefyll for å indikere status på hudkontakten
 void greenRectangle();
 void yellowRectangle();
 void redRectangle();

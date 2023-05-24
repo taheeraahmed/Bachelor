@@ -22,5 +22,10 @@ void chooseNIRsettings(void);
 void chooseMode(void);
 void showSettings(void);
 void SaveOrExit(void);
-
+/*
+void getSkinContact(void);
+void selectStartButton(void);
+void runExperiment(void);
+void exitExperiment(void);
+*/
 #endif

@@ -1,45 +1,47 @@
-#include "Screen/Screen.h"
-#include "utils/utils.h"
-/*
-Bruker "Adafruit ST7735 and ST7789 Library" elksempelkode "graphicstest" til oppsett og initialisering av skjermen.
+/***************************************************************************************************************
+
+Bruker metode hentet fra "Adafruit ST7735 and ST7789 Library" elksempelkode "graphicstest" til oppsett og initialisering av skjermen (kodelinje 22 til 47):
 https://github.com/adafruit/Adafruit-ST7735-Library/blob/master/examples/graphicstest/graphicstest.ino
 I denne koden er det brukt en ST3577S skjerm på 1.8 inch TFT.
+
 Oppkobling fra skjerm til Arduino er som følger:
 LED –› 3.3V
-SCK –› (52)
-SDA –› (51)
+SCK –› 52 (36)
+SDA –› 51 (35)
 A0 –› 34
 RESET –› 33
 CS –› 32
 GND –› GND
 VCC –› 5V
-*/
 
-const int TFT_CS = 32;  // (CS)
-const int TFT_DC = 34;  // (A0)
-const int TFT_RST = 33; // (RESET)
+***************************************************************************************************************/
+#include "Screen/Screen.h"
+#include "utils/utils.h"
 
 
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST); // Bruker maskinvare SPI der SCLK (SCK) er koblet til pinne 52 og MOSI (SDA) er på pinne 51
+const int TFT_CS = 32;
+const int TFT_RESET = 33;
+const int TFT_A0 = 34;
+
+
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_A0, TFT_RESET); // Bruker maskinvare SPI der SCLK (SCK) er koblet til pinne 52 og MOSI (SDA) er på pinne 51
 /*
 //Alternativt kan man bruke denne koden om man ikke skal bruke maskinvare SPI:
-// Navn i parantes er navngiving på selve skjermpinnene
+// Navn i parantes er navngiving i selve eksempelkoden
 
 const int TFT_CS = 32;  // (CS)
-const int TFT_DC = 34;  // (A0)
-const int TFT_RST = 33; // (RESET)
-const int TFT_MOSI = 35;  // (SDA)
-const int TFT_SCLK = 36;  // (SCK)
+const int TFT_RESET = 33; // (RST)
+const int TFT_A0 = 34;  // (DC)
+const int TFT_SDA = 35;  // (MOSI)
+const int TFT_SCK = 36;  // (SCLK)
 
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_A0, TFT_SDA, TFT_SCK, TFT_RESET);
 */
 
 void initScreen()
 {                               // Initialiserer skjermen
   tft.initR(INITR_BLACKTAB);    // Initialiserer en 1.8 inc TFT skjerm med ST7735S chip
-                                // uint16_t time = millis();     // fjern dette ?
   tft.fillScreen(ST7735_BLACK); // Fyller skjermen med svart farge
-                                // time = millis() - time;       // fjern dette ?
   tft.setRotation(3);           // Roterer skjermen 90 grader med klokken
 }
 
@@ -51,7 +53,7 @@ void clearScreen()
 }
 
 
-void batteryCharge(uint8_t battery_charge)
+void batteryCharge(uint8_t battery_charge)              //
 {
   switch (battery_charge)
   {
@@ -72,7 +74,8 @@ void batteryCharge(uint8_t battery_charge)
     break;
   }
 }
-void skinContactStatus(uint8_t skin_contact)
+
+void skinContactStatus(uint8_t skin_contact)            //
 {
   switch (skin_contact)
   {
@@ -95,6 +98,14 @@ void drawDateAndBatteyCharge(uint8_t battery_charge, char date[8])
   tft.println("Dato: ");
   tft.setCursor(40, 5);
   tft.println(date);
+}
+
+void testInitScreen()
+{
+  clearScreen();
+  tft.setCursor(30,30);
+  tft.setTextSize(2);
+  tft.println("Init skjerm");
 }
 
 void homeScreen(uint8_t battery_charge, char date[8])
@@ -267,7 +278,7 @@ void runExperimentScreen(uint8_t battery_charge, char date[8], char remaining_se
   tft.setCursor(0, 30);
   tft.println("PasientID: ");
   tft.setCursor(65, 30);
-  tft.println("xx");
+  tft.println(" x x");
   tft.setCursor(0, 50);
   tft.println("Gjenstaaende tid: ");
   tft.setCursor(20, 70);
@@ -315,29 +326,29 @@ void noSkinContactScreen()
   redRectangle();
 }
 
-void greenRectangle()
+void greenRectangle()             //"Hudkontakt" med grønn boks for å indikere at hudkontakt er opprettet
 {
-  tft.setTextSize(1);
-  tft.setCursor(20, 110);
-  tft.println("Hudkontakt: ");
-  tft.fillRect(131, 106, 24, 20, ST7735_BLACK);
-  tft.fillRect(133, 108, 20, 16, ST7735_GREEN);
+  tft.setTextSize(1);                                 // Default tekststørrelse
+  tft.setCursor(20, 110);                             // Plassering til tekst
+  tft.println("Hudkontakt: ");                        // Tekst før boks
+  tft.fillRect(131, 106, 24, 20, ST7735_BLACK);       // Hvis man vil lage kantlinje rundt boksen –› forandre farge
+  tft.fillRect(133, 108, 20, 16, ST7735_GREEN);       // Grønn firkant
 }
 
-void yellowRectangle()
+void yellowRectangle()            //"Hudkontakt" med gul boks for å indikere at hudkontakt er midlertidig mistet
 {
   tft.setTextSize(1);
   tft.setCursor(20, 110);
   tft.println("Hudkontakt: ");
   tft.fillRect(131, 106, 24, 20, ST7735_BLACK);
-  tft.fillRect(133, 108, 20, 16, ST7735_YELLOW);
+  tft.fillRect(133, 108, 20, 16, ST7735_YELLOW);      // Gul firkant
 }
 
-void redRectangle()
+void redRectangle()               //"Hudkontakt" med gul boks for å indikere at hudkontakt er mistet and no way back
 {
   tft.setTextSize(1);
   tft.setCursor(20, 110);
   tft.println("Hudkontakt: ");
   tft.fillRect(131, 106, 24, 20, ST7735_BLACK);
-  tft.fillRect(133, 108, 20, 16, ST7735_RED);
+  tft.fillRect(133, 108, 20, 16, ST7735_RED);         // Rød firkant
 }
