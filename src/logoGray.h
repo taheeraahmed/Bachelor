@@ -1,9 +1,14 @@
-/*
+/***************************************************************************************************************
+Brukte denne fremgangsmåten for monokrome ikoner til lage bilder for å bitmappe bildene:
+https://www.instructables.com/Converting-Images-to-Flash-Memory-Iconsimages-for-/
 
-Brukte denne eksempelkoden til inspirasjon for å bitmappe 
+Brukte APT logog hentet fra denne siden og beskjært manuelt:
+https://www.apt-norway.com
+
+Brukte denne eksempelkoden til inspirasjon for å bitmappe:
 https://github.com/STEMpedia/eviveProjects/blob/master/imageToFlashMemoryIconsForTFT/tftIcons/tftIcons.ino
+***************************************************************************************************************/
 
-*/
 #ifndef LOGOGRAY_H
 #define LOGOGRAY_H
 
