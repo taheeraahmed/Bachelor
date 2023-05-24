@@ -1,3 +1,25 @@
+# Settings
+
+## Description
+This module is responsible for saving and loading settings from the SD card.
+
+## Functions
+### saveSettingsToFile
+Saves the settings to the SD card.
+
+- Params: `TestChoices test` - The settings to save.
+- Returns: `void`
+
+### getSettingsFromFile
+Loads the settings from the SD card.
+
+- Params: `void`
+- Returns: `TestChoices` - The settings loaded from the SD card.
+
+## Example
+This is the code used for testing if it works. It saves the settings to the SD card and then loads them back and prints them to the serial monitor.
+
+```cpp
 #include "settings/settings.h"
 #include <Adafruit_I2CDevice.h>
 #include "writeToFile/writeToFile.h"
@@ -44,3 +66,4 @@ void loop()
 
   delay(50000);
 }
+```
