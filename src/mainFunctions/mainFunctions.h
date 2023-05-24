@@ -12,11 +12,14 @@
 #ifndef mainFunctions_H
 #define mainFunctions_H
 
+extern volatile bool greenButtonTrigg;
+
 void initiateSystem(void);
 void testDataUpdate(unsigned long testLength);
 void setSystemSleep(void);
-uint8_t getRemainingSeconds(unsigned long start, unsigned long duration);
-uint8_t getRemainingMinutes(unsigned long start, unsigned long duration);
+char *getRemainingSeconds(unsigned long start, unsigned long duration);
+char *getRemainingMinutes(unsigned long start, unsigned long duration);
 void initPinChangeInterrupt(void);
 void runSystem(void);
+
 #endif // !

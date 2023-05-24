@@ -2,22 +2,35 @@
 
 
 uint8_t system_state = 0;
+
 // Initierer globale variabler som brukes i videre kode.
+/*
 uint8_t calcDate[3];
 uint8_t calcTime[3];
 uint8_t batteryState[3];
+*/
 
 char timeChar[8];
 char dateChar[8];
 char dateTimeChar[17];
 
+volatile bool greenButtonTrigg = false;
+char minutes_char[2];
+char seconds_char[2];
+
 bool critical_error_detect = false;
+
+// Initialisering av .csv filer.
+    char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
+    char error_headers[50] = "datetime,error_code,error_msg";
+    char info_header[29] = "Information about experiment";
 
 /**
  * @brief En funksjon for å initiere systemet.
  * @details Denne funksjonen kaller på alle initieringsfunksjonene i systemet.
  */
 void initiateSystem(void){
+    
     initADC();
     initGetTime();
     initLedPins();
@@ -25,12 +38,15 @@ void initiateSystem(void){
     initTimer2();
     initTimer3();
     initTWI();
+    initScreen();
     initPinChangeInterrupt();
 
     Sd2Card card;
     MEMORY_EXTENSION_PINS mem_ext_pins;
     initSD(mem_ext_pins.CS);
     initCard(mem_ext_pins.CS, card);
+
+    system_state = 1;
 
     sei();  // Aktiverer interrupts.
 }
@@ -48,35 +64,20 @@ void testDataUpdate(unsigned long testLength){
     unsigned long test_time_start = getTime();
     unsigned long test_time_new = getTime();
     unsigned long test_time_old;
+    unsigned long testLength_ms = testLength*60000;
 
-    uint16_t ms_to_sample = 60000; // Setter tid mellom hver sample til 60 000 ms = 1 minutt.
+    unsigned long ms_to_sample = 60000; // Setter tid mellom hver sample til 60 000 ms = 1 minutt.
+     runExperimentScreen(batteryState[1], dateChar, getRemainingSeconds(test_time_new, testLength), getRemainingMinutes(test_time_new, (testLength)), threshold_skin_contact);
 
-    // Henter dato og tid for tidsstempel
-    getDate();
-    getTimeStamp();
-
-    // Initialisering av .csv filer.
-    char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
-    char error_headers[50] = "datetime,error_code,error_msg";
-    char info_header[29] = "Information about experiment";
-    
-    // Initialisering av testvalg.
-    /*
-    TestChoices test;
-    test.mode = PLACEBO;
-    test.duration = DURATION_30_MIN;
-    test.pvm_freq = LOW_FREQUENCY;
-    test.patient_id = 123;
-    
+    TestChoices test;    
     test.experiment_id = getExperimentId();
-    */
 
     // Lager filmappe og finavn.
     createDirectory(test.experiment_id);
     char *file_temp = createFileName(TEMP, test);
     char *file_error = createFileName(ERROR, test);
     char *file_info = createFileName(INFO, test);
-
+    
     // Lager filer basert på filnavnene.
     createFile(temp_headers, file_temp, test);
     createFile(error_headers, file_error, test);
@@ -84,14 +85,19 @@ void testDataUpdate(unsigned long testLength){
     writeInfoFile(test, formatDateTimeToChar(calcDate, calcTime), file_info);
 
     // Skrur på NIR-lys med innstillingene satt i forskerMeny.
-    startNIR(0,0,0); // NIRmode, NIRfreq, R_ID
+    calcLedID();
+    
+    startNIR(test.mode, test.pvm_freq, ID_NIR_LED); // NIRmode, NIRfreq, R_ID
 
     // Skrur på LED-indikatorer for at forsøket er i gang.
     testIndicatorOn();    
     greenLedBlink();
 
+   
+
     // Hovedløkke for forsøket.
-    while ((test_time_new - test_time_start) <= (testLength*1000)){
+    while ((test_time_new - test_time_start) < (testLength_ms)){
+        
         // Temperatursensorene oppdateres.
         setFlaggADC();
         test_time_new = getTime();
@@ -99,23 +105,29 @@ void testDataUpdate(unsigned long testLength){
         // Hvert minutt oppdateres .csv filen med nye temperaturverdier.
         if (test_time_new - test_time_old > ms_to_sample){
             // Henter dato og tid for tidsstempel;
-            getDate();
-            getTimeStamp();
+            //getDate();
+            //getTimeStamp();
+            formatDateToChar(calcDate);
             formatDateTimeToChar(calcDate, calcTime);
 
+            // Oppdaterer batteriStatus
+            //getBatteryState();
+
+            // Skjerm oppdateres:
+            runExperimentScreen(3, "blabla", "22", "33", 1);
             //Skriver data til .csv fil (0: Led , 1: pcb, 2: skin, 3:air, 4: datetime)
             char *data = convertDataToChar(temp_value_array[0], temp_value_array[1], temp_value_array[2], temp_value_array[3], dateTimeChar);
             writeToFile(file_temp, data);
             
             test_time_old = test_time_new;
         }
-
+        /*
         // Sjekker om det er dukket opp noen feilmeldinger
         if (write_error[0] == 1){
             redLedBlink();
             // Henter dato og tid for tidsstempel;
-            getDate();
-            getTimeStamp();
+            //getDate();
+            //getTimeStamp();
             formatDateTimeToChar(calcDate, calcTime);
 
             uint8_t i = 0;
@@ -139,9 +151,9 @@ void testDataUpdate(unsigned long testLength){
                     critical_error_detect = true;
                 }
 
-                /*
-                Om hudkontakt blir mistet venter systemet i ett minutt før forsøket avsluttet.
-                */
+                
+                //Om hudkontakt blir mistet venter systemet i ett minutt før forsøket avsluttet.
+                
                 if (threshold_skin_contact == 1){
                     unsigned long skin_error_start = getTime();
                     unsigned long skin_error_curent;
@@ -166,11 +178,13 @@ void testDataUpdate(unsigned long testLength){
                     else{
                      get_error[21] = 0;   
                     }     
+                    
             }
         }
         else{
             redLedOff();
         }
+        */
         
     }
     // Forsøk avsluttes - NIR-lys skrus av og indikatorer deaktiveres.
@@ -194,17 +208,19 @@ void setSystemSleep(void){
  * @param duration Lengden på forsøket i minutter
  * @return uint8_t Antall gjenværende minutter av forsøket
  */
-uint8_t getRemainingMinutes(unsigned long start, unsigned long duration){
+char *getRemainingMinutes(unsigned long start, unsigned long duration){
     unsigned long current_time = getTime();
     unsigned long remaining_time_ms = (duration*60000) - (current_time - start);
 
     uint8_t remaining_seconds = remaining_time_ms/1000;
     uint8_t remaining_minutes = remaining_seconds/60;
 
+    sprintf(minutes_char, "%d", remaining_minutes);
+
     if (remaining_minutes <= 3){
         greenLedBlink();
     }
-    return remaining_minutes;
+    return minutes_char;
 }
 
 /**
@@ -214,12 +230,14 @@ uint8_t getRemainingMinutes(unsigned long start, unsigned long duration){
  * @param duration Lenget på forsøket i minutter
  * @return uint8_t Antall gjenværende sekunder av forsøket fratrukket minutter
  */
-uint8_t getRemainingSeconds(unsigned long start, unsigned long duration){
+char *getRemainingSeconds(unsigned long start, unsigned long duration){
     unsigned long current_time = getTime();
-    unsigned long remaining_ms = duration - (current_time - start);
+    unsigned long remaining_ms = (duration*60000) - (current_time - start);
     uint8_t remaining_seconds = remaining_ms/1000;
     uint8_t remaining_seconds_removed_minutes = remaining_seconds%60;
-    return remaining_seconds_removed_minutes;
+
+    sprintf(seconds_char, "%d", remaining_seconds_removed_minutes);
+    return seconds_char;
 }
 
 /**
@@ -229,6 +247,7 @@ uint8_t getRemainingSeconds(unsigned long start, unsigned long duration){
  */
 void runSystem(void){
   setFlaggADC();
+
   switch (system_state){
     case 0:
         // Systemet sover. Ingentig skjer.
@@ -238,23 +257,19 @@ void runSystem(void){
         // System is initiated
         initiateSystem();
         // APT logo is shown
+        // Videre styres systemet av menyen
         systemWaiting();
+        system_state = 2;
+        
         break;
 
     case 2:
-        // Kjører bruker meny
-        break;
-
-    case 3:
-        // Kjør forsker meny
-        system_state = 0;
-        break;
-    case 4:
         // Skrur av skjerm og setter systemet i dvale.
         clearScreen();
         setSystemSleep();
         system_state = 0;
         break;
+        
   }
 }
 
@@ -271,12 +286,18 @@ void initPinChangeInterrupt(void){
 }
 
 ISR(PCINT1_vect){
-    // Når systemet sover vil trykk på grønn knapp vekke systemet og gå til skjermens forside.
-    if ((system_state == 0) && (threshold_skin_contact == 0)){
-    SMCR &= ~((1 << PIN2) | (1 << PIN0));
-    system_state = 1;
+    // Når systemet sover vil trykk på grønn knapp vekke systemet og gå til skjermens forside.    
+    if ((system_state == 0)){
+        SMCR &= ~((1 << PIN2) | (1 << PIN0));
+        system_state = 1;
     }
-    if ((system_state == 2) && (threshold_skin_contact == 0)){
+    
+    if ((system_state == 1) && (threshold_skin_contact == 1)){
         // Start forsøk i meny.
+        greenButtonTrigg = true;
     }
+    else{
+        greenButtonTrigg = true;
+    }
+    
 }
