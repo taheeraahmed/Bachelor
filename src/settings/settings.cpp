@@ -1,4 +1,5 @@
 #include "writeToFile/writeToFile.h"
+#include "getError/getError.h"
 
 /**
  * @brief Function which saves the settings to a file
@@ -6,7 +7,6 @@
  * @param test_choices: The struct containing the test choices
  * @return void
  */
-
 void saveSettingsToFile(TestChoices test_choices)
 {
     const char *filename = "settings.txt";
@@ -14,12 +14,12 @@ void saveSettingsToFile(TestChoices test_choices)
     if (checkIfFileExists(filename))
     {
         SD.remove(filename);
-        Serial.println("File removed.");
     }
 
     File file = SD.open(filename, FILE_WRITE);
     if (file)
     {
+        get_error[26] = 0;
         // Write mode
         file.print("mode:");
         file.println(test_choices.mode);
@@ -42,8 +42,7 @@ void saveSettingsToFile(TestChoices test_choices)
     }
     else
     {
-        Serial.print("Error opening file: ");
-        Serial.println(filename);
+        get_error[26] = 1;
     }
 }
 
@@ -55,22 +54,47 @@ void saveSettingsToFile(TestChoices test_choices)
 TestChoices getSettingsFromFile()
 {
     TestChoices test_choices;
-    char *filename = "settings.txt";
+    const char *filename = "settings.txt";
     File file = SD.open(filename, FILE_READ);
     if (file)
     {
+        get_error[25] = 0;
         while (file.available())
         {
-            /* Insert string converstion to TestChoices*/
+            String line = file.readStringUntil('\n');
+            line.trim();
+            if (line.startsWith("mode:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.mode = intToMode(value.toInt());
+            }
+            else if (line.startsWith("duration:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.duration = intToDuration(value.toInt());
+            }
+            else if (line.startsWith("pvm_freq:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.pvm_freq = intToPvmFreq(value.toInt());
+            }
+            else if (line.startsWith("patient_id:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.patient_id = value.toInt();
+            }
+            else if (line.startsWith("experiment_id:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.experiment_id = value.toInt();
+            }
         }
-
         file.close();
     }
     else
     {
-        // Error opening file
-        Serial.print("Error opening file: ");
-        Serial.println(filename);
+        get_error[25] = 1;
     }
+    
     return test_choices;
 }
