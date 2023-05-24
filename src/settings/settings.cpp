@@ -6,7 +6,6 @@
  * @param test_choices: The struct containing the test choices
  * @return void
  */
-
 void saveSettingsToFile(TestChoices test_choices)
 {
     const char *filename = "settings.txt";
