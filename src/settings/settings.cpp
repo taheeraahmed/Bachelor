@@ -1,4 +1,5 @@
 #include "writeToFile/writeToFile.h"
+#include "getError/getError.h"
 
 /**
  * @brief Function which saves the settings to a file
@@ -13,7 +14,6 @@ void saveSettingsToFile(TestChoices test_choices)
     if (checkIfFileExists(filename))
     {
         SD.remove(filename);
-        Serial.println("File removed.");
     }
 
     File file = SD.open(filename, FILE_WRITE);

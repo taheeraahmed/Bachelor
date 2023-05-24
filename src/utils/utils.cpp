@@ -41,6 +41,7 @@ const char *pvmFreqToString(PvmFreq pvmFreq)
     case HIGH_FREQ:
         return "Hoy frekvent";
     default:
+        Serial.println("UNKNOWN_PVM_FREQ");
         return "UNKNOWN_PVM_FREQ";
     }
 }
@@ -56,6 +57,7 @@ Mode intToMode(int value)
     case 3:
         return RANDOMIZED;
     default:
+        Serial.println("UNKNOWN_MODE");
         return UNKNOWN_MODE;
     }
 }
@@ -71,6 +73,7 @@ Duration intToDuration(int value)
     case 3:
         return DURATION_40_MIN;
     default:
+        Serial.println("UNKNOWN_DURATION");
         return UNKNOWN_DURATION;
     }
 }
@@ -86,6 +89,7 @@ PvmFreq intToPvmFreq(int value)
     case 3:
         return HIGH_FREQ;
     default:
+        Serial.println("UNKNOWN_PVM_FREQ");
         return UNKNOWN_PVM_FREQ;
     }
 }
