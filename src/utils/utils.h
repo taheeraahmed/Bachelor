@@ -12,9 +12,9 @@
  */
 typedef enum
 {
-  INFO = 1,
-  TEMP,
-  ERROR
+    INFO = 1,
+    TEMP,
+    ERROR
 } FileType;
 
 /**
@@ -25,9 +25,9 @@ typedef enum
 
 typedef enum
 {
-  PLACEBO = 1,
-  NOT_PLACEBO,
-  DOUBLE_BLINDED
+    NIR_LIGHT = 1,
+    PLACEBO,
+    RANDOMIZED
 } Mode;
 
 /**
@@ -37,8 +37,9 @@ typedef enum
  */
 typedef enum
 {
-  DURATION_30_MIN = 1,
-  DURATION_45_MIN
+    DURATION_20_MIN = 1,
+    DURATION_30_MIN,
+    DURATION_40_MIN
 } Duration;
 
 /**
@@ -48,9 +49,9 @@ typedef enum
  */
 typedef enum
 {
-  CONTINUOUS = 1,
-  LOW_FREQUENCY,
-  HIGH_FREQUENCY
+    CONTINOUS = 1,
+    LOW_FREQ,
+    HIGH_FREQ
 } PvmFreq;
 
 /**
@@ -63,12 +64,13 @@ typedef enum
  */
 typedef struct
 {
-  Mode mode;
-  Duration duration;
-  PvmFreq pvm_freq;
-  uint8_t patient_id;
-  uint8_t experiment_id;
+    Mode mode;
+    Duration duration;
+    PvmFreq pvm_freq;
+    uint8_t patient_id;
+    uint8_t experiment_id;
 } TestChoices;
+
 /**
  * @brief This struct is used to store the information about the pins belonging to the memory extension
  * @details
@@ -81,11 +83,11 @@ typedef struct
  */
 typedef struct
 {
-  const int CS = 53;  // SPI chip select pin
-  const int DO = 50;  // SPI data out pin
-  const int DI = 51;  // SPI data in pin
-  const int CLK = 52; // SPI clock pin
-  const int CD = 49;  // Card detect pin I/O
+    const int CS = 53;  // SPI chip select pin
+    const int DO = 50;  // SPI data out pin
+    const int DI = 51;  // SPI data in pin
+    const int CLK = 52; // SPI clock pin
+    const int CD = 49;  // Card detect pin I/O
 } MEMORY_EXTENSION_PINS;
 
 /**
@@ -99,10 +101,10 @@ typedef struct
  */
 typedef struct
 {
-  const int PCB = A1;
-  const int LED = A2;
-  const int AIR = A3;
-  const int SKIN = A4;
+    const int PCB = A1;
+    const int LED = A2;
+    const int AIR = A3;
+    const int SKIN = A4;
 } TEMPERATURE_PINS;
 
 /**
@@ -114,8 +116,8 @@ typedef struct
  */
 typedef struct
 {
-  const int LED = 10;
-  const int CONTROL = 11;
+    const int LED = 10;
+    const int CONTROL = 11;
 } FAN_PINS;
 
 /**
@@ -129,10 +131,13 @@ typedef struct
  */
 struct Error
 {
-  int error_no;
-  String category;
-  String error_text;
-  String failed_part;
+    int error_no;
+    String category;
+    String error_text;
+    String failed_part;
 };
 
+const char *modeToString(Mode mode);
+const char *durationToString(Duration duration);
+const char *pvmFreqToString(PvmFreq pvmFreq);
 #endif // STRUCTS_H
