@@ -27,7 +27,7 @@ uint8_t getExperimentId(void)
  * @param filename: The name of the file to be checked
  * @return uint8_t: Returns 1 if the file exists, 0 if it doesn't
  */
-uint8_t checkIfFileExists(char *filename)
+uint8_t checkIfFileExists(const char *filename)
 {
     if (SD.exists(filename))
     {
