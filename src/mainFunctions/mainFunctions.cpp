@@ -11,9 +11,7 @@ char timeChar[8];
 char dateChar[8];
 char dateTimeChar[17];
 
-int write_error[4];
-
-bool crirical_error_detect = false;
+bool critical_error_detect = false;
 
 /**
  * @brief En funksjon for å initiere systemet.
@@ -63,12 +61,15 @@ void testDataUpdate(unsigned long testLength){
     char info_header[29] = "Information about experiment";
     
     // Initialisering av testvalg.
+    /*
     TestChoices test;
     test.mode = PLACEBO;
     test.duration = DURATION_30_MIN;
     test.pvm_freq = LOW_FREQUENCY;
     test.patient_id = 123;
+    
     test.experiment_id = getExperimentId();
+    */
 
     // Lager filmappe og finavn.
     createDirectory(test.experiment_id);
@@ -134,8 +135,8 @@ void testDataUpdate(unsigned long testLength){
                 i += 1;
 
                 if ((write_error[i] != 1) & (write_error[i] != 12) & (write_error[i] != 13) & (write_error[i] != 15) & (write_error[i] != 16)){
-                    overheatingScreen();
-                    crirical_error_detect = true;
+                    criticalErrorScreen();
+                    critical_error_detect = true;
                 }
 
                 /*
