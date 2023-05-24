@@ -1,7 +1,5 @@
 #include "utils/utils.h"
 
-
-
 const char *modeToString(Mode mode)
 {
     switch (mode)
