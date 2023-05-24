@@ -19,7 +19,7 @@ void batteryCharge(uint8_t battery_charge);
 void skinContactStatus(uint8_t skin_contact);
 void drawDateAndBatteyCharge(uint8_t battery_charge, char date[8]);
 
-//Skjermbildene for å kjøre koden til "RunSientistMenu"
+//Skjermbildene for å kjøre koden til "RunScientistMenu"
 void setPasswordScreen(uint8_t battery, char date[8]);
 void setPatientIDScreen(uint8_t battery, char date[8]);
 void chooseTimeScreen(uint8_t battery, char date[8]);
@@ -44,7 +44,5 @@ void noSkinContactScreen();
 void greenRectangle();
 void yellowRectangle();
 void redRectangle();
-
-unsigned char batteryState(uint8_t batterycharge);
 
 #endif

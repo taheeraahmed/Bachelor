@@ -6,7 +6,7 @@ bool PasswordCorrect = 0;
 char password[6] = {'2', '7', '8', '2', '7', '8'}; // Passorder for å aktivere funksjonalitetene til forskeren kan kun bestå av 6 siffer.
 char password_in[6];
 uint8_t counter = 0;
-uint8_t menuSientistState = 0;
+uint8_t menuScientistState = 0;
 uint8_t menuUserState = 0;
 
 // Midlertidig variabler som skal lagres eller forkastes
@@ -297,8 +297,8 @@ void systemWaiting(void)
     }
     if (customKey == '*')
     {
-        menuSientistState = 1;
-        RunSientistMenu();
+        menuScientistState = 1;
+        RunScientistMenu();
     }
     else if (customKey == '1')
     {
@@ -353,61 +353,61 @@ void RunUserMenu(void)
     }
 }
 
-void RunSientistMenu(void)
+void RunScientistMenu(void)
 {
-    while (menuSientistState != 0)
+    while (menuScientistState != 0)
     {
-        switch (menuSientistState)
+        switch (menuScientistState)
         {
         case 1:
             waitForPassword();
             if (PasswordCorrect == true)
             {
-                menuSientistState = 2;
+                menuScientistState = 2;
             }
             else
             {
-                menuSientistState = 3; // hvorfor hit og ikke direkte til 0?
+                menuScientistState = 3; // hvorfor hit og ikke direkte til 0?
             }
             break;
 
         case 2:
 
             setPatientID();
-            menuSientistState = 4;
+            menuScientistState = 4;
             break;
 
         case 3:
-            menuSientistState = 0;
+            menuScientistState = 0;
             break;
 
         case 4:
             setTime();
-            menuSientistState = 10;
+            menuScientistState = 10;
             break;
 
         case 10:
             showLed(1);
-            menuSientistState = 5;
+            menuScientistState = 5;
             break;
         case 5:
             chooseNIRsettings();
-            menuSientistState = 6;
+            menuScientistState = 6;
             break;
 
         case 6:
             chooseMode();
-            menuSientistState = 7;
+            menuScientistState = 7;
             break;
 
         case 7:
             showSettings();
-            menuSientistState = 8;
+            menuScientistState = 8;
             break;
 
         case 8:
             SaveOrExit();
-            menuSientistState = 0;
+            menuScientistState = 0;
             break;
         }
     }
