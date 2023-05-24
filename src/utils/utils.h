@@ -27,7 +27,8 @@ typedef enum
 {
     NIR_LIGHT = 1,
     PLACEBO,
-    RANDOMIZED
+    RANDOMIZED,
+    UNKNOWN_MODE
 } Mode;
 
 /**
@@ -39,7 +40,8 @@ typedef enum
 {
     DURATION_20_MIN = 1,
     DURATION_30_MIN,
-    DURATION_40_MIN
+    DURATION_40_MIN,
+    UNKNOWN_DURATION
 } Duration;
 
 /**
@@ -51,7 +53,8 @@ typedef enum
 {
     CONTINOUS = 1,
     LOW_FREQ,
-    HIGH_FREQ
+    HIGH_FREQ,
+    UNKNOWN_PVM_FREQ
 } PvmFreq;
 
 /**
@@ -140,4 +143,8 @@ struct Error
 const char *modeToString(Mode mode);
 const char *durationToString(Duration duration);
 const char *pvmFreqToString(PvmFreq pvmFreq);
+
+Mode stringToMode(const String &str);
+Duration stringToDuration(const String &str);
+PvmFreq stringToPvmFreq(const String &str);
 #endif // STRUCTS_H
