@@ -192,16 +192,16 @@ void setFlaggADC(void)
     getTime_since_ADC = getTime_current_ADC;
   }
   /*Om temperatur er over 85 grader i ett minutt settes flagg*/
-  get_error[0] = (threshold_LED >= 12) ? 1 : 0; 
+  get_error[17] = (threshold_LED >= 12) ? 1 : 0; 
 
   /*Om temp på PCB er over 70 grader i ett minutt settes flagg*/
-  get_error[1] = (threshold_PCB >= 12) ? 1 : 0; 
+  get_error[18] = (threshold_PCB >= 12) ? 1 : 0; 
 
   /*Om temp på hud er over 43 grader i ett halvt minutt settes flagg*/
-  get_error[2] = (threshold_skin >= 6) ? 1 : 0;
+  get_error[19] = (threshold_skin >= 6) ? 1 : 0;
 
   /*Om temp i luften mellom LED-array og hud er over 43 grader i ett minutt settes flagg*/
-  get_error[3] = (threshold_air >= 12) ? 1 : 0;
+  get_error[20] = (threshold_air >= 12) ? 1 : 0;
 
   /*Om temp på hud er under 28 grader i ett minutt settes flagg*/
   flagg_skin_contact = (threshold_skin_contact >= 12) ? 1 : 0;
