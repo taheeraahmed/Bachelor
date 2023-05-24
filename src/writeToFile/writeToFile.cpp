@@ -1,4 +1,5 @@
 #include "writeToFile/writeToFile.h"
+#include "getError/getError.h"
 
 /**
  * @brief Function which initializes the SD card
@@ -11,11 +12,12 @@ void initSD(int CS)
 	// Initialize SD card
 	if (!SD.begin(CS))
 	{
-		Serial.println("SD card initialization failed!");
+
+		get_error[2] = 1;
 	}
 	else
 	{
-		Serial.println("SD card initialized successfully!");
+		get_error[2] = 0;
 	}
 }
 
@@ -30,17 +32,11 @@ void initCard(int CS, Sd2Card card)
 {
 	if (!card.init(SPI_HALF_SPEED, CS))
 	{
-
-		Serial.println("initialization failed. Things to check:");
-		Serial.println("* is a card inserted?");
-		Serial.println("* is your wiring correct?");
-		Serial.println("* did you change the chipSelect pin to match your shield or module?");
-		while (1)
-			;
+		get_error[3] = 1;
 	}
 	else
 	{
-		Serial.println("Wiring is correct and a card is present.");
+		get_error[3] = 0;
 	}
 }
 
@@ -62,19 +58,17 @@ void createDirectory(uint8_t experiment_id)
 	uint8_t dir_exists = SD.exists(experiment_id_buffer);
 	if (dir_exists)
 	{
-		Serial.print("Directory already exists: ");
-		Serial.println(experiment_id_buffer);
+		get_error[5] = 1;
 	}
 	else
 	{
 		if (!SD.mkdir(experiment_id_buffer))
 		{
-			Serial.println("Error creating directory!");
+			get_error[4] = 1;
 		}
 		else
 		{
-			Serial.print("Directory created successfully: ");
-			Serial.println(experiment_id_buffer);
+			get_error[4] = 0;
 		}
 	}
 }
@@ -84,7 +78,7 @@ void createDirectory(uint8_t experiment_id)
  * @details The file is closed after the write is complete.
  * @param headers: The headers to be written to the file
  * @param filename: The filename to be created
- * @param test_choices: The test choices struct 
+ * @param test_choices: The test choices struct
  * @return void
  */
 void createFile(char *headers, char *filename, TestChoices test_choices)
@@ -99,22 +93,24 @@ void createFile(char *headers, char *filename, TestChoices test_choices)
 
 	if (file_exists)
 	{
-		return;
+		get_error[6] = 1;
 	}
 	else
 	{
 		// Creating a file with the name
+		get_error[6] = 0;
 		File file = SD.open(filename, FILE_WRITE);
 
 		// If file is created successfully, write headers to file
 		if (file)
 		{
 			file.println(headers);
+			get_error[7] = 0;
 			file.close();
 		}
 		else
 		{
-			Serial.println("File not created");
+			get_error[7] = 1;
 			delete[] filename;
 		};
 	}
@@ -175,23 +171,23 @@ void writeToFile(char *filename, char *data)
 
 	if (file)
 	{
+		get_error[9] = 0;
 		if (file.write(data, strlen(data)))
 		{
 			// Data write successful
+			get_error[8] = 0;
 			file.close();
 		}
 		else
 		{
 			// Error writing data
+			get_error[8] = 1;
 			file.close();
-			Serial.print("Error writing to file: ");
-			Serial.println(filename);
 		}
 	}
 	else
 	{
-		Serial.print("Failed to open file: ");
-		Serial.println(filename);
+		get_error[9] = 1;
 	}
 }
 
@@ -214,6 +210,7 @@ void writeInfoFile(TestChoices test_choices, const char *start_timestamp, char *
 
 	if (file)
 	{
+		get_error[10] = 0;
 		file.print("Experiment ID: ");
 		file.println(test_choices.experiment_id);
 		file.print("Patient ID: ");
@@ -230,6 +227,6 @@ void writeInfoFile(TestChoices test_choices, const char *start_timestamp, char *
 	}
 	else
 	{
-		Serial.println("File not found! writeToFile");
+		get_error[10] = 1;
 	}
 }
