@@ -144,7 +144,7 @@ const char *modeToString(Mode mode);
 const char *durationToString(Duration duration);
 const char *pvmFreqToString(PvmFreq pvmFreq);
 
-Mode stringToMode(const String &str);
-Duration stringToDuration(const String &str);
-PvmFreq stringToPvmFreq(const String &str);
+Mode intToMode(int value);
+Duration intToDuration(int value);
+PvmFreq intToPvmFreq(int value);
 #endif // STRUCTS_H

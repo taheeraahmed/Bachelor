@@ -19,26 +19,28 @@ void setup(void)
   test.patient_id = 123;
   test.experiment_id = getExperimentId();
   Serial.println("BEFORE:");
-  Serial.println(test.mode);
-  Serial.println(test.duration);
-  Serial.println(test.pvm_freq);
+  Serial.println(modeToString(test.mode));
+  Serial.println(durationToString(test.duration));
+  Serial.println(pvmFreqToString(test.pvm_freq));
   Serial.println(test.patient_id);
   Serial.println(test.experiment_id);
+  Serial.println("--------------------");
   saveSettingsToFile(test);
-
 
   test2 = getSettingsFromFile();
 
   Serial.println("AFTER:");
-  Serial.println(test2.mode);
-  Serial.println(test2.duration);
-  Serial.println(test2.pvm_freq);
+  Serial.println(modeToString(test2.mode));
+  Serial.println(durationToString(test2.duration));
+  Serial.println(pvmFreqToString(test2.pvm_freq));
   Serial.println(test2.patient_id);
   Serial.println(test2.experiment_id);
+
+  Serial.println("--------------------");
 }
 
 void loop()
 {
-  
+
   delay(50000);
 }

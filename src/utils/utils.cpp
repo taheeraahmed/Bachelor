@@ -45,59 +45,47 @@ const char *pvmFreqToString(PvmFreq pvmFreq)
     }
 }
 
-Mode stringToMode(const String &str)
+Mode intToMode(int value)
 {
-    if (str == "NIR-lys")
+    switch (value)
     {
+    case 1:
         return NIR_LIGHT;
-    }
-    else if (str == "Placebo")
-    {
+    case 2:
         return PLACEBO;
-    }
-    else if (str == "Randomisert")
-    {
+    case 3:
         return RANDOMIZED;
-    }
-    else {
+    default:
         return UNKNOWN_MODE;
     }
 }
 
-Duration stringToDuration(const String &str)
+Duration intToDuration(int value)
 {
-    if (str == "20 min")
+    switch (value)
     {
+    case 1:
         return DURATION_20_MIN;
-    }
-    else if (str == "30 min")
-    {
+    case 2:
         return DURATION_30_MIN;
-    }
-    else if (str == "40 min")
-    {
+    case 3:
         return DURATION_40_MIN;
-    }
-    else {
+    default:
         return UNKNOWN_DURATION;
     }
 }
 
-PvmFreq stringToPvmFreq(const String &str)
+PvmFreq intToPvmFreq(int value)
 {
-    if (str == "Kontinuerlig")
+    switch (value)
     {
+    case 1:
         return CONTINOUS;
-    }
-    else if (str == "Lav frekvent")
-    {
+    case 2:
         return LOW_FREQ;
-    }
-    else if (str == "Hoy frekvent")
-    {
+    case 3:
         return HIGH_FREQ;
-    }
-    else {
+    default:
         return UNKNOWN_PVM_FREQ;
     }
 }

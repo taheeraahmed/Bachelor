@@ -55,15 +55,40 @@ void saveSettingsToFile(TestChoices test_choices)
 TestChoices getSettingsFromFile()
 {
     TestChoices test_choices;
-    char *filename = "settings.txt";
+    const char *filename = "settings.txt";
     File file = SD.open(filename, FILE_READ);
     if (file)
     {
         while (file.available())
         {
-            /* Insert string converstion to TestChoices*/
+            String line = file.readStringUntil('\n');
+            line.trim();
+            if (line.startsWith("mode:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.mode = intToMode(value.toInt());
+            }
+            else if (line.startsWith("duration:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.duration = intToDuration(value.toInt());
+            }
+            else if (line.startsWith("pvm_freq:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.pvm_freq = intToPvmFreq(value.toInt());
+            }
+            else if (line.startsWith("patient_id:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.patient_id = value.toInt();
+            }
+            else if (line.startsWith("experiment_id:"))
+            {
+                String value = line.substring(line.indexOf(":") + 1);
+                test_choices.experiment_id = value.toInt();
+            }
         }
-
         file.close();
     }
     else
@@ -72,5 +97,6 @@ TestChoices getSettingsFromFile()
         Serial.print("Error opening file: ");
         Serial.println(filename);
     }
+    
     return test_choices;
 }
