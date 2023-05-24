@@ -4,7 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
-#include "logoGray.h"
+#include "Screen/logoGray.h"
 #include "utils/utils.h"
 
 #ifndef SCREEN_H
