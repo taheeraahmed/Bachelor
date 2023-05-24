@@ -2,7 +2,7 @@
 
 /**
  * @brief Function which gets the experiment id
- * @details The function gets the experiment id from the SD card given the directories already existing
+ * @details The function gets the experiment id from the SD card given the directories already existing. Remember to initialize the SD card before calling this function.
  * @return experiment_id: The experiment id to be used for the current experiment
  */
 uint8_t getExperimentId(void)
@@ -27,7 +27,7 @@ uint8_t getExperimentId(void)
  * @param filename: The name of the file to be checked
  * @return uint8_t: Returns 1 if the file exists, 0 if it doesn't
  */
-uint8_t checkIfFileExists(char *filename)
+uint8_t checkIfFileExists(const char *filename)
 {
     if (SD.exists(filename))
     {
@@ -84,47 +84,4 @@ char *convertDataToChar(float temp_pcb, float temp_air, float temp_skin, float t
     strcat(data, String(temp_led).c_str());
     strcat(data, "\n");
     return data;
-}
-
-const char *modeToString(Mode mode)
-{
-    switch (mode)
-    {
-    case PLACEBO:
-        return "PLACEBO";
-    case NOT_PLACEBO:
-        return "NOT_PLACEBO";
-    case DOUBLE_BLINDED:
-        return "DOUBLE_BLINDED";
-    default:
-        return "UNKNOWN_MODE";
-    }
-}
-
-const char *durationToString(Duration duration)
-{
-    switch (duration)
-    {
-    case DURATION_30_MIN:
-        return "DURATION_30_MIN";
-    case DURATION_45_MIN:
-        return "DURATION_45_MIN";
-    default:
-        return "UNKNOWN_DURATION";
-    }
-}
-
-const char *pvmFreqToString(PvmFreq pvmFreq)
-{
-    switch (pvmFreq)
-    {
-    case CONTINUOUS:
-        return "CONTINUOUS";
-    case LOW_FREQUENCY:
-        return "LOW_FREQUENCY";
-    case HIGH_FREQUENCY:
-        return "HIGH_FREQUENCY";
-    default:
-        return "UNKNOWN_PVM_FREQ";
-    }
 }
