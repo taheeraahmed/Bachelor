@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <avr/interrupt.h>
 #include <string.h>
+#include "getError/getError.h"
 
 #ifndef TWI_H_
 #define TWI_H_
@@ -23,6 +24,7 @@ void TWIWrite(uint8_t data);
 uint8_t TWIRecieveWithAck(void);
 uint8_t TWIRecieveWithNack(void);
 void TWIStopCond(void);
+uint8_t getStatusCode(void);
 
 void getDate(void);
 char *formatDateToChar(uint8_t dateArray[3]);

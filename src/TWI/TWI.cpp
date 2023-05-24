@@ -23,6 +23,7 @@ Batterivakt bq27441-G1 Datablad: https://www.ti.com/lit/ds/symlink/bq27441-g1.pd
 volatile uint8_t address_byte;        // Mellomlagrer adressen som skal brukes ved neste overføring.
 volatile uint8_t register_to_read;    // Mellomlagrer registert som skal brukes ved neste overføring.
 volatile uint8_t transmit_data;       // Mellomlagrer data byte som skal brukes ved neste tx overføring.
+volatile uint8_t recieved_data;       // Mellomlagrer mottatt data-byte
 
 volatile uint8_t data_flag = 0;      //Flag som settes når data overføring er fullført.
 volatile bool TWI_ongoing = false;   // Forteller om det er en pågående data overføring på gang.
@@ -123,6 +124,12 @@ uint8_t TWIRecieveWithNack(void){
   return TWDR;
 }
 
+uint8_t getStatusCode(void){
+  uint8_t StatusTWI = (TWSR & ~(0x07));
+
+  return StatusTWI;
+}
+
 
 
 /**
@@ -216,9 +223,10 @@ void getDate(void){
   bool i = true;  
   // While løkke som kjører frem til alle dataene er mottatt.
   while(i){  
+    
     // data-flag inkrementeres hver gan ny transmisjon er starter og hver gang en er avsluttet.
     // Hver gang data_flag er ett partall vil det være mottat data og rawDate oppdateres med motatt byte.
-    // Nåar alle dataene er motatt vil i settes lav og koden går videre til prosessering av data.
+    // Når alle dataene er motatt vil i settes lav og koden går videre til prosessering av data.
     if (data_flag == 0){
       // Oppstart av TWI kommunikasjonen.
       rawDate[0] = 0; 
@@ -232,23 +240,38 @@ void getDate(void){
     else if(data_flag == 2){
       // Rådata for dato er mottat
       data_flag = 3;
-      rawDate[0] = TWDR;
+      rawDate[0] = recieved_data;
       // Henting av rådata for måned startes
       TWIStartRx(RTC_Address, 0x05); 
     }
     else if(data_flag == 4){
       // Rådata for måned er motatt
       data_flag = 5; 
-      rawDate[1] = TWDR;
+      rawDate[1] = recieved_data;
       // Henting av rådata for år startes
       TWIStartRx(RTC_Address, 0x06);
     }
     else if(data_flag == 6){ 
       // Rådata for år er mottatt
-      rawDate[2] = TWDR;
+      rawDate[2] = recieved_data;
       data_flag = 0;
       // Kommunikasjon avsluttes.
       i = false;
+    }
+
+    // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+    // Avbryter kommunikasjonen og returnerer [0,0,0]
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      rawDate[0] = 0;
+      rawDate[1] = 0;
+      rawDate[2] = 0;
+      get_error[12] = 1;
+      data_flag = 0;
+      i = false;
+    }
+    else{
+      get_error[12] = 0;
     }
   }
 
@@ -314,24 +337,39 @@ void getTimeStamp(void){
     else if(data_flag == 2){
       // Rådata for sekunder er motatt.
       data_flag += 1;
-      rawTime[0] = TWDR;
+      rawTime[0] = recieved_data;
       // Henting av rådata for minutter startes
       TWIStartRx(RTC_Address, 0x01);
     }
     else if(data_flag == 4){
       // Rådata for minutter er motatt.
       data_flag += 1;
-      rawTime[1] = TWDR;
+      rawTime[1] = recieved_data;
       // Henting av rådata for timer startes
       TWIStartRx(RTC_Address, 0x02);
     }
     else if(data_flag == 6){ 
       // Rådata for timer er motatt.
-      rawTime[2] = TWDR;
+      rawTime[2] = recieved_data;
       data_flag = 0;
       // Kommunikasjon avsuttes.
       i = false;
     } 
+
+    // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+    // Avbryter kommunikasjonen og returnerer [0,0,0]
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      rawTime[0] = 0;
+      rawTime[1] = 0;
+      rawTime[2] = 0;
+      get_error[13] = 1;
+      data_flag = 0;
+      i = false;
+    }
+    else{
+      get_error[13] = 0;
+    }
   }
   // Formaterer tallene riktig med bit shifting, ganging og addering.
   calcTime[0] = ((rawTime[0] >> 4) & 0x07)*10 + (rawTime[0] & 0x0F);  // Beregner sekunder
@@ -498,29 +536,44 @@ void getBatteryState(void){
     else if(data_flag == 2){
       // Første byte er mottatt
       data_flag += 1;
-      batteryBytes[0] = TWDR;
+      batteryBytes[0] = recieved_data;
       // Henter andre byte for batteriprosent.
       TWIStartRx(BBS_Address, 0x1D);
     }
     else if(data_flag == 4){
       // Andre byte er mottatt
       data_flag += 1;
-      batteryBytes[1] = TWDR;
+      batteryBytes[1] = recieved_data;
       // Henter første byte for StateOfHealth prosent.
       TWIStartRx(BBS_Address,0x20);
     }
     else if(data_flag == 6){
       // Tredje byte er mottatt
       data_flag += 1;
-      batteryBytes[2] = TWDR;
+      batteryBytes[2] = recieved_data;
       // Henter andre byte for StateOfHealth prosent.
       TWIStartRx(BBS_Address,0x21);
     }
     else if(data_flag == 8){
       // Fjerde byte er mottatt
       data_flag = 0;
-      batteryBytes[3] = TWDR;
+      batteryBytes[3] = recieved_data;
       i = false;
+    }
+
+    // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+    // Avbryter kommunikasjonen og returnerer [0,0,0]
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      batteryBytes[0] = 0;
+      batteryBytes[1] = 0;
+      batteryBytes[2] = 0;
+      get_error[15] = 1;
+      data_flag = 0;
+      i = false;
+    }
+    else{
+      get_error[15] = 0;
     }
   }
   // Finne batteri prosent - Setter sammen verdiene hentet for % entet fra registerene 0x1C og 0x1D
@@ -528,21 +581,33 @@ void getBatteryState(void){
 
   // Finner StateOfHealth prosent - Setter sammen verdiene hentet for % entet fra registerene 0x20 og ox21
   batteryState[2] = ((batteryBytes[2] << 4) | batteryBytes[3]) / 0xFFFF;
+  // Setter error om helsen begynner å bli dårlig.
+  if (batteryState[2] < 30){
+    get_error[16] = 1;  // Oppdaterer feilmelding til batteriets helse.
+  }
+  else{
+    get_error[16] = 0;  // Oppdaterer feilmelding til batteriets helse.
+  }
 
   // Finner verdi som skal vises på batteri ikonet på skjermen i femttedeler.
   if (batteryState[0] < 20){
+    get_error[1] = 1;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 20;
   }
   else if (batteryState[0] < 40){
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 40;
   }
   else if (batteryState[0] < 60){
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 60;
   }
   else if (batteryState[0] < 80){
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 80;
   }
   else{
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 100;
   }
 }
@@ -571,6 +636,17 @@ void setDAC(bool on_off){
     first_byte = 0b01000000;
     second_byte = 0b00000000;
     TWIStartTx(DAC_Address, first_byte, second_byte);
+  }
+  // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+  // Avbryter kommunikasjonen
+  while (TWI_ongoing == true){
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      get_error[14] = 1;
+    }
+    else{
+      get_error[14] = 0;
+    }
   }
 }
 
@@ -610,10 +686,13 @@ ISR(TWI_vect){
       TWIWrite(address_byte + 1);
       break;
     
-   // Case 5 - Om pågående kommunikasjoen er RX. Motta data utesn å sette Acknowledge.
+   // Case 5 - Om pågående kommunikasjoen er RX. Motta data uten å sette Acknowledge.
     case 5:
-      TWI_case = 7;
       TWIRecieveWithNack();
+      if (getStatusCode() == 0x58){
+        recieved_data = TWDR;
+        TWI_case = 7;
+      }
       break;
 
     // Case 6 - Om pågående kommunikasjoen er TX. Skriv data til slave.
