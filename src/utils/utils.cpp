@@ -1,4 +1,5 @@
 #include "utils/utils.h"
+#include "getError/getError.h"
 
 const char *modeToString(Mode mode)
 {
@@ -41,13 +42,13 @@ const char *pvmFreqToString(PvmFreq pvmFreq)
     case HIGH_FREQ:
         return "Hoy frekvent";
     default:
-        Serial.println("UNKNOWN_PVM_FREQ");
         return "UNKNOWN_PVM_FREQ";
     }
 }
 
 Mode intToMode(int value)
 {
+    get_error[22] = 0;
     switch (value)
     {
     case 1:
@@ -57,13 +58,14 @@ Mode intToMode(int value)
     case 3:
         return RANDOMIZED;
     default:
-        Serial.println("UNKNOWN_MODE");
+        get_error[22] = 1;
         return UNKNOWN_MODE;
     }
 }
 
 Duration intToDuration(int value)
 {
+    get_error[23] = 0;
     switch (value)
     {
     case 1:
@@ -73,13 +75,14 @@ Duration intToDuration(int value)
     case 3:
         return DURATION_40_MIN;
     default:
-        Serial.println("UNKNOWN_DURATION");
+        get_error[23] = 1;
         return UNKNOWN_DURATION;
     }
 }
 
 PvmFreq intToPvmFreq(int value)
 {
+    get_error[24] = 0;
     switch (value)
     {
     case 1:
@@ -89,7 +92,7 @@ PvmFreq intToPvmFreq(int value)
     case 3:
         return HIGH_FREQ;
     default:
-        Serial.println("UNKNOWN_PVM_FREQ");
+        get_error[24] = 1;
         return UNKNOWN_PVM_FREQ;
     }
 }

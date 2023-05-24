@@ -19,6 +19,7 @@ void saveSettingsToFile(TestChoices test_choices)
     File file = SD.open(filename, FILE_WRITE);
     if (file)
     {
+        get_error[26] = 0;
         // Write mode
         file.print("mode:");
         file.println(test_choices.mode);
@@ -41,8 +42,7 @@ void saveSettingsToFile(TestChoices test_choices)
     }
     else
     {
-        Serial.print("Error opening file: ");
-        Serial.println(filename);
+        get_error[26] = 1;
     }
 }
 
@@ -58,6 +58,7 @@ TestChoices getSettingsFromFile()
     File file = SD.open(filename, FILE_READ);
     if (file)
     {
+        get_error[25] = 0;
         while (file.available())
         {
             String line = file.readStringUntil('\n');
@@ -92,9 +93,7 @@ TestChoices getSettingsFromFile()
     }
     else
     {
-        // Error opening file
-        Serial.print("Error opening file: ");
-        Serial.println(filename);
+        get_error[25] = 1;
     }
     
     return test_choices;
