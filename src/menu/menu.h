@@ -10,7 +10,7 @@
 #include "utils/utils.h"
 
 //void RunMenu(void);
-void RunSientistMenu(void);
+void RunScientistMenu(void);
 void RunUserMenu(void);
 void systemWaiting(void);
 
