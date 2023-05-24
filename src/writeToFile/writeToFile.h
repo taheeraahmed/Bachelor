@@ -1,6 +1,4 @@
 #include <SD.h>
-#include <stdio.h>
-#include <string.h>
 #include <Arduino.h>
 #include <utils/utils.h>
 #include <SPI.h>
@@ -16,9 +14,7 @@ void createFile(char *headers, char *filename, TestChoices test_choices);
 void writeInfoFile(TestChoices test, const char *start_timestamp, char *filename);
 void writeToFile(char *filename, char *data);
 
-// Used for getting and saving settings
-void saveSettingsToFile(TestChoices test_choices, char *filename);
-TestChoices getSettingsFromFile(char *filename);
+
 
 // Helper functions
 uint8_t getExperimentId(void);

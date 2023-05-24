@@ -2,7 +2,7 @@
 
 /**
  * @brief Function which gets the experiment id
- * @details The function gets the experiment id from the SD card given the directories already existing
+ * @details The function gets the experiment id from the SD card given the directories already existing. Remember to initialize the SD card before calling this function.
  * @return experiment_id: The experiment id to be used for the current experiment
  */
 uint8_t getExperimentId(void)

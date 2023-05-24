@@ -1,5 +1,12 @@
 #include "writeToFile/writeToFile.h"
 
+/**
+ * @brief Function which saves the settings to a file
+ * @details The function saves the settings to a file on the SD card. Remember to initialize the SD card before calling this function.
+ * @param test_choices: The struct containing the test choices
+ * @return void
+ */
+
 void saveSettingsToFile(TestChoices test_choices)
 {
     const char *filename = "settings.txt";
@@ -40,6 +47,11 @@ void saveSettingsToFile(TestChoices test_choices)
     }
 }
 
+/**
+ * @brief Function which gets the settings from a file
+ * @details The function gets the settings from a file on the SD card. Remember to initialize the SD card before calling this function.
+ * @return test_choices: The struct containing the test choices
+ */
 TestChoices getSettingsFromFile()
 {
     const char *filename = "settings.txt";
