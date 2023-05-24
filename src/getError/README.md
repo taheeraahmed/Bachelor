@@ -5,7 +5,7 @@ Here we create a global array which is has the size of number of errors. All thr
 
 ## Error messages
 
-| Nummer i array | Varsling:            | Kategori         | Feilmeldingtekst                                      | Del av systemet som har feilet |
+| Index in array | Warning              | Category         | Error message                                        | Part of system which has failed |
 | -------------- | -------------------- | ---------------- | ----------------------------------------------------- | ------------------------------ |
 | 0              |                      | Ingen feil       | Alt fungerer som det skal!                            | Hele                           |
 | 1              | Status: Mindre feil  | Lavt batteri     | Lavt batteri, bør lades ved neste mulighet            | Batteri, BB                    |
