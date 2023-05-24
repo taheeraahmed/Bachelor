@@ -1,6 +1,7 @@
 #include "mainFunctions/mainFunctions.h"
 
 
+uint8_t system_state = 0;
 // Initierer globale variabler som brukes i videre kode.
 uint8_t calcDate[3];
 uint8_t calcTime[3];
@@ -11,6 +12,8 @@ char dateChar[8];
 char dateTimeChar[17];
 
 int write_error[4];
+
+bool crirical_error_detect = false;
 
 /**
  * @brief En funksjon for å initiere systemet.
@@ -24,6 +27,7 @@ void initiateSystem(void){
     initTimer2();
     initTimer3();
     initTWI();
+    initPinChangeInterrupt();
 
     Sd2Card card;
     MEMORY_EXTENSION_PINS mem_ext_pins;
@@ -118,17 +122,49 @@ void testDataUpdate(unsigned long testLength){
             while (write_error[i] != 0){
                 
                 // Formaterrer feilmelding til char "0x--"
-                char errorID[] = "0x00";
-                errorID[2] = write_error[i]/16;
-                errorID[3] = write_error[i]%16;
+                char errorID[] = "00";
+                errorID[0] = write_error[i]/10;
+                errorID[1] = write_error[i]%10;
 
                 // Skriver feilmelding til fil.
-                const char *error_message = "Error message";
-                char *error = convertErrorToChar(1, error_message, formatDateTimeToChar(calcDate, calcTime));
-                writeToFile(file_error, errorID);
+                char *error = convertErrorToChar(1, errorID, formatDateTimeToChar(calcDate, calcTime));
+                writeToFile(file_error, error);
                 // Resetter error melding når den er skrevet.
                 write_error[i] = 0;
                 i += 1;
+
+                if ((write_error[i] != 1) & (write_error[i] != 12) & (write_error[i] != 13) & (write_error[i] != 15) & (write_error[i] != 16)){
+                    overheatingScreen();
+                    crirical_error_detect = true;
+                }
+
+                /*
+                Om hudkontakt blir mistet venter systemet i ett minutt før forsøket avsluttet.
+                */
+                if (threshold_skin_contact == 1){
+                    unsigned long skin_error_start = getTime();
+                    unsigned long skin_error_curent;
+                    uint16_t skin_error_exit_time = 60000;
+
+                    noSkinContactScreen();
+                    
+                    
+                    while (((skin_error_start - skin_error_curent) < skin_error_exit_time) && (threshold_skin_contact == 1)){
+                        // Skriver feilmelding til fil.
+                        get_error[21] = 1;
+                        char *error = convertErrorToChar(1, "21", formatDateTimeToChar(calcDate, calcTime));
+                        writeToFile(file_error, error);
+            
+                        skin_error_curent = getTime();
+                        }
+                    }
+                    // Når ett minutt er gått sjekkes hudkontakt på nytt for å bestemme om forsøket skal avbrytes eller fortsettes.
+                    if (threshold_skin_contact == 1){
+                        break;
+                    }
+                    else{
+                     get_error[21] = 0;   
+                    }     
             }
         }
         else{
@@ -163,6 +199,10 @@ uint8_t getRemainingMinutes(unsigned long start, unsigned long duration){
 
     uint8_t remaining_seconds = remaining_time_ms/1000;
     uint8_t remaining_minutes = remaining_seconds/60;
+
+    if (remaining_minutes <= 3){
+        greenLedBlink();
+    }
     return remaining_minutes;
 }
 
@@ -179,4 +219,60 @@ uint8_t getRemainingSeconds(unsigned long start, unsigned long duration){
     uint8_t remaining_seconds = remaining_ms/1000;
     uint8_t remaining_seconds_removed_minutes = remaining_seconds%60;
     return remaining_seconds_removed_minutes;
+}
+
+/**
+ * @brief Funksjon som styrer systemflyt
+ * @details Denne funksjoenen opererer som en tilstandsmaskin som kontrollerer hvordan systemet opererer til enhver tid.
+ * Store deler av flyten knyttes direkte til skjermfunksjonene i "menu.h"
+ */
+void runSystem(void){
+  setFlaggADC();
+  switch (system_state){
+    case 0:
+        // Systemet sover. Ingentig skjer.
+        // Neste tilstand trigges av avbrudd levert fra grønn knapp.
+        break;
+    case 1:
+        // System is initiated
+        initiateSystem();
+        // APT logo is shown
+        systemWaiting();
+        break;
+
+    case 2:
+        // Kjører bruker meny
+        break;
+
+    case 3:
+        // Kjør forsker meny
+        system_state = 0;
+        break;
+    case 4:
+        // Skrur av skjerm og setter systemet i dvale.
+        clearScreen();
+        setSystemSleep();
+        system_state = 0;
+        break;
+  }
+}
+
+/**
+ * @brief Aktiverer avbrudd på den grønne knappen.
+ */
+void initPinChangeInterrupt(void){
+  // Setting  
+  DDRJ &= ~(1 << PIN1);
+  
+  // set up interrupt vector table
+  PCICR |= (1 << PIN1); // Enable PCINT for Port J
+  PCMSK1 |= (1 << PIN1); // Enable PCINT3 for PORTJ PIN!
+}
+
+ISR(PCINT1_vect){
+    // Når systemet sover vil trykk på grønn knapp vekke systemet og gå til skjermens forside.
+    if (system_state == 0){
+    SMCR &= ~((1 << PIN2) | (1 << PIN0));
+    system_state = 1;
+    }
 }

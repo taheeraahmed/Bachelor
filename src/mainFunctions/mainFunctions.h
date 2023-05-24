@@ -13,9 +13,10 @@
 #define mainFunctions_H
 
 void initiateSystem(void);
-void runMenu(void);
 void testDataUpdate(unsigned long testLength);
 void setSystemSleep(void);
 uint8_t getRemainingSeconds(unsigned long start, unsigned long duration);
 uint8_t getRemainingMinutes(unsigned long start, unsigned long duration);
+void initPinChangeInterrupt(void);
+void runSystem(void);
 #endif // !
