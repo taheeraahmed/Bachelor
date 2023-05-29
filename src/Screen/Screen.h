@@ -10,6 +10,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
+// Generelle skjermfunksjoner
 void initScreen();
 void testInitScreen();                              //Slett senere
 void clearScreen();
@@ -36,12 +37,12 @@ void selectStartButtonScreen(uint8_t battery, char date[8], uint8_t skin_contact
 void runExperimentScreen(uint8_t battery, char date[8], char remaining_seconds[2], char remaining_minutes[2], uint8_t skin_contact);
 void exitExperimentScreen(uint8_t battery, char date[8]);
 
-//Skjermbildene for feilmeldinger på skjermen
+//Skjermbildene for feil som vises på skjermen
 void wrongPasswordScreen(uint8_t battery, char date[8]);
 void criticalErrorScreen();
 void noSkinContactScreen();
 
-//Firkanter med plassering an tekst og fargefyll for å indikere status på hudkontakten
+//Firkanter med plassering av tekst og fargefyll for å indikere status på hudkontakten
 void greenRectangle();
 void yellowRectangle();
 void redRectangle();

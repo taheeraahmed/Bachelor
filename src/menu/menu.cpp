@@ -113,7 +113,6 @@ void waitForPassword(void)
 
 void setPatientID(void)
 {
-    // Sett inn grafikk her
     clearScreen();
     setPatientIDScreen(0, "22-05-23");
     while (counter < 2)
@@ -247,7 +246,6 @@ void showSettings(void)
     {
         customKey = customKeypad.getKey();
 
-        // Sett inn skjermbilde med temp values.
     }
 }
 
@@ -269,7 +267,7 @@ void SaveOrExit(void)
         TestTime = tempTestTime;
         NirSettings = tempNirSettings;
         TestMode = tempTestMode;
-        // Virker som at settingene nullstilles før lagring
+
         PasientID[0] = '0';
         PasientID[1] = '0';
         tempTestTime = 0;
@@ -288,7 +286,7 @@ void SaveOrExit(void)
 
 void systemWaiting(void)
 {
-    char customKey = '0'; // forandret på denne sånn at man hopper tilbake til hjemskjermen var char customKey;
+    char customKey = '0';
     clearScreen();
     homeScreen(3, "22-05-23");
     while ((customKey != '*') & (customKey !='1')){
@@ -367,7 +365,7 @@ void RunScientistMenu(void)
             }
             else
             {
-                menuScientistState = 3; // hvorfor hit og ikke direkte til 0?
+                menuScientistState = 3;
             }
             break;
 
