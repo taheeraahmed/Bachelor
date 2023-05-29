@@ -1,9 +1,9 @@
 #include "PWM/PWM.h"
 
+// timer variabler for buzzer
 unsigned long current_time__buzzer;
 unsigned long old_time_buzzer;
 bool buzzer_trig;
-
 
 /**
  * @brief Function to initiate PWM on timer3. 

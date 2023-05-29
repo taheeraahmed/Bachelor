@@ -213,9 +213,8 @@ void TWIStartRx(uint8_t address, uint8_t read_register){
  * @details
  * First the registers 0x04, 0x05, 0x06 is read from and saved in the array rawDate.
  * Then the rawDate is converted to the date in decimal and saved in the global array calckDate.
- * @return calcDate[0] Returns the date
- * @return calcDate[1] Returns the month
- * @return calcDate[2] Returns the year
+ * If an error occurs in the communication the function will return [0,0,0] and error code 12 will be set.
+ * The result will be saved in the gloval array calcDate.
 */
 void getDate(void){
   uint8_t rawDate[3];
@@ -284,7 +283,7 @@ void getDate(void){
 /**
  * @brief Function to change integer values for date to one string.
  * @param dateArray The functions uses the Array output from getDate.
- * @return One sting in dd-mm-yy format.
+ * @return One stirng in dd-mm-yy format.
 */
 char *formatDateToChar(uint8_t dateArray[3]){
   dateChar[0] = '\0';
@@ -311,9 +310,8 @@ char *formatDateToChar(uint8_t dateArray[3]){
  * @details
  * First the registers 0x00, 0x01, 0x02 is read from and saved in the array rawTime.
  * Then the rawTime is converted to the time in decimal and saved in the global array calcTime.
- * @return [calcDate[0]] Returns seconds
- * @return [calcDate[1]] Returns minutes
- * @return [calcDate[2]] Returns months
+ *  If an error occurs in the communication the function will returrn [0,0,0] and error code 13 will be set.
+ * The result will be saved in the gloval array calcTime.
 */
 void getTimeStamp(void){
   uint8_t rawTime[3];
@@ -514,6 +512,9 @@ void resetRTC(uint8_t sec, uint8_t min, uint8_t hour, uint8_t date, uint8_t mont
  * Reads from the registers 0x1C and 0x1D to get the battery % value in the interval [0-100].
  * Calculate values for battery indicator on screen [0-5]
  * Also reads the battery state of health.
+ * If an error occurs in the communication the function will returrn [0,0,0] and error code 15 will be set.
+ * If the battery state of health is below 30% error code 16 will be set.
+ * If the battery % is below 20% error code 1 will be set.
  * All parameters is saved in global array batteryState.
 */
 void getBatteryState(void){
@@ -618,6 +619,7 @@ void getBatteryState(void){
  * @details
  * When DAC is turned on, 0xFFF is written to the DAC to set 5V as output.
  * When DAC is turned off, 0x000 is written ti the DAC to set 0V as output.
+ * If an error occurs in the communication the critical error code 14 will be set.
  * @param on_off Value to turn DAC output on/off.
 */
 void setDAC(bool on_off){

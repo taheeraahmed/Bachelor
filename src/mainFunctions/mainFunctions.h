@@ -1,6 +1,6 @@
 #include <avr/io.h>
 
-#include "ledControls/ledControls.h"
+#include "ledButtonControls/ledButtonControls.h"
 #include "NIR/NIR.h"
 #include "getTime/getTime.h"
 #include "PWM/PWM.h"
@@ -12,7 +12,7 @@
 #ifndef mainFunctions_H
 #define mainFunctions_H
 
-extern volatile bool greenButtonTrigg;
+extern volatile uint8_t system_state;
 
 void initiateSystem(void);
 void testDataUpdate(unsigned long testLength);

@@ -1,15 +1,5 @@
 #include "mainFunctions/mainFunctions.h"
 
-
-uint8_t system_state = 0;
-
-// Initierer globale variabler som brukes i videre kode.
-/*
-uint8_t calcDate[3];
-uint8_t calcTime[3];
-uint8_t batteryState[3];
-*/
-
 char timeChar[8];
 char dateChar[8];
 char dateTimeChar[17];
@@ -20,14 +10,16 @@ char seconds_char[2];
 
 bool critical_error_detect = false;
 
+volatile uint8_t system_state = 0;
+
 // Initialisering av .csv filer.
     char temp_headers[50] = "datetime,temp_pcb,temp_air,temp_skin,temp_led";
     char error_headers[50] = "datetime,error_code,error_msg";
     char info_header[29] = "Information about experiment";
 
 /**
- * @brief En funksjon for å initiere systemet.
- * @details Denne funksjonen kaller på alle initieringsfunksjonene i systemet.
+ * @brief Function used to initiate the system.
+ * @details This function initiates the system by calling all the init functions.
  */
 void initiateSystem(void){
     
@@ -52,12 +44,14 @@ void initiateSystem(void){
 }
 
 /**
- * @brief En funksjon kjører systemet under førsøket.
- * @details Denne funksjonen kjører initierer førsøket ved å åpnet alle filer.
- * Deretter går den inn i en hvile loop som kjører til testtiden er nådd eller testen avbrytes.
- * Hver minutt innhentes verdier fra temperatursensorene og oppdaterer .csv filen.
- * Om det oppstår feilmeldinger underveis vil disse skrives til en egen .csv fil.
- * @param testLength Lengden på testen i minutter.
+ * @brief  Function tu run system logic during experiment.
+ * @details The function runs the system during the experiment.
+ * It initiates the CSV files, NIR-light and sets the screen to experiment mode.
+ * Then it enters a loop that runs until the test time is reached or the test is aborted.
+ * Every minute it writes to the CSV files and updates the screen.
+ * If it encounters any errors it writes these to a separate CSV file.
+ * Criticlal errors or missing skin contact will abort the test.
+ * @param testLength The length of the test in minutes.
  */
 void testDataUpdate(unsigned long testLength){
     // Oppsett av variabler knyttet til tidtaking av forsøket.
@@ -67,8 +61,8 @@ void testDataUpdate(unsigned long testLength){
     unsigned long testLength_ms = testLength*60000;
 
     unsigned long ms_to_sample = 60000; // Setter tid mellom hver sample til 60 000 ms = 1 minutt.
-     runExperimentScreen(batteryState[1], dateChar, getRemainingSeconds(test_time_new, testLength), getRemainingMinutes(test_time_new, (testLength)), threshold_skin_contact);
-
+     
+    // Oppsett av variabler knyttet filoppretting for forsøket
     TestChoices test;    
     test.experiment_id = getExperimentId();
 
@@ -84,16 +78,15 @@ void testDataUpdate(unsigned long testLength){
     createFile(info_header, file_info, test);
     writeInfoFile(test, formatDateTimeToChar(calcDate, calcTime), file_info);
 
-    // Skrur på NIR-lys med innstillingene satt i forskerMeny.
-    calcLedID();
-    
-    startNIR(test.mode, test.pvm_freq, ID_NIR_LED); // NIRmode, NIRfreq, R_ID
-
+    // Starter forsøksskjerm.
+    runExperimentScreen(batteryState[1], dateChar, "--", "--", threshold_skin_contact);
     // Skrur på LED-indikatorer for at forsøket er i gang.
     testIndicatorOn();    
     greenLedBlink();
 
-   
+    // Skrur på NIR-lys med innstillingene satt i forskerMeny.
+    calcLedID();
+    startNIR(test.mode, test.pvm_freq, ID_NIR_LED); // NIRmode, NIRfreq, R_ID
 
     // Hovedløkke for forsøket.
     while ((test_time_new - test_time_start) < (testLength_ms)){
@@ -105,36 +98,36 @@ void testDataUpdate(unsigned long testLength){
         // Hvert minutt oppdateres .csv filen med nye temperaturverdier.
         if (test_time_new - test_time_old > ms_to_sample){
             // Henter dato og tid for tidsstempel;
-            //getDate();
-            //getTimeStamp();
+            getDate();
+            getTimeStamp();
             formatDateToChar(calcDate);
             formatDateTimeToChar(calcDate, calcTime);
 
             // Oppdaterer batteriStatus
-            //getBatteryState();
+            getBatteryState();
 
             // Skjerm oppdateres:
-            runExperimentScreen(3, "blabla", "22", "33", 1);
+            runExperimentScreen(batteryState[1], dateChar, getRemainingSeconds(test_time_start, testLength), getRemainingMinutes(test_time_start, testLength), 1);
             //Skriver data til .csv fil (0: Led , 1: pcb, 2: skin, 3:air, 4: datetime)
             char *data = convertDataToChar(temp_value_array[0], temp_value_array[1], temp_value_array[2], temp_value_array[3], dateTimeChar);
             writeToFile(file_temp, data);
             
             test_time_old = test_time_new;
         }
-        /*
+    
         // Sjekker om det er dukket opp noen feilmeldinger
         if (write_error[0] == 1){
             redLedBlink();
             // Henter dato og tid for tidsstempel;
-            //getDate();
-            //getTimeStamp();
+            getDate();
+            getTimeStamp();
             formatDateTimeToChar(calcDate, calcTime);
 
             uint8_t i = 0;
             // Sjekker hvert element i feimeldingslisten til den er tom.
             while (write_error[i] != 0){
                 
-                // Formaterrer feilmelding til char "0x--"
+                // Formaterrer feilmelding til char
                 char errorID[] = "00";
                 errorID[0] = write_error[i]/10;
                 errorID[1] = write_error[i]%10;
@@ -146,52 +139,49 @@ void testDataUpdate(unsigned long testLength){
                 write_error[i] = 0;
                 i += 1;
 
+                // Sjekker om feilmeldingen er kritisk.
                 if ((write_error[i] != 1) & (write_error[i] != 12) & (write_error[i] != 13) & (write_error[i] != 15) & (write_error[i] != 16)){
                     criticalErrorScreen();
                     critical_error_detect = true;
                 }
-
-                
-                //Om hudkontakt blir mistet venter systemet i ett minutt før forsøket avsluttet.
-                
-                if (threshold_skin_contact == 1){
-                    unsigned long skin_error_start = getTime();
-                    unsigned long skin_error_curent;
-                    uint16_t skin_error_exit_time = 60000;
-
-                    noSkinContactScreen();
-                    
-                    
-                    while (((skin_error_start - skin_error_curent) < skin_error_exit_time) && (threshold_skin_contact == 1)){
-                        // Skriver feilmelding til fil.
-                        get_error[21] = 1;
-                        char *error = convertErrorToChar(1, "21", formatDateTimeToChar(calcDate, calcTime));
-                        writeToFile(file_error, error);
-            
-                        skin_error_curent = getTime();
-                        }
-                    }
-                    // Når ett minutt er gått sjekkes hudkontakt på nytt for å bestemme om forsøket skal avbrytes eller fortsettes.
-                    if (threshold_skin_contact == 1){
-                        break;
-                    }
-                    else{
-                     get_error[21] = 0;   
-                    }     
-                    
             }
         }
         else{
             redLedOff();
         }
-        */
-        
+                
+        //Om hudkontakt blir mistet venter systemet i ett minutt før forsøket avsluttet.
+        if (threshold_skin_contact == 1){
+            unsigned long skin_error_start = getTime();
+            unsigned long skin_error_curent;
+            uint16_t skin_error_exit_time = 60000;
+
+            noSkinContactScreen();
+            
+            
+            while (((skin_error_start - skin_error_curent) < skin_error_exit_time) && (threshold_skin_contact == 1)){
+                // Skriver feilmelding til fil.
+                get_error[21] = 1;
+                char *error = convertErrorToChar(1, "21", formatDateTimeToChar(calcDate, calcTime));
+                writeToFile(file_error, error);
+    
+                skin_error_curent = getTime();
+            }
+            // Når ett minutt er gått sjekkes hudkontakt på nytt for å bestemme om forsøket skal avbrytes eller fortsettes.
+            if (threshold_skin_contact == 1){
+                break;
+            }
+            else{
+                get_error[21] = 0;   
+            }   
+        }  
     }
     // Forsøk avsluttes - NIR-lys skrus av og indikatorer deaktiveres.
-    void endNIR(void);
+    endNIR();
     testIndicatorOff();
     greenLedOff();
 }
+
 
 /**
  * @brief En funksjon for å sette systemet i dvale.
@@ -203,7 +193,7 @@ void setSystemSleep(void){
 
 /**
  * @brief Henter ut gjenværende hele minutter av forsøket
- * 
+ * 1
  * @param start Starttiden for forsøket
  * @param duration Lengden på forsøket i minutter
  * @return uint8_t Antall gjenværende minutter av forsøket
@@ -273,31 +263,3 @@ void runSystem(void){
   }
 }
 
-/**
- * @brief Aktiverer avbrudd på den grønne knappen.
- */
-void initPinChangeInterrupt(void){
-  // Setting  
-  DDRJ &= ~(1 << PIN1);
-  
-  // set up interrupt vector table
-  PCICR |= (1 << PIN1); // Enable PCINT for Port J
-  PCMSK1 |= (1 << PIN1); // Enable PCINT3 for PORTJ PIN!
-}
-
-ISR(PCINT1_vect){
-    // Når systemet sover vil trykk på grønn knapp vekke systemet og gå til skjermens forside.    
-    if ((system_state == 0)){
-        SMCR &= ~((1 << PIN2) | (1 << PIN0));
-        system_state = 1;
-    }
-    
-    if ((system_state == 1) && (threshold_skin_contact == 1)){
-        // Start forsøk i meny.
-        greenButtonTrigg = true;
-    }
-    else{
-        greenButtonTrigg = true;
-    }
-    
-}

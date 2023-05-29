@@ -4,10 +4,10 @@
 
 
 void setup(){
-  initPinChangeInterrupt();
-  initiateSystem();
+  Serial.begin(9600);
+  initScreen();
 }
 
 void loop(void){
-  testDataUpdate(2000);
+  systemWaiting();
 }

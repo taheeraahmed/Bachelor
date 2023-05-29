@@ -1,7 +1,7 @@
 # Kontroll av indikator LEDs på NIR-prototype
 
 ### void initLedPins(void);
-Funksjon som initierer alle pinnene som LED-ene er koblet til.
+Funksjon som initierer alle pinnene som LED-ene er koblet til og aktiverer avbrudd på den grønne knappen.
 
 ## Grønn LED
 Den grønne LED-en brukes for å indikere status på forsøket.
@@ -45,6 +45,12 @@ Funksjon som skrur på test Indikator LED. Brukes før forsøk starter.
 
 ### void testIndicatorOff(void);
 Funksjon som srur test indikator LED av. Brukes når forsøk avsluttes.
+
+## void initPinChangeInterrupt(void);
+Akriverer abrudd på den grønne knappen.
+ISR-en til avbruddsvektoren er knyttet til hvilken tilstand systemet er i. 
+- Ved tilstand 0 er systemet i søvnmodus: Knappen vil vekke systemet.
+- Ved tilstand 1 er menyen aktivert: Knappen vil starte forsøk når hudkontakt er opprettet.
 
 
 
