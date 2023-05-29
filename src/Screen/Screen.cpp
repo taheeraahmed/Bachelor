@@ -8,7 +8,7 @@ Oppkobling fra skjerm til Arduino er som følger:
 LED –› 3.3V
 SCK –› 52 (36)
 SDA –› 51 (35)
-A0 –› 34
+A0 –› 34 dc
 RESET –› 33
 CS –› 32
 GND –› GND
@@ -53,7 +53,7 @@ void clearScreen()
 }
 
 
-void batteryCharge(uint8_t battery_charge)              //
+void batteryCharge(uint8_t battery_charge)
 {
   switch (battery_charge)
   {
@@ -75,7 +75,7 @@ void batteryCharge(uint8_t battery_charge)              //
   }
 }
 
-void skinContactStatus(uint8_t skin_contact)            //
+void skinContactStatus(uint8_t skin_contact)
 {
   switch (skin_contact)
   {
@@ -98,14 +98,6 @@ void drawDateAndBatteyCharge(uint8_t battery_charge, char date[8])
   tft.println("Dato: ");
   tft.setCursor(40, 5);
   tft.println(date);
-}
-
-void testInitScreen()
-{
-  clearScreen();
-  tft.setCursor(30,30);
-  tft.setTextSize(2);
-  tft.println("Init skjerm");
 }
 
 void homeScreen(uint8_t battery_charge, char date[8])
@@ -178,7 +170,7 @@ void getLEDHeadScreen(uint8_t battery_charge, char date[8])
   tft.setCursor(60, 80);
   tft.println("Hode: ");
   tft.setCursor(100, 80);
-  tft.println("X");             //input LED-hode
+  tft.println("X");
 }
 
 void pulseNIRSettingsScreen(uint8_t battery_charge, char date[8])

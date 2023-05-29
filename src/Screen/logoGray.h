@@ -1,5 +1,5 @@
 /***************************************************************************************************************
-Brukte denne fremgangsmåten for monokrome ikoner til lage bilder for å bitmappe bildene:
+Brukte denne fremgangsmåten for monokrome ikoner til å lage bilder for å bitmappe bildene:
 https://www.instructables.com/Converting-Images-to-Flash-Memory-Iconsimages-for-/
 
 Brukte APT logog hentet fra denne siden og beskjært manuelt:
