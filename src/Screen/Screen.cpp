@@ -23,7 +23,6 @@ const int TFT_CS = 32;
 const int TFT_RESET = 33;
 const int TFT_A0 = 34;
 
-
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_A0, TFT_RESET); // Bruker maskinvare SPI der SCLK (SCK) er koblet til pinne 52 og MOSI (SDA) er på pinne 51
 /*
 //Alternativt kan man bruke denne koden om man ikke skal bruke maskinvare SPI:
@@ -53,7 +52,7 @@ void clearScreen()
 }
 
 
-void batteryCharge(uint8_t battery_charge)
+void batteryCharge(uint8_t battery_charge)              //
 {
   switch (battery_charge)
   {
@@ -98,6 +97,14 @@ void drawDateAndBatteyCharge(uint8_t battery_charge, char date[8])
   tft.println("Dato: ");
   tft.setCursor(40, 5);
   tft.println(date);
+}
+
+void testInitScreen()
+{
+  clearScreen();
+  tft.setCursor(30,30);
+  tft.setTextSize(2);
+  tft.println("Init skjerm");
 }
 
 void homeScreen(uint8_t battery_charge, char date[8])

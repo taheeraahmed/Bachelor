@@ -1,4 +1,5 @@
 #include "utils/utils.h"
+#include "getError/getError.h"
 
 const char *modeToString(Mode mode)
 {
@@ -45,59 +46,53 @@ const char *pvmFreqToString(PvmFreq pvmFreq)
     }
 }
 
-Mode stringToMode(const String &str)
+Mode intToMode(int value)
 {
-    if (str == "NIR-lys")
+    get_error[22] = 0;
+    switch (value)
     {
+    case 1:
         return NIR_LIGHT;
-    }
-    else if (str == "Placebo")
-    {
+    case 2:
         return PLACEBO;
-    }
-    else if (str == "Randomisert")
-    {
+    case 3:
         return RANDOMIZED;
-    }
-    else {
+    default:
+        get_error[22] = 1;
         return UNKNOWN_MODE;
     }
 }
 
-Duration stringToDuration(const String &str)
+Duration intToDuration(int value)
 {
-    if (str == "20 min")
+    get_error[23] = 0;
+    switch (value)
     {
+    case 1:
         return DURATION_20_MIN;
-    }
-    else if (str == "30 min")
-    {
+    case 2:
         return DURATION_30_MIN;
-    }
-    else if (str == "40 min")
-    {
+    case 3:
         return DURATION_40_MIN;
-    }
-    else {
+    default:
+        get_error[23] = 1;
         return UNKNOWN_DURATION;
     }
 }
 
-PvmFreq stringToPvmFreq(const String &str)
+PvmFreq intToPvmFreq(int value)
 {
-    if (str == "Kontinuerlig")
+    get_error[24] = 0;
+    switch (value)
     {
+    case 1:
         return CONTINOUS;
-    }
-    else if (str == "Lav frekvent")
-    {
+    case 2:
         return LOW_FREQ;
-    }
-    else if (str == "Hoy frekvent")
-    {
+    case 3:
         return HIGH_FREQ;
-    }
-    else {
+    default:
+        get_error[24] = 1;
         return UNKNOWN_PVM_FREQ;
     }
 }

@@ -12,6 +12,7 @@
 
 // Generelle skjermfunksjoner
 void initScreen();
+void testInitScreen();                              //Slett senere
 void clearScreen();
 void homeScreen(uint8_t battery, char date[8]);
 

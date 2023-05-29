@@ -23,6 +23,7 @@ Batterivakt bq27441-G1 Datablad: https://www.ti.com/lit/ds/symlink/bq27441-g1.pd
 volatile uint8_t address_byte;        // Mellomlagrer adressen som skal brukes ved neste overføring.
 volatile uint8_t register_to_read;    // Mellomlagrer registert som skal brukes ved neste overføring.
 volatile uint8_t transmit_data;       // Mellomlagrer data byte som skal brukes ved neste tx overføring.
+volatile uint8_t recieved_data;       // Mellomlagrer mottatt data-byte
 
 volatile uint8_t data_flag = 0;      //Flag som settes når data overføring er fullført.
 volatile bool TWI_ongoing = false;   // Forteller om det er en pågående data overføring på gang.
@@ -123,6 +124,12 @@ uint8_t TWIRecieveWithNack(void){
   return TWDR;
 }
 
+uint8_t getStatusCode(void){
+  uint8_t StatusTWI = (TWSR & ~(0x07));
+
+  return StatusTWI;
+}
+
 
 
 /**
@@ -206,9 +213,8 @@ void TWIStartRx(uint8_t address, uint8_t read_register){
  * @details
  * First the registers 0x04, 0x05, 0x06 is read from and saved in the array rawDate.
  * Then the rawDate is converted to the date in decimal and saved in the global array calckDate.
- * @return calcDate[0] Returns the date
- * @return calcDate[1] Returns the month
- * @return calcDate[2] Returns the year
+ * If an error occurs in the communication the function will return [0,0,0] and error code 12 will be set.
+ * The result will be saved in the gloval array calcDate.
 */
 void getDate(void){
   uint8_t rawDate[3];
@@ -216,9 +222,10 @@ void getDate(void){
   bool i = true;  
   // While løkke som kjører frem til alle dataene er mottatt.
   while(i){  
+    
     // data-flag inkrementeres hver gan ny transmisjon er starter og hver gang en er avsluttet.
     // Hver gang data_flag er ett partall vil det være mottat data og rawDate oppdateres med motatt byte.
-    // Nåar alle dataene er motatt vil i settes lav og koden går videre til prosessering av data.
+    // Når alle dataene er motatt vil i settes lav og koden går videre til prosessering av data.
     if (data_flag == 0){
       // Oppstart av TWI kommunikasjonen.
       rawDate[0] = 0; 
@@ -232,23 +239,38 @@ void getDate(void){
     else if(data_flag == 2){
       // Rådata for dato er mottat
       data_flag = 3;
-      rawDate[0] = TWDR;
+      rawDate[0] = recieved_data;
       // Henting av rådata for måned startes
       TWIStartRx(RTC_Address, 0x05); 
     }
     else if(data_flag == 4){
       // Rådata for måned er motatt
       data_flag = 5; 
-      rawDate[1] = TWDR;
+      rawDate[1] = recieved_data;
       // Henting av rådata for år startes
       TWIStartRx(RTC_Address, 0x06);
     }
     else if(data_flag == 6){ 
       // Rådata for år er mottatt
-      rawDate[2] = TWDR;
+      rawDate[2] = recieved_data;
       data_flag = 0;
       // Kommunikasjon avsluttes.
       i = false;
+    }
+
+    // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+    // Avbryter kommunikasjonen og returnerer [0,0,0]
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      rawDate[0] = 0;
+      rawDate[1] = 0;
+      rawDate[2] = 0;
+      get_error[12] = 1;
+      data_flag = 0;
+      i = false;
+    }
+    else{
+      get_error[12] = 0;
     }
   }
 
@@ -261,9 +283,9 @@ void getDate(void){
 /**
  * @brief Function to change integer values for date to one string.
  * @param dateArray The functions uses the Array output from getDate.
- * @return One sting in dd-mm-yy format.
+ * @return One stirng in dd-mm-yy format.
 */
-void formatDateToChar(uint8_t dateArray[3]){
+char *formatDateToChar(uint8_t dateArray[3]){
   dateChar[0] = '\0';
 
   char dd[2];
@@ -279,6 +301,8 @@ void formatDateToChar(uint8_t dateArray[3]){
   strcat(dateChar, mm);
   strcat(dateChar, "-");
   strcat(dateChar, yy);
+
+  return dateChar;
 }
 
 /**
@@ -286,9 +310,8 @@ void formatDateToChar(uint8_t dateArray[3]){
  * @details
  * First the registers 0x00, 0x01, 0x02 is read from and saved in the array rawTime.
  * Then the rawTime is converted to the time in decimal and saved in the global array calcTime.
- * @return [calcDate[0]] Returns seconds
- * @return [calcDate[1]] Returns minutes
- * @return [calcDate[2]] Returns months
+ *  If an error occurs in the communication the function will returrn [0,0,0] and error code 13 will be set.
+ * The result will be saved in the gloval array calcTime.
 */
 void getTimeStamp(void){
   uint8_t rawTime[3];
@@ -312,24 +335,39 @@ void getTimeStamp(void){
     else if(data_flag == 2){
       // Rådata for sekunder er motatt.
       data_flag += 1;
-      rawTime[0] = TWDR;
+      rawTime[0] = recieved_data;
       // Henting av rådata for minutter startes
       TWIStartRx(RTC_Address, 0x01);
     }
     else if(data_flag == 4){
       // Rådata for minutter er motatt.
       data_flag += 1;
-      rawTime[1] = TWDR;
+      rawTime[1] = recieved_data;
       // Henting av rådata for timer startes
       TWIStartRx(RTC_Address, 0x02);
     }
     else if(data_flag == 6){ 
       // Rådata for timer er motatt.
-      rawTime[2] = TWDR;
+      rawTime[2] = recieved_data;
       data_flag = 0;
       // Kommunikasjon avsuttes.
       i = false;
     } 
+
+    // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+    // Avbryter kommunikasjonen og returnerer [0,0,0]
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      rawTime[0] = 0;
+      rawTime[1] = 0;
+      rawTime[2] = 0;
+      get_error[13] = 1;
+      data_flag = 0;
+      i = false;
+    }
+    else{
+      get_error[13] = 0;
+    }
   }
   // Formaterer tallene riktig med bit shifting, ganging og addering.
   calcTime[0] = ((rawTime[0] >> 4) & 0x07)*10 + (rawTime[0] & 0x0F);  // Beregner sekunder
@@ -342,7 +380,7 @@ void getTimeStamp(void){
  * @param timeArray The functions uses the Array output from getTimeStamp.
  * @return One sting in hh:mm:ss format.
 */
-void formatTimeToChar(uint8_t timeArray[3]){
+char *formatTimeToChar(uint8_t timeArray[3]){
   timeChar[0] = '\0';
 
   char seconds[2];
@@ -358,6 +396,8 @@ void formatTimeToChar(uint8_t timeArray[3]){
   strcat (timeChar, minutes);
   strcat (timeChar, ":");
   strcat (timeChar, seconds);
+
+  return timeChar;
 }
 
 
@@ -366,7 +406,7 @@ void formatTimeToChar(uint8_t timeArray[3]){
  * @param dateArray The functions uses the Array output from getDate.
  * @return One sting in dd-mm-yy format.
 */
-void formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]){
+char *formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]){
   dateTimeChar[0] = '\0';
   char dd[2];
   char mm[2];
@@ -397,6 +437,8 @@ void formatDateTimeToChar(uint8_t dateArray[3], uint8_t timeArray[3]){
   strcat (dateTimeChar, minutes);
   strcat (dateTimeChar, ":");
   strcat (dateTimeChar, seconds);
+
+  return dateTimeChar;
 }
 
 /**
@@ -470,6 +512,9 @@ void resetRTC(uint8_t sec, uint8_t min, uint8_t hour, uint8_t date, uint8_t mont
  * Reads from the registers 0x1C and 0x1D to get the battery % value in the interval [0-100].
  * Calculate values for battery indicator on screen [0-5]
  * Also reads the battery state of health.
+ * If an error occurs in the communication the function will returrn [0,0,0] and error code 15 will be set.
+ * If the battery state of health is below 30% error code 16 will be set.
+ * If the battery % is below 20% error code 1 will be set.
  * All parameters is saved in global array batteryState.
 */
 void getBatteryState(void){
@@ -492,51 +537,78 @@ void getBatteryState(void){
     else if(data_flag == 2){
       // Første byte er mottatt
       data_flag += 1;
-      batteryBytes[0] = TWDR;
+      batteryBytes[0] = recieved_data;
       // Henter andre byte for batteriprosent.
       TWIStartRx(BBS_Address, 0x1D);
     }
     else if(data_flag == 4){
       // Andre byte er mottatt
       data_flag += 1;
-      batteryBytes[1] = TWDR;
+      batteryBytes[1] = recieved_data;
       // Henter første byte for StateOfHealth prosent.
       TWIStartRx(BBS_Address,0x20);
     }
     else if(data_flag == 6){
       // Tredje byte er mottatt
       data_flag += 1;
-      batteryBytes[2] = TWDR;
+      batteryBytes[2] = recieved_data;
       // Henter andre byte for StateOfHealth prosent.
       TWIStartRx(BBS_Address,0x21);
     }
     else if(data_flag == 8){
       // Fjerde byte er mottatt
       data_flag = 0;
-      batteryBytes[3] = TWDR;
+      batteryBytes[3] = recieved_data;
       i = false;
+    }
+
+    // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+    // Avbryter kommunikasjonen og returnerer [0,0,0]
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      batteryBytes[0] = 0;
+      batteryBytes[1] = 0;
+      batteryBytes[2] = 0;
+      get_error[15] = 1;
+      data_flag = 0;
+      i = false;
+    }
+    else{
+      get_error[15] = 0;
     }
   }
   // Finne batteri prosent - Setter sammen verdiene hentet for % entet fra registerene 0x1C og 0x1D
   batteryState[0] = ((batteryBytes[0] << 4) | batteryBytes[1]) / 0xFFFF;
 
   // Finner StateOfHealth prosent - Setter sammen verdiene hentet for % entet fra registerene 0x20 og ox21
-  batteryState[1] = ((batteryBytes[2] << 4) | batteryBytes[3]) / 0xFFFF;
+  batteryState[2] = ((batteryBytes[2] << 4) | batteryBytes[3]) / 0xFFFF;
+  // Setter error om helsen begynner å bli dårlig.
+  if (batteryState[2] < 30){
+    get_error[16] = 1;  // Oppdaterer feilmelding til batteriets helse.
+  }
+  else{
+    get_error[16] = 0;  // Oppdaterer feilmelding til batteriets helse.
+  }
 
   // Finner verdi som skal vises på batteri ikonet på skjermen i femttedeler.
   if (batteryState[0] < 20){
+    get_error[1] = 1;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 20;
   }
   else if (batteryState[0] < 40){
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 40;
   }
   else if (batteryState[0] < 60){
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 60;
   }
   else if (batteryState[0] < 80){
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 80;
   }
   else{
+    get_error[1] = 0;  // Oppdaterer feilmelding til batteri %.
     batteryState[1] = 100;
   }
 }
@@ -547,6 +619,7 @@ void getBatteryState(void){
  * @details
  * When DAC is turned on, 0xFFF is written to the DAC to set 5V as output.
  * When DAC is turned off, 0x000 is written ti the DAC to set 0V as output.
+ * If an error occurs in the communication the critical error code 14 will be set.
  * @param on_off Value to turn DAC output on/off.
 */
 void setDAC(bool on_off){
@@ -565,6 +638,17 @@ void setDAC(bool on_off){
     first_byte = 0b01000000;
     second_byte = 0b00000000;
     TWIStartTx(DAC_Address, first_byte, second_byte);
+  }
+  // Sjekker om det er dukket opp noen brudd i kommunikasjonen.
+  // Avbryter kommunikasjonen
+  while (TWI_ongoing == true){
+    if (getStatusCode() == 0x38){
+      TWIStopCond();
+      get_error[14] = 1;
+    }
+    else{
+      get_error[14] = 0;
+    }
   }
 }
 
@@ -604,10 +688,13 @@ ISR(TWI_vect){
       TWIWrite(address_byte + 1);
       break;
     
-   // Case 5 - Om pågående kommunikasjoen er RX. Motta data utesn å sette Acknowledge.
+   // Case 5 - Om pågående kommunikasjoen er RX. Motta data uten å sette Acknowledge.
     case 5:
-      TWI_case = 7;
       TWIRecieveWithNack();
+      if (getStatusCode() == 0x58){
+        recieved_data = TWDR;
+        TWI_case = 7;
+      }
       break;
 
     // Case 6 - Om pågående kommunikasjoen er TX. Skriv data til slave.
