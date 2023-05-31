@@ -8,7 +8,7 @@
 
 volatile int get_error[26];
 volatile int write_error[26];
-int j = 1;
+int j = 0;
 
 /**
 * @brief En funksjon for håndtering av feilmeldinger
